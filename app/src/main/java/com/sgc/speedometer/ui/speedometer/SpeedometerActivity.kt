@@ -20,8 +20,8 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         speedLimit.setOnClickListener {
             MaterialDialog(this).show {
                 title(R.string.set_speed_limit)
-                negativeButton {  }
-                input(inputType = InputType.TYPE_CLASS_NUMBER,maxLength = 3) { _, text ->
+                negativeButton { }
+                input(inputType = InputType.TYPE_CLASS_NUMBER, prefill = viewModel.maxSpeed.value.toString()) { _, text ->
                     viewModel.updateMaxSpeed(text.toString().toInt())
                 }
             }
@@ -31,7 +31,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     override val bindingVariable: Int
         get() = BR.speedometerViewModel
     override val layoutId: Int
-        get() =  R.layout.activity_speedometer;
+        get() = R.layout.activity_speedometer;
 
     override fun performDependencyInjection(buildComponent: ActivityComponent) {
         buildComponent.inject(this);
