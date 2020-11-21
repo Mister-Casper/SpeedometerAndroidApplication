@@ -1,16 +1,14 @@
-package com.sgc.speedometer.ui.activity
+package com.sgc.speedometer.ui.speedometer
 
 import android.os.Bundle
 import android.text.InputType
-import androidx.activity.viewModels
-import androidx.databinding.DataBindingUtil
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
 import com.sgc.speedometer.BR
 import com.sgc.speedometer.R
 import com.sgc.speedometer.databinding.ActivitySpeedometerBinding
 import com.sgc.speedometer.di.component.ActivityComponent
-import com.sgc.speedometer.ui.viewModel.SpeedometerViewModel
+import com.sgc.speedometer.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_speedometer.*
 
 class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, SpeedometerViewModel>() {

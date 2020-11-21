@@ -1,7 +1,8 @@
-package com.sgc.speedometer.ui.viewModel
+package com.sgc.speedometer.ui.speedometer
 
 import androidx.lifecycle.MutableLiveData
 import com.sgc.speedometer.data.DataManager
+import com.sgc.speedometer.ui.base.BaseViewModel
 
 class SpeedometerViewModel (dataManager: DataManager) : BaseViewModel(dataManager) {
 

@@ -1,4 +1,4 @@
-package com.sgc.speedometer.ui.activity
+package com.sgc.speedometer.ui.base
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -8,7 +8,6 @@ import com.sgc.speedometer.App
 import com.sgc.speedometer.di.component.ActivityComponent
 import com.sgc.speedometer.di.component.DaggerActivityComponent
 import com.sgc.speedometer.di.module.ActivityModule
-import com.sgc.speedometer.ui.viewModel.BaseViewModel
 import javax.inject.Inject
 
 abstract class BaseActivity<T : ViewDataBinding, V : BaseViewModel> : AppCompatActivity(){

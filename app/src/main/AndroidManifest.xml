@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme"
         android:name=".App">
         <activity
-            android:name=".ui.activity.SpeedometerActivity">
+            android:name=".ui.speedometer.SpeedometerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

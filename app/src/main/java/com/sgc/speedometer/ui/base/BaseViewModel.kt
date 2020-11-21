@@ -1,4 +1,4 @@
-package com.sgc.speedometer.ui.viewModel
+package com.sgc.speedometer.ui.base
 
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.ViewModel
