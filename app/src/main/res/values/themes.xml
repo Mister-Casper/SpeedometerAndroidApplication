@@ -1,0 +1,10 @@
+<resources>
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/text_color</item>
+        <item name="colorPrimaryDark">@color/text_color</item>
+        <item name="colorAccent">@color/text_color</item>
+        <item name="android:textColor">@color/text_color</item>
+        <item name="android:windowLightStatusBar">@bool/windowDrawsSystemBarBackgrounds</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+</resources>

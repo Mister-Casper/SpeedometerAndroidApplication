@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Спидометр</string>
+
+    <string name="km_per_hour">км/ч</string>
+    <string name="miles_per_hour">миль/ч</string>
+    <string name="speed_limit">Ограничение скорости : %1$d</string>
+    <string name="set_speed_limit">Ограничение скорости </string>
+
+</resources>
