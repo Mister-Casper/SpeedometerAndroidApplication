@@ -2,5 +2,6 @@
 <resources>
     <color name="background_color">#000000</color>
     <color name="text_color">#ffffff</color>
+    <color name="color_accent">#ffffff</color>
     <bool name="windowDrawsSystemBarBackgrounds">false</bool>
 </resources>

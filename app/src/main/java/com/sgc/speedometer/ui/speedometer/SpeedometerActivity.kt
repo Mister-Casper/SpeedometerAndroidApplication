@@ -3,6 +3,8 @@ package com.sgc.speedometer.ui.speedometer
 import android.os.Bundle
 import android.text.InputType
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.WhichButton
+import com.afollestad.materialdialogs.actions.getActionButton
 import com.afollestad.materialdialogs.input.input
 import com.sgc.speedometer.BR
 import com.sgc.speedometer.R
@@ -21,7 +23,14 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
             MaterialDialog(this).show {
                 title(R.string.set_speed_limit)
                 negativeButton { }
-                input(inputType = InputType.TYPE_CLASS_NUMBER, prefill = viewModel.maxSpeed.value.toString()) { _, text ->
+                apply {
+                    getActionButton(WhichButton.POSITIVE).updateTextColor(getColor(R.color.text_color))
+                    getActionButton(WhichButton.NEGATIVE).updateTextColor(getColor(R.color.text_color))
+                }
+                input(
+                    inputType = InputType.TYPE_CLASS_NUMBER,
+                    prefill = viewModel.maxSpeed.value.toString()
+                ) { _, text ->
                     viewModel.updateMaxSpeed(text.toString().toInt())
                 }
             }
