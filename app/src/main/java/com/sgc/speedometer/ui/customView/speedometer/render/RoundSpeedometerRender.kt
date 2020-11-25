@@ -13,4 +13,8 @@ class RoundSpeedometerRender()  : SpeedometerRender() {
 
     }
 
+    override fun speedLimitReturned() {
+
+    }
+
 }
