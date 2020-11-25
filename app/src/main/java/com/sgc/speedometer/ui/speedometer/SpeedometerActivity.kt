@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.InputType
+import android.text.format.DateUtils
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.afollestad.materialdialogs.MaterialDialog
@@ -40,6 +41,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         get() = R.layout.activity_speedometer;
 
     private lateinit var receiver: SpeedReceiver
+    private var vibrator: Vibrator? = null
 
     override fun performDependencyInjection(buildComponent: ActivityComponent) {
         buildComponent.inject(this);
@@ -83,6 +85,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         when (requestCode) {
             TAG_CODE_PERMISSION_LOCATION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    viewModel.setSpeedLimitControlObserver(this)
                     startService()
                 }
             }
@@ -90,21 +93,23 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     }
 
     override fun speedLimitExceeded() {
-        val v = getSystemService(VIBRATOR_SERVICE) as Vibrator
+        vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+            vibrator!!.vibrate(VibrationEffect.createOneShot(4000, VibrationEffect.DEFAULT_AMPLITUDE))
         } else {
-            v.vibrate(500)
+            vibrator!!.vibrate(4000)
         }
         speedometer.speedLimitExceeded()
     }
 
     override fun speedLimitReturned() {
         speedometer.speedLimitReturned()
+        vibrator?.cancel()
     }
 
     override fun onDestroy() {
         stopService()
+        vibrator?.cancel()
         super.onDestroy()
     }
 
