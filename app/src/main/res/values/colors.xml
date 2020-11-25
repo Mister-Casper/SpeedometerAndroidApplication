@@ -3,5 +3,6 @@
     <color name="background_color">#ffffff</color>
     <color name="text_color">#000000</color>
     <color name="color_accent">#000000</color>
+    <color name="alert_color">#ff0f0f</color>
     <bool name="windowDrawsSystemBarBackgrounds">true</bool>
 </resources>

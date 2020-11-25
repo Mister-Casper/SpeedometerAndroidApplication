@@ -2,6 +2,7 @@ package com.sgc.speedometer.ui.customView.speedometer.speedLimitControl
 
 interface SpeedLimitControlObserver {
 
-    fun limitExceeded()
+    fun speedLimitExceeded()
+    fun speedLimitReturned()
 
 }

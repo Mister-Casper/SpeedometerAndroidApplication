@@ -6,4 +6,6 @@ import com.sgc.speedometer.utils.SpeedUnit
 abstract class SpeedometerRender {
 
     abstract fun draw(canvas: Canvas, speed: Int, maxSpeed: Int, speedUnit: SpeedUnit)
+    abstract fun speedLimitExceeded()
+    abstract fun speedLimitReturned()
 }

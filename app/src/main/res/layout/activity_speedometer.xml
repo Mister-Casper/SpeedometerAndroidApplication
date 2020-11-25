@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:customView="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable
@@ -21,7 +22,8 @@
         <com.sgc.speedometer.ui.customView.speedometer.SpeedometerView
             android:id="@+id/speedometer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            customView:speed="@{speedometerViewModel.currentSpeed}"/>
 
         <TextView
             android:id="@+id/speedLimit"

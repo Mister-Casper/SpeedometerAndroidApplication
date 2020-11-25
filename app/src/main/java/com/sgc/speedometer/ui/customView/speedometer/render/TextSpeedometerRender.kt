@@ -46,4 +46,12 @@ class TextSpeedometerRender(private val context: Context) : SpeedometerRender() 
 
         canvas.drawText(speedUnit.getString(context), xTextPos, yTextPos, textPaint)
     }
+
+    override fun speedLimitExceeded() {
+        speedPaint.color = context.getColor(R.color.alert_color)
+    }
+
+    override fun speedLimitReturned() {
+        speedPaint.color = context.getColor(R.color.text_color)
+    }
 }

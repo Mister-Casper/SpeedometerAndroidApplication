@@ -31,4 +31,12 @@ class SpeedometerView : View {
         super.onDraw(canvas)
     }
 
+    fun speedLimitExceeded(){
+        speedometerRender.speedLimitExceeded()
+    }
+
+    fun speedLimitReturned(){
+        speedometerRender.speedLimitReturned()
+    }
+
 }
