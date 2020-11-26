@@ -4,8 +4,7 @@ import android.content.Context
 import com.sgc.speedometer.R
 
 enum class SpeedUnit(val id: Int, val valueFactor: Double, private val stringId:Int) {
-    KilometerPerHour(0, 1.0, R.string.km_per_hour),
-    MilesPerHour(1, 0.621371, R.string.miles_per_hour);
+    KilometerPerHour(0, 1.0, R.string.km_per_hour);
 
     fun getString(context: Context):String{
         return context.getString(stringId)
