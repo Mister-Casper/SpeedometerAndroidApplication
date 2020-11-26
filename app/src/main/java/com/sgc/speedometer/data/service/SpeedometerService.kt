@@ -9,6 +9,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
+import android.os.Bundle
 import android.os.IBinder
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -23,13 +24,27 @@ class SpeedometerService : Service(), LocationListener {
     private lateinit var manager: NotificationManager
     private lateinit var pendingIntent: PendingIntent
     private lateinit var locationManager: LocationManager
+    
+    private var lastLocation: Location? = null
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
     override fun onLocationChanged(location: Location) {
-        updateSpeed((location.speed * 3.6f).toInt())
+        var speed = if (location.hasSpeed() && location.speed > 0) {
+            location.speed
+        } else {
+            lastLocation?.let { lastLocation ->
+                val elapsedTimeInSeconds = (location.time - lastLocation.time) / 1_000
+                val distanceInMeters = lastLocation.distanceTo(location)
+                distanceInMeters / elapsedTimeInSeconds
+            } ?: 0.0
+        }.toDouble()
+
+        speed = speed * 36 / 10
+        updateSpeed(speed.toInt())
+        lastLocation = location
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -113,6 +128,10 @@ class SpeedometerService : Service(), LocationListener {
     }
 
     override fun onProviderDisabled(provider: String) {
+
+    }
+
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
 
     }
 
