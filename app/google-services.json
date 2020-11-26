@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "185907441905",
+    "firebase_url": "https://speedometer-b11a0.firebaseio.com",
+    "project_id": "speedometer-b11a0",
+    "storage_bucket": "speedometer-b11a0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:185907441905:android:fa280a632589641bfe7950",
+        "android_client_info": {
+          "package_name": "com.sgc.speedometer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "185907441905-l030h43ds5p6p4sv16n8ed9irqe6jnvu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDA8AZgi8JKKMmF5L38yoOOOrssPPBYkaw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "185907441905-l030h43ds5p6p4sv16n8ed9irqe6jnvu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

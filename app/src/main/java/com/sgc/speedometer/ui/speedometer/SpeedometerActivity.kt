@@ -47,7 +47,6 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         if (savedInstanceState == null) {
             ActivityCompat.requestPermissions(
                 this, arrayOf(
