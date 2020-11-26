@@ -39,11 +39,11 @@ class SpeedometerService : Service(), LocationListener {
             lastLocation?.let { lastLocation ->
                 val elapsedTimeInSeconds = (location.time - lastLocation.time) / 1_000
                 val distanceInMeters = lastLocation.distanceTo(location)
-                (distanceInMeters / elapsedTimeInSeconds )* 36 / 10
+                (distanceInMeters / elapsedTimeInSeconds) * 36 / 10
             } ?: 0.0
         }.toInt()
 
-        if(currentSpeed != newSpeed) {
+        if (currentSpeed != newSpeed) {
             updateSpeed(newSpeed)
             currentSpeed = newSpeed
         }
@@ -68,8 +68,8 @@ class SpeedometerService : Service(), LocationListener {
         )
 
         builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Спидометр работает в фоновом режиме")
-            .setContentText("Скорость - 0 км/ч")
+            .setContentTitle(getString(R.string.speedometer_service_status))
+            .setContentText(getString(R.string.speed_value, 0))
             .setContentIntent(pendingIntent)
             .setSound(null)
             .setSmallIcon(R.mipmap.speedometer_icon)
@@ -115,7 +115,7 @@ class SpeedometerService : Service(), LocationListener {
 
     private fun updateSpeed(speed: Int) {
         sendDataToActivity(speed)
-        builder.setContentText("Скорость - $speed км/ч")
+        builder.setContentText(getString(R.string.speed_value, speed))
         manager.notify(1, builder.build())
     }
 
