@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Speedometer</string>
+
+    <string name="km_per_hour">km/h</string>
+    <string name="speed_limit">Speed limit: %1$d</string>
+    <string name="speed_value">Speed : %1$d</string>
+    <string name="set_speed_limit">Speed Limit</string>
+    <string name="speedometer_service_status">Speedometer running in the background</string>
+
+</resources>
