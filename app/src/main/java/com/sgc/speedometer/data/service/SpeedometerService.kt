@@ -26,24 +26,27 @@ class SpeedometerService : Service(), LocationListener {
     private lateinit var locationManager: LocationManager
 
     private var lastLocation: Location? = null
+    private var currentSpeed = 0
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
     override fun onLocationChanged(location: Location) {
-        var speed = if (location.hasSpeed() && location.speed > 0) {
-            location.speed
+        val newSpeed = if (location.hasSpeed() && location.speed > 0) {
+            location.speed * 36 / 10
         } else {
             lastLocation?.let { lastLocation ->
                 val elapsedTimeInSeconds = (location.time - lastLocation.time) / 1_000
                 val distanceInMeters = lastLocation.distanceTo(location)
-                distanceInMeters / elapsedTimeInSeconds
+                (distanceInMeters / elapsedTimeInSeconds )* 36 / 10
             } ?: 0.0
-        }.toDouble()
+        }.toInt()
 
-        speed = speed * 36 / 10
-        updateSpeed(speed.toInt())
+        if(currentSpeed != newSpeed) {
+            updateSpeed(newSpeed)
+            currentSpeed = newSpeed
+        }
         lastLocation = location
     }
 
@@ -84,7 +87,7 @@ class SpeedometerService : Service(), LocationListener {
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 1f, this)
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 250, 1f, this)
                 }
             }
         }
