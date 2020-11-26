@@ -54,7 +54,7 @@ class SpeedometerService : Service(), LocationListener {
             .setContentText("Скорость - 0 км/ч")
             .setContentIntent(pendingIntent)
             .setSound(null)
-            .setSmallIcon(R.mipmap.ic_launcher_round)
+            .setSmallIcon(R.mipmap.speedometer_icon)
         return builder.build()
     }
 
