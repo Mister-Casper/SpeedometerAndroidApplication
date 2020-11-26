@@ -8,10 +8,6 @@ import javax.inject.Singleton
 @Singleton
 class AppDataManager @Inject constructor(private val preferencesHelper: PreferencesHelper) : DataManager {
 
-    override fun getMaxSpeed(): Int {
-        return preferencesHelper.getMaxSpeed(0)
-    }
-
     override fun getMaxSpeed(defaultMaxSpeed: Int): Int {
         return preferencesHelper.getMaxSpeed(defaultMaxSpeed)
     }
