@@ -17,10 +17,6 @@ class AppPreferencesHelper @Inject constructor(context: Context, @PreferenceInfo
     private val prefs: SharedPreferences =
         context.getSharedPreferences(prefFileName, Context.MODE_PRIVATE)
 
-    override fun getMaxSpeed(): Int {
-        return prefs.getInt(PREF_KEY_MAX_SPEED, 0)
-    }
-
     override fun getMaxSpeed(defaultMaxSpeed: Int): Int {
         return prefs.getInt(PREF_KEY_MAX_SPEED, defaultMaxSpeed)
     }

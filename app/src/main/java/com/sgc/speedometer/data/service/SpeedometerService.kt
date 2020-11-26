@@ -24,7 +24,7 @@ class SpeedometerService : Service(), LocationListener {
     private lateinit var manager: NotificationManager
     private lateinit var pendingIntent: PendingIntent
     private lateinit var locationManager: LocationManager
-    
+
     private var lastLocation: Location? = null
 
     override fun onBind(intent: Intent?): IBinder? {

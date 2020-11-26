@@ -8,7 +8,7 @@ import com.sgc.speedometer.ui.customView.speedometer.speedLimitControl.SpeedLimi
 
 class SpeedometerViewModel(dataManager: DataManager) : BaseViewModel(dataManager) {
 
-    var maxSpeed: MutableLiveData<Int> = MutableLiveData<Int>(dataManager.getMaxSpeed())
+    var maxSpeed: MutableLiveData<Int> = MutableLiveData<Int>(dataManager.getMaxSpeed(60))
     var currentSpeed: MutableLiveData<Int> = MutableLiveData<Int>(0)
 
     private var speedLimitControl: SpeedLimitControl? = null
@@ -25,6 +25,6 @@ class SpeedometerViewModel(dataManager: DataManager) : BaseViewModel(dataManager
     }
 
     fun setSpeedLimitControlObserver(speedLimitControlObserver: SpeedLimitControlObserver){
-        speedLimitControl = SpeedLimitControl(speedLimitControlObserver,dataManager.getMaxSpeed())
+        speedLimitControl = SpeedLimitControl(speedLimitControlObserver,dataManager.getMaxSpeed(60))
     }
 }
