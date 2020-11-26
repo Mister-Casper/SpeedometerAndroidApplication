@@ -48,31 +48,39 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) {
-            ActivityCompat.requestPermissions(
-                this, arrayOf(
-                    ACCESS_FINE_LOCATION,
-                    ACCESS_COARSE_LOCATION
-                ),
-                TAG_CODE_PERMISSION_LOCATION
-            )
+            requestPermissions()
+        }
+    }
 
-            receiver = SpeedReceiver()
-            registerReceiver(receiver, IntentFilter(SPEED_INTENT_FILTER))
+    private fun requestPermissions() {
+        ActivityCompat.requestPermissions(
+            this, arrayOf(
+                ACCESS_FINE_LOCATION,
+                ACCESS_COARSE_LOCATION
+            ),
+            TAG_CODE_PERMISSION_LOCATION
+        )
+    }
 
-            speedLimit.setOnClickListener {
-                MaterialDialog(this).show {
-                    title(R.string.set_speed_limit)
-                    negativeButton { }
-                    apply {
-                        getActionButton(WhichButton.POSITIVE).updateTextColor(getColor(R.color.text_color))
-                        getActionButton(WhichButton.NEGATIVE).updateTextColor(getColor(R.color.text_color))
-                    }
-                    input(
-                        inputType = InputType.TYPE_CLASS_NUMBER,
-                        prefill = viewModel.maxSpeed.value.toString()
-                    ) { _, text ->
-                        viewModel.updateMaxSpeed(text.toString().toInt())
-                    }
+    private fun registerReceiver(){
+        receiver = SpeedReceiver()
+        registerReceiver(receiver, IntentFilter(SPEED_INTENT_FILTER))
+    }
+
+    private fun initSpeedLimitClickListener(){
+        speedLimit.setOnClickListener {
+            MaterialDialog(this).show {
+                title(R.string.set_speed_limit)
+                negativeButton { }
+                apply {
+                    getActionButton(WhichButton.POSITIVE).updateTextColor(getColor(R.color.text_color))
+                    getActionButton(WhichButton.NEGATIVE).updateTextColor(getColor(R.color.text_color))
+                }
+                input(
+                    inputType = InputType.TYPE_CLASS_NUMBER,
+                    prefill = viewModel.maxSpeed.value.toString()
+                ) { _, text ->
+                    viewModel.updateMaxSpeed(text.toString().toInt())
                 }
             }
         }
@@ -82,6 +90,8 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         when (requestCode) {
             TAG_CODE_PERMISSION_LOCATION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    initSpeedLimitClickListener()
+                    registerReceiver()
                     viewModel.setSpeedLimitControlObserver(this)
                     startService()
                 }
