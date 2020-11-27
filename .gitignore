@@ -82,3 +82,5 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 app/mapping.txt
+app/obfuscation/unused.txt
+app/obfuscation/seeds.txt
