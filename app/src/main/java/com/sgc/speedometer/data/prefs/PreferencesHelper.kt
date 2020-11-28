@@ -1,6 +1,6 @@
 package com.sgc.speedometer.data.prefs
 
-import com.sgc.speedometer.data.util.SpeedUnit.SpeedUnit
+import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 
 interface PreferencesHelper {
 

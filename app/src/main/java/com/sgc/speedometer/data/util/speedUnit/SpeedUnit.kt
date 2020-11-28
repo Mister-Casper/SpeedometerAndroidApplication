@@ -1,4 +1,4 @@
-package com.sgc.speedometer.data.util.SpeedUnit
+package com.sgc.speedometer.data.util.speedUnit
 
 import android.content.Context
 import com.sgc.speedometer.R

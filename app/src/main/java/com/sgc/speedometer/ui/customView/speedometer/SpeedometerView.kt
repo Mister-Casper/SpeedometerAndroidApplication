@@ -6,7 +6,7 @@ import android.util.AttributeSet
 import android.view.View
 import com.sgc.speedometer.ui.customView.speedometer.render.SpeedometerRender
 import com.sgc.speedometer.ui.customView.speedometer.render.TextSpeedometerRender
-import com.sgc.speedometer.data.util.SpeedUnit.SpeedUnit
+import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 
 class SpeedometerView : View {
 

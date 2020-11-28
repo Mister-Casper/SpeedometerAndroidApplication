@@ -1,7 +1,7 @@
 package com.sgc.speedometer.data
 
 import com.sgc.speedometer.data.prefs.PreferencesHelper
-import com.sgc.speedometer.data.util.SpeedUnit.SpeedUnit
+import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 

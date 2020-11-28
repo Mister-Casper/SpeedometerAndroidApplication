@@ -3,7 +3,7 @@ package com.sgc.speedometer.data.prefs
 import android.content.Context
 import android.content.SharedPreferences
 import com.sgc.speedometer.di.PreferenceInfo
-import com.sgc.speedometer.data.util.SpeedUnit.SpeedUnit
+import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 import javax.inject.Inject
 
 class AppPreferencesHelper @Inject constructor(context: Context, @PreferenceInfo prefFileName: String) :
