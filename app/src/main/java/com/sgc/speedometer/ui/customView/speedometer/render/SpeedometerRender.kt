@@ -1,7 +1,7 @@
 package com.sgc.speedometer.ui.customView.speedometer.render
 
 import android.graphics.Canvas
-import com.sgc.speedometer.utils.SpeedUnit
+import com.sgc.speedometer.data.util.SpeedUnit.SpeedUnit
 
 abstract class SpeedometerRender {
 

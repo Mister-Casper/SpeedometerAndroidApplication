@@ -1,21 +1,23 @@
-package com.sgc.speedometer.utils
+package com.sgc.speedometer.data.util.SpeedUnit
 
 import android.content.Context
 import com.sgc.speedometer.R
 
 enum class SpeedUnit(val id: Int, val valueFactor: Double, private val stringId:Int) {
-    KilometerPerHour(0, 1.0, R.string.km_per_hour);
+    MetersPerSec(0, 1.0, R.string.m_per_sec),
+    KmPerHour(0, 3.6, R.string.km_per_hour),
+    MilesPerHour(0, 2.23694, R.string.miles_per_hour);
 
     fun getString(context: Context):String{
         return context.getString(stringId)
     }
 
     companion object {
-        fun getById(id:Int) : SpeedUnit{
+        fun getById(id:Int) : SpeedUnit {
             for (e in values()) {
                 if (e.id == id) return e
             }
-            return KilometerPerHour
+            return MetersPerSec
         }
     }
 }

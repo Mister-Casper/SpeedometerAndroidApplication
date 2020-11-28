@@ -5,7 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import com.sgc.speedometer.R
-import com.sgc.speedometer.utils.SpeedUnit
+import com.sgc.speedometer.data.util.SpeedUnit.SpeedUnit
 
 class TextSpeedometerRender(private val context: Context) : SpeedometerRender() {
 

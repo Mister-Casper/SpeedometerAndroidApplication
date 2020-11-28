@@ -6,7 +6,7 @@ import android.util.AttributeSet
 import android.view.View
 import com.sgc.speedometer.ui.customView.speedometer.render.SpeedometerRender
 import com.sgc.speedometer.ui.customView.speedometer.render.TextSpeedometerRender
-import com.sgc.speedometer.utils.SpeedUnit
+import com.sgc.speedometer.data.util.SpeedUnit.SpeedUnit
 
 class SpeedometerView : View {
 
@@ -27,7 +27,7 @@ class SpeedometerView : View {
     constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0)
 
     override fun onDraw(canvas: Canvas) {
-        speedometerRender.draw(canvas,speed,maxSpeed,SpeedUnit.KilometerPerHour)
+        speedometerRender.draw(canvas,speed,maxSpeed, SpeedUnit.KilometerPerHour)
         super.onDraw(canvas)
     }
 
