@@ -12,6 +12,7 @@ class AppPreferencesHelper @Inject constructor(context: Context, @PreferenceInfo
     companion object {
         private const val PREF_KEY_MAX_SPEED = "PREF_KEY_MAX_SPEED"
         private const val PREF_KEY_SPEED_UNIT = "PREF_KEY_SPEED_UNIT"
+        private const val PREF_KEY_IS_DARK_THEME = "PREF_KEY_IS_DARK_THEME"
     }
 
     private val prefs: SharedPreferences =
@@ -32,4 +33,13 @@ class AppPreferencesHelper @Inject constructor(context: Context, @PreferenceInfo
     override fun setSpeedUnit(speedUnit: SpeedUnit) {
         prefs.edit().putInt(PREF_KEY_SPEED_UNIT, speedUnit.id).apply()
     }
+
+    override fun getIsDarkTheme(): Boolean {
+        return prefs.getBoolean(PREF_KEY_IS_DARK_THEME,false)
+    }
+
+    override fun setIsDarkTheme(isDarkTheme: Boolean) {
+        prefs.edit().putBoolean(PREF_KEY_IS_DARK_THEME, isDarkTheme).apply()
+    }
+
 }

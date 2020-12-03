@@ -1,0 +1,7 @@
+<resources>
+    <string-array name="speed_units">
+        <item>@string/m_per_sec</item>
+        <item>@string/km_per_hour</item>
+        <item>@string/miles_per_hour</item>
+    </string-array>
+</resources>

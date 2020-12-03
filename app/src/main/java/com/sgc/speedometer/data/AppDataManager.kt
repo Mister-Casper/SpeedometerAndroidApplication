@@ -23,4 +23,12 @@ class AppDataManager @Inject constructor(private val preferencesHelper: Preferen
     override fun setSpeedUnit(speedUnit: SpeedUnit) {
         preferencesHelper.setSpeedUnit(speedUnit)
     }
+
+    override fun getIsDarkTheme(): Boolean {
+        return preferencesHelper.getIsDarkTheme()
+    }
+
+    override fun setIsDarkTheme(isDarkTheme: Boolean) {
+        preferencesHelper.setIsDarkTheme(isDarkTheme)
+    }
 }

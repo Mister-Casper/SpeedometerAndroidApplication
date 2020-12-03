@@ -10,4 +10,10 @@
     <string name="set_speed_limit">Ограничение скорости </string>
     <string name="speedometer_service_status">Спидометр работает в фоновом режиме</string>
 
+    <string name="settings">Настройки</string>
+    <string name="general_settings_header">Общее</string>
+    <string name="dark_theme_settings">Темная тема</string>
+    <string name="speed_unit_settings">Единица скорости</string>
+
+
 </resources>

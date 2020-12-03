@@ -11,4 +11,9 @@ interface PreferencesHelper {
     fun getSpeedUnit(defaultSpeedUnit: SpeedUnit): SpeedUnit
 
     fun setSpeedUnit(speedUnit: SpeedUnit)
+
+    fun getIsDarkTheme(): Boolean
+
+    fun setIsDarkTheme(isDarkTheme:Boolean)
+
 }
