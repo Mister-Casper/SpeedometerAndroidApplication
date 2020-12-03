@@ -10,7 +10,7 @@ import com.sgc.speedometer.di.component.DaggerActivityComponent
 import com.sgc.speedometer.di.module.ActivityModule
 import javax.inject.Inject
 
-abstract class BaseActivity<T : ViewDataBinding, V : BaseViewModel> : AppCompatActivity(){
+abstract class BaseActivity<T : ViewDataBinding, V : BaseViewModel> : AppCompatActivity() {
 
     private var viewDataBinding: T? = null
 
