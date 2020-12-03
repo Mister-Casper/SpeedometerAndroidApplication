@@ -11,7 +11,15 @@ import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 class SpeedometerView : View {
 
     var speedometerRender: SpeedometerRender = TextSpeedometerRender(context)
-
+        set(value) {
+            field = value
+            invalidate()
+        }
+    var speedUnit: SpeedUnit = SpeedUnit.KmPerHour
+        set(value) {
+            field = value
+            invalidate()
+        }
     var speed: Int = 0
         set(value) {
             field = value
@@ -27,15 +35,15 @@ class SpeedometerView : View {
     constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0)
 
     override fun onDraw(canvas: Canvas) {
-        speedometerRender.draw(canvas,speed,maxSpeed, SpeedUnit.KilometerPerHour)
+        speedometerRender.draw(canvas, speed, maxSpeed, speedUnit)
         super.onDraw(canvas)
     }
 
-    fun speedLimitExceeded(){
+    fun speedLimitExceeded() {
         speedometerRender.speedLimitExceeded()
     }
 
-    fun speedLimitReturned(){
+    fun speedLimitReturned() {
         speedometerRender.speedLimitReturned()
     }
 

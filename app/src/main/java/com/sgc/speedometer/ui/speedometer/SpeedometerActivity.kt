@@ -12,6 +12,9 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.InputType
+import android.view.Menu
+import android.view.MenuItem
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.afollestad.materialdialogs.MaterialDialog
@@ -20,15 +23,20 @@ import com.afollestad.materialdialogs.actions.getActionButton
 import com.afollestad.materialdialogs.input.input
 import com.sgc.speedometer.BR
 import com.sgc.speedometer.R
+import com.sgc.speedometer.data.DataManager
 import com.sgc.speedometer.data.service.SpeedometerService
+import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 import com.sgc.speedometer.databinding.ActivitySpeedometerBinding
 import com.sgc.speedometer.di.component.ActivityComponent
 import com.sgc.speedometer.ui.base.BaseActivity
 import com.sgc.speedometer.ui.customView.speedometer.speedLimitControl.SpeedLimitControlObserver
+import com.sgc.speedometer.ui.settings.SettingsActivity
 import com.sgc.speedometer.utils.AppConstants.SPEED_INTENT_FILTER
 import com.sgc.speedometer.utils.AppConstants.SPEED_KEY
 import com.sgc.speedometer.utils.AppConstants.TAG_CODE_PERMISSION_LOCATION
 import kotlinx.android.synthetic.main.activity_speedometer.*
+import javax.inject.Inject
+
 
 class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, SpeedometerViewModel>(),
     SpeedLimitControlObserver {
@@ -41,14 +49,33 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     private lateinit var receiver: SpeedReceiver
     private var vibrator: Vibrator? = null
 
+    @Inject
+    lateinit var dataManager: DataManager
+
     override fun performDependencyInjection(buildComponent: ActivityComponent) {
         buildComponent.inject(this);
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        title = ""
+        selectTheme(dataManager.getIsDarkTheme())
         if (savedInstanceState == null) {
             requestPermissions()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        speedometer.speedUnit = dataManager.getSpeedUnit(SpeedUnit.KmPerHour)
+    }
+
+    private fun selectTheme(isDarkTheme: Boolean) {
+        when (isDarkTheme) {
+            true ->
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            false ->
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
 
@@ -62,12 +89,12 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         )
     }
 
-    private fun registerReceiver(){
+    private fun registerReceiver() {
         receiver = SpeedReceiver()
         registerReceiver(receiver, IntentFilter(SPEED_INTENT_FILTER))
     }
 
-    private fun initSpeedLimitClickListener(){
+    private fun initSpeedLimitClickListener() {
         speedLimit.setOnClickListener {
             MaterialDialog(this).show {
                 title(R.string.set_speed_limit)
@@ -128,6 +155,22 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     private fun stopService() {
         val serviceIntent = Intent(this, SpeedometerService::class.java)
         stopService(serviceIntent)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.speedometer_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.getItemId()) {
+            R.id.settings -> {
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     inner class SpeedReceiver : BroadcastReceiver() {

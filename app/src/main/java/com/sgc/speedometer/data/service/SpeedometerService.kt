@@ -13,10 +13,13 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import com.sgc.speedometer.App
 import com.sgc.speedometer.R
+import com.sgc.speedometer.data.util.speedUnit.SpeedUnitConverter
 import com.sgc.speedometer.ui.speedometer.SpeedometerActivity
 import com.sgc.speedometer.utils.AppConstants.SPEED_INTENT_FILTER
 import com.sgc.speedometer.utils.AppConstants.SPEED_KEY
+import javax.inject.Inject
 
 class SpeedometerService : Service(), LocationListener {
 
@@ -28,18 +31,22 @@ class SpeedometerService : Service(), LocationListener {
     private var lastLocation: Location? = null
     private var currentSpeed = 0
 
+    @Inject
+    lateinit var speedUnitConverter: SpeedUnitConverter
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
     override fun onLocationChanged(location: Location) {
         val newSpeed = if (location.hasSpeed() && location.speed > 0) {
-            location.speed * 36 / 10
+           speedUnitConverter.convertToDefaultByMetersPerSec( location.speed.toDouble())
         } else {
             lastLocation?.let { lastLocation ->
                 val elapsedTimeInSeconds = (location.time - lastLocation.time) / 1_000
                 val distanceInMeters = lastLocation.distanceTo(location)
-                (distanceInMeters / elapsedTimeInSeconds) * 36 / 10
+                val speed = distanceInMeters / elapsedTimeInSeconds
+                speedUnitConverter.convertToDefaultByMetersPerSec(speed.toDouble())
             } ?: 0.0
         }.toInt()
 
@@ -51,6 +58,7 @@ class SpeedometerService : Service(), LocationListener {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        (application as App).speedometerComponent.inject(this)
         manager = getSystemService(NotificationManager::class.java)
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         createNotificationChannel()
