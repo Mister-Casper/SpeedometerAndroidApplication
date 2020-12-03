@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Speedometer</string>
 
@@ -9,5 +10,11 @@
     <string name="speed_value">Speed : %1$d</string>
     <string name="set_speed_limit">Speed Limit</string>
     <string name="speedometer_service_status">Speedometer running in the background</string>
+
+    <string name="settings">Settings</string>
+    <string name="general_settings_header">General</string>
+    <string name="dark_theme_settings">Dark theme</string>
+    <string name="speed_unit_settings">Speed unit</string>
+
 
 </resources>
