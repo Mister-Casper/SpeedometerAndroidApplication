@@ -1,5 +1,8 @@
 package com.sgc.speedometer.ui.speedometer
 
+import android.content.Context
+import android.location.LocationManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.sgc.speedometer.data.DataManager
 import com.sgc.speedometer.ui.base.BaseViewModel
@@ -30,5 +33,13 @@ class SpeedometerViewModel(dataManager: DataManager) : BaseViewModel(dataManager
 
     fun setSpeedLimitControlObserver(speedLimitControlObserver: SpeedLimitControlObserver){
         speedLimitControl = SpeedLimitControl(speedLimitControlObserver,dataManager.getMaxSpeed(60))
+    }
+
+    fun getIsGPSEnable(context: Context): Boolean {
+        val locationManager = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
+        val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        val isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+
+        return isGpsEnabled && isNetworkEnabled
     }
 }

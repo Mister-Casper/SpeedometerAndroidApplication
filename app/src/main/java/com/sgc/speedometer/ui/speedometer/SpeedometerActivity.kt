@@ -178,17 +178,9 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     }
 
     private fun checkGPSEnable(){
-        val isGPSEnable = getIsGPSEnable(this)
+        val isGPSEnable = viewModel.getIsGPSEnable(this)
         showGPSEnableDialog(isGPSEnable)
         speedometer.gpsEnable = isGPSEnable
-    }
-
-    private fun getIsGPSEnable(context: Context): Boolean {
-        val locationManager = context.getSystemService(LOCATION_SERVICE) as LocationManager
-        val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        val isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-
-        return isGpsEnabled && isNetworkEnabled
     }
 
     private fun showGPSEnableDialog(isGPSEnable: Boolean) {
