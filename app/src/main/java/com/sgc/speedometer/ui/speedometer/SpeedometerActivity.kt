@@ -62,6 +62,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         title = ""
         selectTheme(dataManager.getIsDarkTheme())
         initSpeedLimitClickListener()
+        checkGPSEnable()
         if (savedInstanceState == null) {
             requestPermissions()
         }
@@ -176,6 +177,36 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         return super.onOptionsItemSelected(item)
     }
 
+    private fun checkGPSEnable(){
+        val isGPSEnable = getIsGPSEnable(this)
+        showGPSEnableDialog(isGPSEnable)
+        speedometer.gpsEnable = isGPSEnable
+    }
+
+    private fun getIsGPSEnable(context: Context): Boolean {
+        val locationManager = context.getSystemService(LOCATION_SERVICE) as LocationManager
+        val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        val isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+
+        return isGpsEnabled && isNetworkEnabled
+    }
+
+    private fun showGPSEnableDialog(isGPSEnable: Boolean) {
+        if (!isGPSEnable) {
+            if (!isFinishing)
+                MaterialDialog(this@SpeedometerActivity).show {
+                    title(R.string.gps_disable)
+                    message(R.string.turn_on_gps)
+                    negativeButton { }
+                    positiveButton { startActivity(Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)); }
+                    apply {
+                        getActionButton(WhichButton.POSITIVE).updateTextColor(getColor(R.color.text_color))
+                        getActionButton(WhichButton.NEGATIVE).updateTextColor(getColor(R.color.text_color))
+                    }
+                }
+        }
+    }
+
     private inner class SpeedReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action.equals(SPEED_INTENT_FILTER))
@@ -186,33 +217,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     private inner class GPSSwitchStateReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (PROVIDERS_CHANGED_ACTION == intent.action) {
-                val isGPSEnable = getIsGPSEnable(context)
-                showGPSEnableDialog(isGPSEnable)
-                speedometer.gpsEnable = isGPSEnable
-            }
-        }
-
-        private fun getIsGPSEnable(context: Context):Boolean{
-            val locationManager = context.getSystemService(LOCATION_SERVICE) as LocationManager
-            val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-            val isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-
-            return isGpsEnabled && isNetworkEnabled
-        }
-
-        private fun showGPSEnableDialog(isGPSEnable:Boolean){
-            if (!isGPSEnable) {
-                if (!isFinishing)
-                    MaterialDialog(this@SpeedometerActivity).show {
-                        title(R.string.gps_disable)
-                        message(R.string.turn_on_gps)
-                        negativeButton { }
-                        positiveButton { startActivity(Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)); }
-                        apply {
-                            getActionButton(WhichButton.POSITIVE).updateTextColor(getColor(R.color.text_color))
-                            getActionButton(WhichButton.NEGATIVE).updateTextColor(getColor(R.color.text_color))
-                        }
-                    }
+                checkGPSEnable()
             }
         }
     }
