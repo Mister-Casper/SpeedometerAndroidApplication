@@ -12,6 +12,10 @@ class SpeedometerViewModel(dataManager: DataManager) : BaseViewModel(dataManager
     var currentSpeed: MutableLiveData<Int> = MutableLiveData<Int>(0)
 
     private var speedLimitControl: SpeedLimitControl? = null
+    set(value) {
+        field = value
+        speedLimitControl?.checkSpeedLimit(currentSpeed.value!!)
+    }
 
     fun updateMaxSpeed(maxSpeedValue: Int) {
         maxSpeed.value = maxSpeedValue
