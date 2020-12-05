@@ -22,15 +22,20 @@ class TextSpeedometerRender(private val context: Context) : SpeedometerRender() 
         textPaint.color = context.getColor(R.color.text_color)
     }
 
-    override fun draw(canvas: Canvas, speed: Int, maxSpeed: Int, speedUnit: SpeedUnit) {
-        drawSpeed(canvas, speed)
-        drawText(canvas, speedUnit)
+    override fun draw(canvas: Canvas, speed: Int, maxSpeed: Int, speedUnit: SpeedUnit, gpsEnable: Boolean) {
+        drawSpeed(canvas, speed, gpsEnable)
+        if (gpsEnable) {
+            drawText(canvas, speedUnit)
+        }
     }
 
-    private fun drawSpeed(canvas: Canvas, speed: Int) {
+    private fun drawSpeed(canvas: Canvas, speed: Int, gpsEnable: Boolean) {
         val xSpeedPos = canvas.width / 2.0f
         val ySpeedPos = canvas.height / 3.0f
-        canvas.drawText(speed.toString(), xSpeedPos, ySpeedPos, speedPaint)
+        var speedText = "-"
+        if (gpsEnable)
+            speedText = speed.toString()
+        canvas.drawText(speedText, xSpeedPos, ySpeedPos, speedPaint)
     }
 
     private fun drawText(canvas: Canvas, speedUnit: SpeedUnit) {

@@ -30,12 +30,17 @@ class SpeedometerView : View {
             field = value
             invalidate()
         }
+    var gpsEnable: Boolean = true
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
     constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0)
 
     override fun onDraw(canvas: Canvas) {
-        speedometerRender.draw(canvas, speed, maxSpeed, speedUnit)
+        speedometerRender.draw(canvas, speed, maxSpeed, speedUnit,gpsEnable)
         super.onDraw(canvas)
     }
 

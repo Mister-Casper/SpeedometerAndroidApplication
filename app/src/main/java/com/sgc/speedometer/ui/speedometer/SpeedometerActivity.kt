@@ -7,6 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.location.LocationManager
+import android.location.LocationManager.PROVIDERS_CHANGED_ACTION
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -46,7 +48,6 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     override val layoutId: Int
         get() = R.layout.activity_speedometer;
 
-    private lateinit var receiver: SpeedReceiver
     private var vibrator: Vibrator? = null
 
     @Inject
@@ -60,6 +61,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         super.onCreate(savedInstanceState)
         title = ""
         selectTheme(dataManager.getIsDarkTheme())
+        initSpeedLimitClickListener()
         if (savedInstanceState == null) {
             requestPermissions()
         }
@@ -89,9 +91,11 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         )
     }
 
-    private fun registerReceiver() {
-        receiver = SpeedReceiver()
-        registerReceiver(receiver, IntentFilter(SPEED_INTENT_FILTER))
+    private fun registerReceivers() {
+        val speedReceiver = SpeedReceiver()
+        registerReceiver(speedReceiver, IntentFilter(SPEED_INTENT_FILTER))
+        val gpsSwitchStateReceiver = GPSSwitchStateReceiver()
+        registerReceiver(gpsSwitchStateReceiver, IntentFilter(PROVIDERS_CHANGED_ACTION))
     }
 
     private fun initSpeedLimitClickListener() {
@@ -117,8 +121,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         when (requestCode) {
             TAG_CODE_PERMISSION_LOCATION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    initSpeedLimitClickListener()
-                    registerReceiver()
+                    registerReceivers()
                     viewModel.setSpeedLimitControlObserver(this)
                     startService()
                 }
@@ -173,10 +176,44 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         return super.onOptionsItemSelected(item)
     }
 
-    inner class SpeedReceiver : BroadcastReceiver() {
+    private inner class SpeedReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action.equals(SPEED_INTENT_FILTER))
                 viewModel.updateCurrentSpeed(intent.getIntExtra(SPEED_KEY, 0))
+        }
+    }
+
+    private inner class GPSSwitchStateReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (PROVIDERS_CHANGED_ACTION == intent.action) {
+                val isGPSEnable = getIsGPSEnable(context)
+                showGPSEnableDialog(isGPSEnable)
+                speedometer.gpsEnable = isGPSEnable
+            }
+        }
+
+        private fun getIsGPSEnable(context: Context):Boolean{
+            val locationManager = context.getSystemService(LOCATION_SERVICE) as LocationManager
+            val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+            val isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+
+            return isGpsEnabled && isNetworkEnabled
+        }
+
+        private fun showGPSEnableDialog(isGPSEnable:Boolean){
+            if (!isGPSEnable) {
+                if (!isFinishing)
+                    MaterialDialog(this@SpeedometerActivity).show {
+                        title(R.string.gps_disable)
+                        message(R.string.turn_on_gps)
+                        negativeButton { }
+                        positiveButton { startActivity(Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)); }
+                        apply {
+                            getActionButton(WhichButton.POSITIVE).updateTextColor(getColor(R.color.text_color))
+                            getActionButton(WhichButton.NEGATIVE).updateTextColor(getColor(R.color.text_color))
+                        }
+                    }
+            }
         }
     }
 }

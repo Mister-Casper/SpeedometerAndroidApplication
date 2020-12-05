@@ -5,7 +5,7 @@ import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 
 class RoundSpeedometerRender()  : SpeedometerRender() {
 
-    override fun draw(canvas: Canvas, speed: Int, maxSpeed: Int, speedUnit: SpeedUnit) {
+    override fun draw(canvas: Canvas, speed: Int, maxSpeed: Int, speedUnit: SpeedUnit,gpsEnable:Boolean) {
 
     }
 
