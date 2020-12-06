@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:customView="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/background_color">
 
     <data>
@@ -10,8 +11,6 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingStart="10dp"
@@ -23,8 +22,10 @@
         <com.sgc.speedometer.ui.customView.speedometer.SpeedometerView
             android:id="@+id/speedometer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            customView:speed="@{speedometerViewModel.currentSpeed}"/>
+            android:layout_height="250dp"
+            customView:layout_constraintTop_toTopOf="parent"
+            customView:speed="@{speedometerViewModel.currentSpeed}"
+            tools:layout_editor_absoluteX="10dp" />
 
         <TextView
             android:id="@+id/speedLimit"
@@ -32,8 +33,8 @@
             android:layout_height="wrap_content"
             android:text="@{@string/speed_limit(speedometerViewModel.maxSpeed)}"
             android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@+id/speedometer"
-            app:layout_constraintStart_toStartOf="parent" />
+            customView:layout_constraintBottom_toBottomOf="parent"
+            customView:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
