@@ -129,13 +129,18 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     }
 
     override fun speedLimitExceeded() {
+        if (dataManager.getIsVibration())
+            vibrate()
+        speedometer.speedLimitExceeded()
+    }
+
+    private fun vibrate() {
         vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator!!.vibrate(VibrationEffect.createOneShot(4000, VibrationEffect.DEFAULT_AMPLITUDE))
         } else {
             vibrator!!.vibrate(4000)
         }
-        speedometer.speedLimitExceeded()
     }
 
     override fun speedLimitReturned() {
@@ -175,7 +180,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         return super.onOptionsItemSelected(item)
     }
 
-    private fun checkGPSEnable(){
+    private fun checkGPSEnable() {
         val isGPSEnable = viewModel.getIsGPSEnable(this)
         showGPSEnableDialog(isGPSEnable)
         speedometer.gpsEnable = isGPSEnable

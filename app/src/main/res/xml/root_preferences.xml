@@ -1,25 +1,39 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
         app:iconSpaceReserved="false"
         app:title="@string/general_settings_header">
 
         <SwitchPreference
+            android:defaultValue="false"
             app:iconSpaceReserved="false"
             app:key="theme"
             app:title="@string/dark_theme_settings"
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
-            app:iconSpaceReserved="false"
-            app:defaultValue="@string/km_per_hour"
+            android:defaultValue="@string/km_per_hour"
             app:entries="@array/speed_units"
             app:entryValues="@array/speed_units"
+            app:iconSpaceReserved="false"
             app:key="speed_unit"
             app:title="@string/speed_unit_settings"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/warning_settings_header">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="vibration"
+            app:title="@string/vibration_settings"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
 
 </PreferenceScreen>

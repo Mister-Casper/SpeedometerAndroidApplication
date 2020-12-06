@@ -31,4 +31,12 @@ class AppDataManager @Inject constructor(private val preferencesHelper: Preferen
     override fun setIsDarkTheme(isDarkTheme: Boolean) {
         preferencesHelper.setIsDarkTheme(isDarkTheme)
     }
+
+    override fun getIsVibration(): Boolean {
+        return preferencesHelper.getIsVibration()
+    }
+
+    override fun setIsVibration(isVibration: Boolean) {
+        preferencesHelper.setIsVibration(isVibration)
+    }
 }

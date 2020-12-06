@@ -13,6 +13,7 @@ class AppPreferencesHelper @Inject constructor(context: Context, @PreferenceInfo
         private const val PREF_KEY_MAX_SPEED = "PREF_KEY_MAX_SPEED"
         private const val PREF_KEY_SPEED_UNIT = "PREF_KEY_SPEED_UNIT"
         private const val PREF_KEY_IS_DARK_THEME = "PREF_KEY_IS_DARK_THEME"
+        private const val PREF_KEY_IS_VIBRATION = "PREF_KEY_IS_VIBRATION"
     }
 
     private val prefs: SharedPreferences =
@@ -40,6 +41,14 @@ class AppPreferencesHelper @Inject constructor(context: Context, @PreferenceInfo
 
     override fun setIsDarkTheme(isDarkTheme: Boolean) {
         prefs.edit().putBoolean(PREF_KEY_IS_DARK_THEME, isDarkTheme).apply()
+    }
+
+    override fun getIsVibration(): Boolean {
+        return prefs.getBoolean(PREF_KEY_IS_VIBRATION,true)
+    }
+
+    override fun setIsVibration(isVibration: Boolean) {
+        prefs.edit().putBoolean(PREF_KEY_IS_VIBRATION, isVibration).apply()
     }
 
 }

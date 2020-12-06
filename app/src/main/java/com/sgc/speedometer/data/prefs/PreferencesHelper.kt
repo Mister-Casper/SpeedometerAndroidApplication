@@ -16,4 +16,7 @@ interface PreferencesHelper {
 
     fun setIsDarkTheme(isDarkTheme:Boolean)
 
+    fun getIsVibration(): Boolean
+
+    fun setIsVibration(isVibration:Boolean)
 }

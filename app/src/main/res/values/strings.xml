@@ -11,9 +11,11 @@
     <string name="speedometer_service_status">Спидометр работает в фоновом режиме</string>
 
     <string name="settings">Настройки</string>
-    <string name="general_settings_header">Общее</string>
+    <string name="general_settings_header">ОБЩЕЕ</string>
     <string name="dark_theme_settings">Темная тема</string>
     <string name="speed_unit_settings">Единица скорости</string>
+    <string name="warning_settings_header">ПРЕДУПРЕЖДЕНИЕ</string>
+    <string name="vibration_settings">Вибрация</string>
 
     <string name="gps_disable">GPS деактевировано</string>
     <string name="turn_on_gps">Пожалуйста, включите службу определения местоположения.</string>
