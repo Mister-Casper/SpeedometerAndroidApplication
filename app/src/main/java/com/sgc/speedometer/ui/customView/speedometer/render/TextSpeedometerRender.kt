@@ -14,10 +14,10 @@ class TextSpeedometerRender(private val context: Context) : SpeedometerRender() 
     var topTextPadding = 75
 
     init {
-        speedPaint.textSize = 300.0f
+        speedPaint.textSize = 300f
         speedPaint.textAlign = Paint.Align.CENTER
         speedPaint.color = context.getColor(R.color.text_color)
-        textPaint.textSize = 100.0f
+        textPaint.textSize = 100f
         textPaint.textAlign = Paint.Align.CENTER
         textPaint.color = context.getColor(R.color.text_color)
     }
@@ -30,7 +30,7 @@ class TextSpeedometerRender(private val context: Context) : SpeedometerRender() 
     }
 
     private fun drawSpeed(canvas: Canvas, speed: Int, gpsEnable: Boolean) {
-        val xSpeedPos = canvas.width / 2.0f
+        val xSpeedPos = canvas.width / 2f
         val ySpeedPos = canvas.height / 1.5f
         var speedText = "-"
         if (gpsEnable)
@@ -46,7 +46,7 @@ class TextSpeedometerRender(private val context: Context) : SpeedometerRender() 
 
         val height: Int = bounds.height()
 
-        val xTextPos = canvas.width / 2.0f
+        val xTextPos = canvas.width / 2f
         val yTextPos = canvas.height / 1.5f + height + topTextPadding
 
         canvas.drawText(speedUnit.getString(context), xTextPos, yTextPos, textPaint)
