@@ -46,7 +46,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     override val layoutId: Int
         get() = R.layout.activity_speedometer;
 
-    private lateinit var vibrator: Vibrator
+    private var vibrator: Vibrator? = null
 
     @Inject
     lateinit var dataManager: DataManager
@@ -137,9 +137,9 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     private fun vibrate() {
         vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(VibrationEffect.createOneShot(4000, VibrationEffect.DEFAULT_AMPLITUDE))
+            vibrator!!.vibrate(VibrationEffect.createOneShot(4000, VibrationEffect.DEFAULT_AMPLITUDE))
         } else {
-            vibrator.vibrate(4000)
+            vibrator!!.vibrate(4000)
         }
     }
 
