@@ -6,7 +6,7 @@
 
     <item
         android:id="@+id/set_round_speedometer"
-        android:icon="@drawable/text_speedometer_btm"
+        android:icon="@drawable/round_speedometer_btm"
         app:showAsAction="always"
         android:title="">
     </item>
