@@ -170,9 +170,9 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         if (speedometer.speedometerRender.getRenderId() == 0)
-            inflater.inflate(R.menu.round_speedometer_menu, menu)
-        else
             inflater.inflate(R.menu.text_speedometer_menu, menu)
+        else
+            inflater.inflate(R.menu.round_speedometer_menu, menu)
         return true
     }
 
