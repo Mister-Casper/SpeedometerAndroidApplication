@@ -59,4 +59,8 @@ class TextSpeedometerRender(private val context: Context) : SpeedometerRender() 
     override fun speedLimitReturned() {
         speedPaint.color = context.getColor(R.color.text_color)
     }
+
+    override fun getRenderId(): Int {
+        return 1
+    }
 }

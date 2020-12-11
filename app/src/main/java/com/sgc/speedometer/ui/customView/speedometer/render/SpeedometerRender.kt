@@ -8,4 +8,5 @@ abstract class SpeedometerRender {
     abstract fun draw(canvas: Canvas, speed: Int, maxSpeed: Int, speedUnit: SpeedUnit,gpsEnable:Boolean)
     abstract fun speedLimitExceeded()
     abstract fun speedLimitReturned()
+    abstract fun getRenderId():Int
 }

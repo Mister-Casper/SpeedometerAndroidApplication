@@ -30,6 +30,8 @@ import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 import com.sgc.speedometer.databinding.ActivitySpeedometerBinding
 import com.sgc.speedometer.di.component.ActivityComponent
 import com.sgc.speedometer.ui.base.BaseActivity
+import com.sgc.speedometer.ui.customView.speedometer.render.RoundSpeedometerRender
+import com.sgc.speedometer.ui.customView.speedometer.render.TextSpeedometerRender
 import com.sgc.speedometer.ui.customView.speedometer.speedLimitControl.SpeedLimitControlObserver
 import com.sgc.speedometer.ui.settings.SettingsActivity
 import com.sgc.speedometer.utils.AppConstants.SPEED_INTENT_FILTER
@@ -37,6 +39,7 @@ import com.sgc.speedometer.utils.AppConstants.SPEED_KEY
 import com.sgc.speedometer.utils.AppConstants.TAG_CODE_PERMISSION_LOCATION
 import kotlinx.android.synthetic.main.activity_speedometer.*
 import javax.inject.Inject
+
 
 class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, SpeedometerViewModel>(),
     SpeedLimitControlObserver {
@@ -166,7 +169,10 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
-        inflater.inflate(R.menu.speedometer_menu, menu)
+        if (speedometer.speedometerRender.getRenderId() == 0)
+            inflater.inflate(R.menu.round_speedometer_menu, menu)
+        else
+            inflater.inflate(R.menu.text_speedometer_menu, menu)
         return true
     }
 
@@ -175,6 +181,14 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
             R.id.settings -> {
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
+            }
+            R.id.set_round_speedometer -> {
+                speedometer.speedometerRender = RoundSpeedometerRender(this)
+                invalidateOptionsMenu()
+            }
+            R.id.set_text_speedometer -> {
+                speedometer.speedometerRender = TextSpeedometerRender(this)
+                invalidateOptionsMenu()
             }
         }
         return super.onOptionsItemSelected(item)

@@ -7,10 +7,11 @@ import android.view.View
 import com.sgc.speedometer.ui.customView.speedometer.render.SpeedometerRender
 import com.sgc.speedometer.ui.customView.speedometer.render.TextSpeedometerRender
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
+import com.sgc.speedometer.ui.customView.speedometer.render.RoundSpeedometerRender
 
 class SpeedometerView : View {
 
-    var speedometerRender: SpeedometerRender = TextSpeedometerRender(context)
+    var speedometerRender: SpeedometerRender = RoundSpeedometerRender(context)
         set(value) {
             field = value
             invalidate()

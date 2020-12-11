@@ -166,4 +166,8 @@ class RoundSpeedometerRender(private val context: Context) : SpeedometerRender()
         speedPaint.color = context.getColor(R.color.text_color)
     }
 
+    override fun getRenderId(): Int {
+        return 0
+    }
+
 }
