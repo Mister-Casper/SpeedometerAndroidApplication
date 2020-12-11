@@ -19,7 +19,7 @@ class RoundSpeedometerRender(private val context: Context) : SpeedometerRender()
 
     private var topTextPadding = 75
 
-    private val bigGraduations = 10
+    private val bigGraduations = 8
     private val smallGraduations = 5
 
     private val maxSpeed = 240
