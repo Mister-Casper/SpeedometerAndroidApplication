@@ -2,10 +2,12 @@ package com.sgc.speedometer
 
 import android.app.Activity
 import android.app.Application
+import com.kobakei.ratethisapp.RateThisApp
 import com.sgc.speedometer.di.component.*
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
 import javax.inject.Inject
+
 
 class App : Application(), HasActivityInjector {
 
@@ -28,6 +30,9 @@ class App : Application(), HasActivityInjector {
         settingsComponent = DaggerSettingsComponent.builder()
             .appComponent(appComponent)
             .build()
+
+        val config = RateThisApp.Config(3, 5)
+        RateThisApp.init(config)
     }
 
     override fun activityInjector(): DispatchingAndroidInjector<Activity>? {

@@ -22,6 +22,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.getActionButton
 import com.afollestad.materialdialogs.input.input
+import com.kobakei.ratethisapp.RateThisApp
 import com.sgc.speedometer.BR
 import com.sgc.speedometer.R
 import com.sgc.speedometer.data.DataManager
@@ -67,6 +68,8 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         if (savedInstanceState == null) {
             requestPermissions()
         }
+        RateThisApp.onCreate(this)
+        RateThisApp.showRateDialogIfNeeded(this)
     }
 
     override fun onResume() {
