@@ -68,8 +68,6 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         if (savedInstanceState == null) {
             requestPermissions()
         }
-        RateThisApp.onCreate(this)
-        RateThisApp.showRateDialogIfNeeded(this)
     }
 
     override fun onResume() {
@@ -129,6 +127,8 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
                     registerReceivers()
                     viewModel.setSpeedLimitControlObserver(this)
                     startService()
+                    RateThisApp.onCreate(this)
+                    RateThisApp.showRateDialogIfNeeded(this)
                 }
             }
         }
