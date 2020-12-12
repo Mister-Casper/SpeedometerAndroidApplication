@@ -6,7 +6,7 @@
         app:title="@string/general_settings_header">
 
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             app:iconSpaceReserved="false"
             app:key="theme"
             app:title="@string/dark_theme_settings"

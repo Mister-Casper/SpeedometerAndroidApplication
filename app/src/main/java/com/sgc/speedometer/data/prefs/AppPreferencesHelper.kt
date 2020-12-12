@@ -36,7 +36,7 @@ class AppPreferencesHelper @Inject constructor(context: Context, @PreferenceInfo
     }
 
     override fun getIsDarkTheme(): Boolean {
-        return prefs.getBoolean(PREF_KEY_IS_DARK_THEME,false)
+        return prefs.getBoolean(PREF_KEY_IS_DARK_THEME,true)
     }
 
     override fun setIsDarkTheme(isDarkTheme: Boolean) {
