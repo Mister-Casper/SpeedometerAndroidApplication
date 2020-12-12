@@ -1,24 +1,23 @@
 <resources>
-    <string name="app_name">Спидометр</string>
+<string name="app_name">Speedometer</string>
 
-    <string name="m_per_sec">м/сек</string>
-    <string name="km_per_hour">км/ч</string>
-    <string name="miles_per_hour">миль/ч</string>
+<string name="m_per_sec">m/sec</string>
+<string name="km_per_hour">km/h</string>
+<string name="miles_per_hour">miles/h</string>
 
-    <string name="speed_limit">Ограничение скорости : %1$d</string>
-    <string name="speed_value">Скорость : %1$d</string>
-    <string name="set_speed_limit">Ограничение скорости </string>
-    <string name="speedometer_service_status">Спидометр работает в фоновом режиме</string>
+<string name="speed_limit">Speed limit: %1$d</string>
+<string name="speed_value">Speed : %1$d</string>
+<string name="set_speed_limit">Speed limit</string>
+<string name="speedometer_service_status">Speedometer running in the background</string>
 
-    <string name="settings">Настройки</string>
-    <string name="general_settings_header">ОБЩЕЕ</string>
-    <string name="dark_theme_settings">Темная тема</string>
-    <string name="speed_unit_settings">Единица скорости</string>
-    <string name="warning_settings_header">ПРЕДУПРЕЖДЕНИЕ</string>
-    <string name="vibration_settings">Вибрация</string>
+<string name="settings">Settings</string>
+<string name="general_settings_header">General</string>
+<string name="dark_theme_settings">Dark theme</string>
+<string name="speed_unit_settings">Speed unit</string>
+<string name="warning_settings_header">WARNING</string>
+<string name="vibration_settings">Vibration</string>
 
-    <string name="gps_disable">GPS деактевировано</string>
-    <string name="turn_on_gps">Пожалуйста, включите службу определения местоположения.</string>
-
+<string name="gps_disable">GPS deactivated</string>
+<string name="turn_on_gps">Please enable location service.</string>
 
 </resources>
