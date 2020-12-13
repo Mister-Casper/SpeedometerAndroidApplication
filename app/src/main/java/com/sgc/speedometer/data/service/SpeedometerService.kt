@@ -43,14 +43,14 @@ class SpeedometerService : Service(), LocationListener {
            speedUnitConverter.convertToDefaultByMetersPerSec( location.speed.toDouble())
         } else {
             lastLocation?.let { lastLocation ->
-                val elapsedTimeInSeconds = (location.time - lastLocation.time) / 1_000
+                val elapsedTimeInSeconds = (location.time - lastLocation.time) / 1000.0
                 val distanceInMeters = lastLocation.distanceTo(location)
                 val speed = distanceInMeters / elapsedTimeInSeconds
-                speedUnitConverter.convertToDefaultByMetersPerSec(speed.toDouble())
+                speedUnitConverter.convertToDefaultByMetersPerSec(speed)
             } ?: 0.0
         }.toInt()
 
-        if (currentSpeed != newSpeed) {
+        if (currentSpeed != newSpeed && newSpeed < 10000) {
             updateSpeed(newSpeed)
             currentSpeed = newSpeed
         }
