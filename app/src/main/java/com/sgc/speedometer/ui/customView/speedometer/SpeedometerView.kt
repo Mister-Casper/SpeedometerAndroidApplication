@@ -15,6 +15,7 @@ class SpeedometerView : View {
         set(value) {
             field = value
             invalidate()
+            showSpeedLimitExceeded()
         }
     var speedUnit: SpeedUnit = SpeedUnit.KmPerHour
         set(value) {
@@ -36,21 +37,25 @@ class SpeedometerView : View {
             field = value
             invalidate()
         }
+    var isSpeedLimitExceeded: Boolean = false
+        set(value) {
+            field = value
+            showSpeedLimitExceeded()
+        }
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
     constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0)
 
     override fun onDraw(canvas: Canvas) {
-        speedometerRender.draw(canvas, speed, maxSpeed, speedUnit,gpsEnable)
+        speedometerRender.draw(canvas, speed, maxSpeed, speedUnit, gpsEnable)
         super.onDraw(canvas)
     }
 
-    fun speedLimitExceeded() {
-        speedometerRender.speedLimitExceeded()
-    }
-
-    fun speedLimitReturned() {
-        speedometerRender.speedLimitReturned()
+    private fun showSpeedLimitExceeded(){
+        if(isSpeedLimitExceeded)
+            speedometerRender.speedLimitExceeded()
+        else
+            speedometerRender.speedLimitReturned()
     }
 
 }

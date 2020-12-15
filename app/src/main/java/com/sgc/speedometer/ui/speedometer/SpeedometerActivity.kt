@@ -137,7 +137,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     override fun speedLimitExceeded() {
         if (dataManager.getIsVibration())
             vibrate()
-        speedometer.speedLimitExceeded()
+        speedometer.isSpeedLimitExceeded = true
     }
 
     private fun vibrate() {
@@ -150,8 +150,8 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     }
 
     override fun speedLimitReturned() {
-        speedometer.speedLimitReturned()
         vibrator?.cancel()
+        speedometer.isSpeedLimitExceeded = false
     }
 
     override fun onDestroy() {
