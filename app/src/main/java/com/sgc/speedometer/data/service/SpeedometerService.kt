@@ -50,7 +50,7 @@ class SpeedometerService : Service(), LocationListener {
             } ?: 0.0
         }.toInt()
 
-        if (currentSpeed != newSpeed && newSpeed < 10000) {
+        if (currentSpeed != newSpeed) {
             updateSpeed(newSpeed)
             currentSpeed = newSpeed
         }
