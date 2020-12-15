@@ -8,10 +8,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.location.LocationManager.PROVIDERS_CHANGED_ACTION
-import android.os.Build
-import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
+import android.os.*
 import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
@@ -68,6 +65,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         if (savedInstanceState == null) {
             requestPermissions()
         }
+        restoreState(savedInstanceState)
     }
 
     override fun onResume() {
@@ -219,6 +217,19 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt(SPEEDOMETER_RENDER_ID,speedometer.speedometerRender.getRenderId())
+        super.onSaveInstanceState(outState)
+    }
+
+    private fun restoreState(state:Bundle?){
+        if(state != null){
+            val speedometerRenderId = state.getInt(SPEEDOMETER_RENDER_ID)
+            if(speedometerRenderId == 1)
+                speedometer.speedometerRender = TextSpeedometerRender(this)
+        }
+    }
+
     private inner class SpeedReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action.equals(SPEED_INTENT_FILTER))
@@ -232,5 +243,9 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
                 checkGPSEnable()
             }
         }
+    }
+
+    companion object{
+        private const val SPEEDOMETER_RENDER_ID = "SPEEDOMETER_RENDER_ID"
     }
 }
