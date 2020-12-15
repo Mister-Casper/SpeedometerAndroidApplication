@@ -182,6 +182,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
             R.id.settings -> {
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
+                overridePendingTransition(R.anim.enter, R.anim.exit)
             }
             R.id.set_round_speedometer -> {
                 speedometer.speedometerRender = RoundSpeedometerRender(this)
