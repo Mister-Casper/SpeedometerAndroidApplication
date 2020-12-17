@@ -30,7 +30,7 @@ import com.sgc.speedometer.di.component.ActivityComponent
 import com.sgc.speedometer.ui.base.BaseActivity
 import com.sgc.speedometer.ui.customView.speedometer.render.RoundSpeedometerRender
 import com.sgc.speedometer.ui.customView.speedometer.render.TextSpeedometerRender
-import com.sgc.speedometer.ui.customView.speedometer.speedLimitControl.SpeedLimitControlObserver
+import com.sgc.speedometer.ui.speedometer.speedLimitControl.SpeedLimitControlObserver
 import com.sgc.speedometer.ui.settings.SettingsActivity
 import com.sgc.speedometer.utils.AppConstants.SPEED_INTENT_FILTER
 import com.sgc.speedometer.utils.AppConstants.SPEED_KEY

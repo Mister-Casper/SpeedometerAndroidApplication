@@ -6,8 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.sgc.speedometer.data.DataManager
 import com.sgc.speedometer.ui.base.BaseViewModel
-import com.sgc.speedometer.ui.customView.speedometer.speedLimitControl.SpeedLimitControl
-import com.sgc.speedometer.ui.customView.speedometer.speedLimitControl.SpeedLimitControlObserver
+import com.sgc.speedometer.ui.speedometer.speedLimitControl.SpeedLimitControl
+import com.sgc.speedometer.ui.speedometer.speedLimitControl.SpeedLimitControlObserver
 
 class SpeedometerViewModel(dataManager: DataManager) : BaseViewModel(dataManager) {
 
