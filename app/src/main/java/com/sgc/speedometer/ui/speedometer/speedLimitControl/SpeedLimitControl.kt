@@ -1,4 +1,4 @@
-package com.sgc.speedometer.ui.customView.speedometer.speedLimitControl
+package com.sgc.speedometer.ui.speedometer.speedLimitControl
 
 class SpeedLimitControl(var speedLimitControlObserver: SpeedLimitControlObserver, var speedLimit: Int) {
 
