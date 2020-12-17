@@ -40,7 +40,7 @@ class SpeedometerService : Service(), LocationListener {
 
     override fun onLocationChanged(location: Location) {
         val newSpeed = if (location.hasSpeed() && location.speed > 0) {
-           speedUnitConverter.convertToDefaultByMetersPerSec( location.speed.toDouble())
+            speedUnitConverter.convertToDefaultByMetersPerSec(location.speed.toDouble())
         } else {
             lastLocation?.let { lastLocation ->
                 val elapsedTimeInSeconds = (location.time - lastLocation.time) / 1000.0
@@ -50,7 +50,7 @@ class SpeedometerService : Service(), LocationListener {
             } ?: 0.0
         }.toInt()
 
-        if (currentSpeed != newSpeed) {
+        if (currentSpeed != newSpeed && newSpeed < 10000) {
             updateSpeed(newSpeed)
             currentSpeed = newSpeed
         }
@@ -95,10 +95,10 @@ class SpeedometerService : Service(), LocationListener {
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 250, 1f, this)
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, this)
                 }
                 if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 250, 1f, this)
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
                 }
             }
         }
