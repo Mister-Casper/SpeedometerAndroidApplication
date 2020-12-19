@@ -13,6 +13,7 @@ class SpeedometerViewModel(dataManager: DataManager) : BaseViewModel(dataManager
 
     var maxSpeed: MutableLiveData<Int> = MutableLiveData<Int>(dataManager.getMaxSpeed(60))
     var currentSpeed: MutableLiveData<Int> = MutableLiveData<Int>(0)
+    var distance: MutableLiveData<Int> = MutableLiveData<Int>(0)
 
     private var speedLimitControl: SpeedLimitControl? = null
 
@@ -30,6 +31,10 @@ class SpeedometerViewModel(dataManager: DataManager) : BaseViewModel(dataManager
 
     fun setSpeedLimitControlObserver(speedLimitControlObserver: SpeedLimitControlObserver){
         speedLimitControl = SpeedLimitControl(speedLimitControlObserver,dataManager.getMaxSpeed(60))
+    }
+
+    fun updateDistance(distance: Int) {
+        this.distance.value = distance
     }
 
     fun getIsGPSEnable(context: Context): Boolean {

@@ -6,7 +6,7 @@
     <string name="miles_per_hour">miles/h</string>
 
     <string name="speed_limit">Speed limit: %1$d</string>
-    <string name="speed_value">Speed : %1$d</string>
+    <string name="speed_value">Speed : %1$d , Distance : %2$d</string>
     <string name="set_speed_limit">Speed limit</string>
     <string name="speedometer_service_status">Speedometer running in the background</string>
 
@@ -19,5 +19,7 @@
 
     <string name="gps_disable">GPS deactivated</string>
     <string name="turn_on_gps">Please enable location service.</string>
+
+    <string name="speed_info_distance">Distance</string>
 
 </resources>

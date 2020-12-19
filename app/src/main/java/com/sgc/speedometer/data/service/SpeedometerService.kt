@@ -17,6 +17,7 @@ import com.sgc.speedometer.App
 import com.sgc.speedometer.R
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnitConverter
 import com.sgc.speedometer.ui.speedometer.SpeedometerActivity
+import com.sgc.speedometer.utils.AppConstants.DISTANCE_KEY
 import com.sgc.speedometer.utils.AppConstants.SPEED_INTENT_FILTER
 import com.sgc.speedometer.utils.AppConstants.SPEED_KEY
 import javax.inject.Inject
@@ -29,7 +30,7 @@ class SpeedometerService : Service(), LocationListener {
     private lateinit var locationManager: LocationManager
 
     private var lastLocation: Location? = null
-    private var currentSpeed = 0
+    private var distance = 0.0
 
     @Inject
     lateinit var speedUnitConverter: SpeedUnitConverter
@@ -39,20 +40,19 @@ class SpeedometerService : Service(), LocationListener {
     }
 
     override fun onLocationChanged(location: Location) {
-        val newSpeed = if (location.hasSpeed() && location.speed > 0) {
-            speedUnitConverter.convertToDefaultByMetersPerSec(location.speed.toDouble())
-        } else {
-            lastLocation?.let { lastLocation ->
-                val elapsedTimeInSeconds = (location.time - lastLocation.time) / 1000.0
-                val distanceInMeters = lastLocation.distanceTo(location)
-                val speed = distanceInMeters / elapsedTimeInSeconds
-                speedUnitConverter.convertToDefaultByMetersPerSec(speed)
-            } ?: 0.0
-        }.toInt()
+        if (lastLocation != null) {
+            val elapsedTimeInSeconds = (location.time - lastLocation!!.time) / 1000.0
+            val distanceInMeters = location.distanceTo(lastLocation)
+            val speed = distanceInMeters / elapsedTimeInSeconds
 
-        if (currentSpeed != newSpeed && newSpeed < 10000) {
-            updateSpeed(newSpeed)
-            currentSpeed = newSpeed
+            val newSpeed = if (location.hasSpeed() && location.speed > 0) {
+                speedUnitConverter.convertToDefaultByMetersPerSec(location.speed.toDouble())
+            } else {
+                speedUnitConverter.convertToDefaultByMetersPerSec(speed)
+            }.toInt()
+
+            distance += distanceInMeters / 1000
+            updateInfo(newSpeed, distance.toInt())
         }
         lastLocation = location
     }
@@ -77,7 +77,7 @@ class SpeedometerService : Service(), LocationListener {
 
         builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(getString(R.string.speedometer_service_status))
-            .setContentText(getString(R.string.speed_value, 0))
+            .setContentText(getString(R.string.speed_value, 0, 0))
             .setContentIntent(pendingIntent)
             .setSound(null)
             .setSmallIcon(R.mipmap.speedometer_icon)
@@ -124,16 +124,17 @@ class SpeedometerService : Service(), LocationListener {
         super.onDestroy()
     }
 
-    private fun updateSpeed(speed: Int) {
-        sendDataToActivity(speed)
-        builder.setContentText(getString(R.string.speed_value, speed))
+    private fun updateInfo(speed: Int, distance: Int) {
+        sendDataToActivity(speed, distance)
+        builder.setContentText(getString(R.string.speed_value, speed, distance))
         manager.notify(1, builder.build())
     }
 
-    private fun sendDataToActivity(speed: Int) {
+    private fun sendDataToActivity(speed: Int, distance: Int) {
         val sendIntent = Intent()
         sendIntent.action = SPEED_INTENT_FILTER
         sendIntent.putExtra(SPEED_KEY, speed)
+        sendIntent.putExtra(DISTANCE_KEY, distance)
         sendBroadcast(sendIntent)
     }
 

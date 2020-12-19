@@ -32,6 +32,7 @@ import com.sgc.speedometer.ui.customView.speedometer.render.RoundSpeedometerRend
 import com.sgc.speedometer.ui.customView.speedometer.render.TextSpeedometerRender
 import com.sgc.speedometer.ui.speedometer.speedLimitControl.SpeedLimitControlObserver
 import com.sgc.speedometer.ui.settings.SettingsActivity
+import com.sgc.speedometer.utils.AppConstants.DISTANCE_KEY
 import com.sgc.speedometer.utils.AppConstants.SPEED_INTENT_FILTER
 import com.sgc.speedometer.utils.AppConstants.SPEED_KEY
 import com.sgc.speedometer.utils.AppConstants.TAG_CODE_PERMISSION_LOCATION
@@ -241,6 +242,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         override fun onReceive(context: Context, intent: Intent) {
             if (PROVIDERS_CHANGED_ACTION == intent.action) {
                 checkGPSEnable()
+                viewModel.updateDistance(intent.getIntExtra(DISTANCE_KEY,0))
             }
         }
     }
