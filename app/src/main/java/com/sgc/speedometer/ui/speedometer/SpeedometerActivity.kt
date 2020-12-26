@@ -45,7 +45,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     override val bindingVariable: Int
         get() = BR.speedometerViewModel
     override val layoutId: Int
-        get() = R.layout.activity_speedometer;
+        get() = R.layout.activity_speedometer
 
     private var vibrator: Vibrator? = null
 
