@@ -51,7 +51,7 @@ class SpeedometerService : Service(), LocationListener {
                 speedUnitConverter.convertToDefaultByMetersPerSec(speed)
             }.toInt()
 
-            distance += distanceInMeters / 1000
+            distance += distanceInMeters
             updateInfo(newSpeed, distance.toInt())
         }
         lastLocation = location
@@ -94,11 +94,8 @@ class SpeedometerService : Service(), LocationListener {
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, this)
-                }
                 if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 50, 0.2f, this)
                 }
             }
         }
