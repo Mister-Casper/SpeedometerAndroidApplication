@@ -219,22 +219,24 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt(SPEEDOMETER_RENDER_ID,speedometer.speedometerRender.getRenderId())
+        outState.putInt(SPEEDOMETER_RENDER_ID, speedometer.speedometerRender.getRenderId())
         super.onSaveInstanceState(outState)
     }
 
-    private fun restoreState(state:Bundle?){
-        if(state != null){
+    private fun restoreState(state: Bundle?) {
+        if (state != null) {
             val speedometerRenderId = state.getInt(SPEEDOMETER_RENDER_ID)
-            if(speedometerRenderId == 1)
+            if (speedometerRenderId == 1)
                 speedometer.speedometerRender = TextSpeedometerRender(this)
         }
     }
 
     private inner class SpeedReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action.equals(SPEED_INTENT_FILTER))
+            if (intent.action.equals(SPEED_INTENT_FILTER)) {
                 viewModel.updateCurrentSpeed(intent.getIntExtra(SPEED_KEY, 0))
+                viewModel.updateDistance(intent.getIntExtra(DISTANCE_KEY, 0))
+            }
         }
     }
 
@@ -242,12 +244,11 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         override fun onReceive(context: Context, intent: Intent) {
             if (PROVIDERS_CHANGED_ACTION == intent.action) {
                 checkGPSEnable()
-                viewModel.updateDistance(intent.getIntExtra(DISTANCE_KEY,0))
             }
         }
     }
 
-    companion object{
+    companion object {
         private const val SPEEDOMETER_RENDER_ID = "SPEEDOMETER_RENDER_ID"
     }
 }
