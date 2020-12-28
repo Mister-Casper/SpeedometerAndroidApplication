@@ -1,5 +1,6 @@
 package com.sgc.speedometer.data.prefs
 
+import com.sgc.speedometer.data.util.distanceUnit.DistanceUnit
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 
 interface PreferencesHelper {
@@ -11,6 +12,10 @@ interface PreferencesHelper {
     fun getSpeedUnit(defaultSpeedUnit: SpeedUnit): SpeedUnit
 
     fun setSpeedUnit(speedUnit: SpeedUnit)
+
+    fun getDistanceUnit(defaultDistanceUnit: DistanceUnit): DistanceUnit
+
+    fun setDistanceUnit(distanceUnit: DistanceUnit)
 
     fun getIsDarkTheme(): Boolean
 

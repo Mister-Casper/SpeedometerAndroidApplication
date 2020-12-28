@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.sgc.speedometer.App
 import com.sgc.speedometer.R
+import com.sgc.speedometer.data.util.distanceUnit.DistanceUnitConverter
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnitConverter
 import com.sgc.speedometer.ui.speedometer.SpeedometerActivity
 import com.sgc.speedometer.utils.AppConstants.DISTANCE_KEY
@@ -35,6 +36,9 @@ class SpeedometerService : Service(), LocationListener {
     @Inject
     lateinit var speedUnitConverter: SpeedUnitConverter
 
+    @Inject
+    lateinit var distanceUnitConverter: DistanceUnitConverter
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
@@ -52,7 +56,7 @@ class SpeedometerService : Service(), LocationListener {
             }.toInt()
 
             distance += distanceInMeters
-            updateInfo(newSpeed, distance.toInt())
+            updateInfo(newSpeed, distanceUnitConverter.convertToDefaultByMeters(distance).toInt())
         }
         lastLocation = location
     }

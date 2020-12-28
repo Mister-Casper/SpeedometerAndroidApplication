@@ -64,5 +64,14 @@
             customView:layout_constraintStart_toEndOf="@+id/imageView"
             customView:layout_constraintTop_toBottomOf="@+id/textView" />
 
+        <TextView
+            android:id="@+id/distance_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:textSize="20sp"
+            customView:layout_constraintStart_toEndOf="@+id/distance"
+            customView:layout_constraintTop_toTopOf="@+id/distance" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

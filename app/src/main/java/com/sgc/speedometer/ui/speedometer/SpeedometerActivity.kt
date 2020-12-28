@@ -24,6 +24,7 @@ import com.sgc.speedometer.BR
 import com.sgc.speedometer.R
 import com.sgc.speedometer.data.DataManager
 import com.sgc.speedometer.data.service.SpeedometerService
+import com.sgc.speedometer.data.util.distanceUnit.DistanceUnit
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 import com.sgc.speedometer.databinding.ActivitySpeedometerBinding
 import com.sgc.speedometer.di.component.ActivityComponent
@@ -71,6 +72,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     override fun onResume() {
         super.onResume()
         speedometer.speedUnit = dataManager.getSpeedUnit(SpeedUnit.KmPerHour)
+        distance_unit.text = dataManager.getDistanceUnit(DistanceUnit.Meters).getString(this)
     }
 
     private fun selectTheme(isDarkTheme: Boolean) {

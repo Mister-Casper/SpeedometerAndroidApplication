@@ -9,6 +9,7 @@ import androidx.preference.SwitchPreference
 import com.sgc.speedometer.App
 import com.sgc.speedometer.R
 import com.sgc.speedometer.data.DataManager
+import com.sgc.speedometer.data.util.distanceUnit.DistanceUnit
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 import javax.inject.Inject
 
@@ -43,6 +44,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
             Preference.OnPreferenceChangeListener { _, newValue ->
                 val index: Int = speedUnitPreference.findIndexOfValue(newValue.toString())
                 dataManager.setSpeedUnit(SpeedUnit.getById(index))
+                true
+            }
+
+        val distanceUnitPreference: ListPreference? = findPreference("distance_unit")
+        distanceUnitPreference!!.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, newValue ->
+                val index: Int = distanceUnitPreference.findIndexOfValue(newValue.toString())
+                dataManager.setDistanceUnit(DistanceUnit.getById(index))
                 true
             }
 

@@ -1,6 +1,7 @@
 package com.sgc.speedometer.data
 
 import com.sgc.speedometer.data.prefs.PreferencesHelper
+import com.sgc.speedometer.data.util.distanceUnit.DistanceUnit
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -22,6 +23,14 @@ class AppDataManager @Inject constructor(private val preferencesHelper: Preferen
 
     override fun setSpeedUnit(speedUnit: SpeedUnit) {
         preferencesHelper.setSpeedUnit(speedUnit)
+    }
+
+    override fun getDistanceUnit(defaultDistanceUnit: DistanceUnit): DistanceUnit {
+        return preferencesHelper.getDistanceUnit(defaultDistanceUnit)
+    }
+
+    override fun setDistanceUnit(distanceUnit: DistanceUnit) {
+        preferencesHelper.setDistanceUnit(distanceUnit)
     }
 
     override fun getIsDarkTheme(): Boolean {

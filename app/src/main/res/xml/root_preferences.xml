@@ -21,6 +21,15 @@
             app:title="@string/speed_unit_settings"
             app:useSimpleSummaryProvider="true" />
 
+        <ListPreference
+            android:defaultValue="@string/m"
+            app:entries="@array/distance_units"
+            app:entryValues="@array/distance_units"
+            app:iconSpaceReserved="false"
+            app:key="distance_unit"
+            app:title="@string/distance_unit_settings"
+            app:useSimpleSummaryProvider="true" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

@@ -2,6 +2,7 @@ package com.sgc.speedometer.data.prefs
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.sgc.speedometer.data.util.distanceUnit.DistanceUnit
 import com.sgc.speedometer.di.PreferenceInfo
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 import javax.inject.Inject
@@ -12,6 +13,7 @@ class AppPreferencesHelper @Inject constructor(context: Context, @PreferenceInfo
     companion object {
         private const val PREF_KEY_MAX_SPEED = "PREF_KEY_MAX_SPEED"
         private const val PREF_KEY_SPEED_UNIT = "PREF_KEY_SPEED_UNIT"
+        private const val PREF_KEY_DISTANCE_UNIT = "PREF_KEY_DISTANCE_UNIT"
         private const val PREF_KEY_IS_DARK_THEME = "PREF_KEY_IS_DARK_THEME"
         private const val PREF_KEY_IS_VIBRATION = "PREF_KEY_IS_VIBRATION"
     }
@@ -33,6 +35,14 @@ class AppPreferencesHelper @Inject constructor(context: Context, @PreferenceInfo
 
     override fun setSpeedUnit(speedUnit: SpeedUnit) {
         prefs.edit().putInt(PREF_KEY_SPEED_UNIT, speedUnit.id).apply()
+    }
+
+    override fun getDistanceUnit(defaultDistanceUnit: DistanceUnit): DistanceUnit {
+        return DistanceUnit.getById(prefs.getInt(PREF_KEY_DISTANCE_UNIT, defaultDistanceUnit.id))
+    }
+
+    override fun setDistanceUnit(distanceUnit: DistanceUnit) {
+        prefs.edit().putInt(PREF_KEY_DISTANCE_UNIT, distanceUnit.id).apply()
     }
 
     override fun getIsDarkTheme(): Boolean {

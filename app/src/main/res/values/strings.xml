@@ -4,6 +4,9 @@
     <string name="m_per_sec">m/sec</string>
     <string name="km_per_hour">km/h</string>
     <string name="miles_per_hour">miles/h</string>
+    <string name="m">meters</string>
+    <string name="km">kilometers</string>
+    <string name="mi">miles</string>
 
     <string name="speed_limit">Speed limit: %1$d</string>
     <string name="speed_value">Speed : %1$d , Distance : %2$d</string>
@@ -14,6 +17,7 @@
     <string name="general_settings_header">GENERAL</string>
     <string name="dark_theme_settings">Dark theme</string>
     <string name="speed_unit_settings">Speed unit</string>
+    <string name="distance_unit_settings">Distance unit</string>
     <string name="warning_settings_header">WARNING</string>
     <string name="vibration_settings">Vibration</string>
 
