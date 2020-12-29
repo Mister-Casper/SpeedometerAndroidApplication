@@ -84,27 +84,27 @@ class RoundSpeedometerRender(private val context: Context) : SpeedometerRender()
         canvas.restore()
 
         if (isBig) {
-            drawBigGraduationSpeed(canvas,speed,length,angle)
+            drawBigGraduationSpeed(canvas, speed, length, angle)
         }
     }
 
-    private fun getGraduationLength(isBig:Boolean) : Int{
+    private fun getGraduationLength(isBig: Boolean): Int {
         return if (isBig) {
             lengthBigGraduations
-        }else{
+        } else {
             lengthSmallGraduations
         }
     }
 
-    private fun getGraduationWidth(isBig:Boolean) : Int{
+    private fun getGraduationWidth(isBig: Boolean): Int {
         return if (isBig) {
             widthBigGraduations
-        }else{
+        } else {
             widthSmallGraduations
         }
     }
 
-    private fun drawBigGraduationSpeed(canvas: Canvas,speed: Int,length:Int,angle:Double){
+    private fun drawBigGraduationSpeed(canvas: Canvas, speed: Int, length: Int, angle: Double) {
         val textBounds = Rect()
         mainPaint.getTextBounds(speed.toString(), 0, speed.toString().length, textBounds)
         val x = (canvas.width / 2 + (getRadius(canvas) - length * 1.5) * cos(toRadians(angle))).toFloat()
@@ -138,8 +138,10 @@ class RoundSpeedometerRender(private val context: Context) : SpeedometerRender()
 
     private fun drawArrow(canvas: Canvas, speed: Int) {
         var angle = startAngle.toDouble()
-        if (speed != 0)
+        if (speed != 0) {
             angle = startAngle + (speed.toDouble() / maxSpeed * maxAngle)
+            angle = angle.coerceAtMost(maxAngle)
+        }
 
         val bounds = Rect()
         textPaint.getTextBounds(speed.toString(), 0, speed.toString().length, bounds)
