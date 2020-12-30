@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Speedometer</string>
 
+    <string name="ask_permission">"For the app to work, you need access to the device's location"</string>
+
     <string name="m_per_sec">m/sec</string>
     <string name="km_per_hour">km/h</string>
     <string name="miles_per_hour">miles/h</string>

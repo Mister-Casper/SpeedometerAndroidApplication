@@ -127,6 +127,14 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
                     startService()
                     RateThisApp.onCreate(this)
                     RateThisApp.showRateDialogIfNeeded(this)
+                } else {
+                    MaterialDialog(this@SpeedometerActivity).show {
+                        message(R.string.ask_permission)
+                        positiveButton { requestPermissions() }
+                        apply {
+                            getActionButton(WhichButton.POSITIVE).updateTextColor(getColor(R.color.text_color))
+                        }
+                    }
                 }
             }
         }

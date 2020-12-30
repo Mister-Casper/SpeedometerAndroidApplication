@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Спидометр</string>
 
+    <string name="ask_permission">Для работы приложения необходим доступ к местоположению устройства</string>
+
     <string name="m_per_sec">м/сек</string>
     <string name="km_per_hour">км/ч</string>
     <string name="miles_per_hour">миль/ч</string>
