@@ -45,16 +45,16 @@ class AppPreferencesHelper @Inject constructor(context: Context, @PreferenceInfo
         prefs.edit().putInt(PREF_KEY_DISTANCE_UNIT, distanceUnit.id).apply()
     }
 
-    override fun getIsDarkTheme(): Boolean {
-        return prefs.getBoolean(PREF_KEY_IS_DARK_THEME,true)
+    override fun getIsDarkTheme(defaultIsDarkTheme:Boolean): Boolean {
+        return prefs.getBoolean(PREF_KEY_IS_DARK_THEME,defaultIsDarkTheme)
     }
 
     override fun setIsDarkTheme(isDarkTheme: Boolean) {
         prefs.edit().putBoolean(PREF_KEY_IS_DARK_THEME, isDarkTheme).apply()
     }
 
-    override fun getIsVibration(): Boolean {
-        return prefs.getBoolean(PREF_KEY_IS_VIBRATION,true)
+    override fun getIsVibration(defaultIsVibration:Boolean): Boolean {
+        return prefs.getBoolean(PREF_KEY_IS_VIBRATION,defaultIsVibration)
     }
 
     override fun setIsVibration(isVibration: Boolean) {

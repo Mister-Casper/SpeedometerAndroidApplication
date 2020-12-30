@@ -17,11 +17,11 @@ interface PreferencesHelper {
 
     fun setDistanceUnit(distanceUnit: DistanceUnit)
 
-    fun getIsDarkTheme(): Boolean
+    fun getIsDarkTheme(defaultIsDarkTheme:Boolean): Boolean
 
     fun setIsDarkTheme(isDarkTheme:Boolean)
 
-    fun getIsVibration(): Boolean
+    fun getIsVibration(defaultIsVibration:Boolean): Boolean
 
     fun setIsVibration(isVibration:Boolean)
 }

@@ -2,10 +2,7 @@ package com.sgc.speedometer.ui.settings
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
+import androidx.preference.*
 import com.sgc.speedometer.App
 import com.sgc.speedometer.R
 import com.sgc.speedometer.data.DataManager
@@ -20,6 +17,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         (requireActivity().application as App).settingsComponent.inject(this)
+        setDefaultSettings()
         super.onCreate(savedInstanceState)
     }
 
@@ -60,5 +58,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
             dataManager.setIsVibration(o as Boolean)
             true
         }
+    }
+
+    private fun setDefaultSettings(){
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context).edit()
+        prefs.putBoolean("theme", dataManager.getIsDarkTheme())
+        prefs.putString("speed_unit", dataManager.getSpeedUnit().getString(requireContext()))
+        prefs.putString("distance_unit", dataManager.getDistanceUnit().getString(requireContext()))
+        prefs.putBoolean("vibration", dataManager.getIsVibration())
+        prefs.apply()
     }
 }

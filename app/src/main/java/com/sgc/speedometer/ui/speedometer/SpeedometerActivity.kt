@@ -71,8 +71,8 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
 
     override fun onResume() {
         super.onResume()
-        speedometer.speedUnit = dataManager.getSpeedUnit(SpeedUnit.KmPerHour)
-        distance_unit.text = dataManager.getDistanceUnit(DistanceUnit.Meters).getString(this)
+        speedometer.speedUnit = dataManager.getSpeedUnit()
+        distance_unit.text = dataManager.getDistanceUnit().getString(this)
     }
 
     private fun selectTheme(isDarkTheme: Boolean) {

@@ -4,20 +4,21 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
-import com.sgc.speedometer.ui.customView.speedometer.render.SpeedometerRender
-import com.sgc.speedometer.ui.customView.speedometer.render.TextSpeedometerRender
+import com.sgc.speedometer.data.DefaultSettings
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 import com.sgc.speedometer.ui.customView.speedometer.render.RoundSpeedometerRender
+import com.sgc.speedometer.ui.customView.speedometer.render.SpeedometerRender
 
 class SpeedometerView : View {
 
+    var defaultSettings = DefaultSettings()
     var speedometerRender: SpeedometerRender = RoundSpeedometerRender(context)
         set(value) {
             field = value
             invalidate()
             showSpeedLimitExceeded()
         }
-    var speedUnit: SpeedUnit = SpeedUnit.KmPerHour
+    var speedUnit: SpeedUnit = defaultSettings.speedUnit
         set(value) {
             field = value
             invalidate()

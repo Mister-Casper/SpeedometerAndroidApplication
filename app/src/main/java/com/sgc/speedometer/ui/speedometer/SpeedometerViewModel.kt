@@ -11,7 +11,7 @@ import com.sgc.speedometer.ui.speedometer.speedLimitControl.SpeedLimitControlObs
 
 class SpeedometerViewModel(dataManager: DataManager) : BaseViewModel(dataManager) {
 
-    var maxSpeed: MutableLiveData<Int> = MutableLiveData<Int>(dataManager.getMaxSpeed(60))
+    var maxSpeed: MutableLiveData<Int> = MutableLiveData<Int>(dataManager.getMaxSpeed())
     var currentSpeed: MutableLiveData<Int> = MutableLiveData<Int>(0)
     var distance: MutableLiveData<Int> = MutableLiveData<Int>(0)
 
@@ -30,7 +30,7 @@ class SpeedometerViewModel(dataManager: DataManager) : BaseViewModel(dataManager
     }
 
     fun setSpeedLimitControlObserver(speedLimitControlObserver: SpeedLimitControlObserver){
-        speedLimitControl = SpeedLimitControl(speedLimitControlObserver,dataManager.getMaxSpeed(60))
+        speedLimitControl = SpeedLimitControl(speedLimitControlObserver,dataManager.getMaxSpeed())
     }
 
     fun updateDistance(distance: Int) {
