@@ -24,15 +24,13 @@ import com.sgc.speedometer.BR
 import com.sgc.speedometer.R
 import com.sgc.speedometer.data.DataManager
 import com.sgc.speedometer.data.service.SpeedometerService
-import com.sgc.speedometer.data.util.distanceUnit.DistanceUnit
-import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 import com.sgc.speedometer.databinding.ActivitySpeedometerBinding
 import com.sgc.speedometer.di.component.ActivityComponent
 import com.sgc.speedometer.ui.base.BaseActivity
 import com.sgc.speedometer.ui.customView.speedometer.render.RoundSpeedometerRender
 import com.sgc.speedometer.ui.customView.speedometer.render.TextSpeedometerRender
-import com.sgc.speedometer.ui.speedometer.speedLimitControl.SpeedLimitControlObserver
 import com.sgc.speedometer.ui.settings.SettingsActivity
+import com.sgc.speedometer.ui.speedometer.speedLimitControl.SpeedLimitControlObserver
 import com.sgc.speedometer.utils.AppConstants.DISTANCE_KEY
 import com.sgc.speedometer.utils.AppConstants.SPEED_INTENT_FILTER
 import com.sgc.speedometer.utils.AppConstants.SPEED_KEY

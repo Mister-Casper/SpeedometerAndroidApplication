@@ -2,7 +2,6 @@ package com.sgc.speedometer.di.component
 
 import com.sgc.speedometer.di.module.ActivityModule
 import com.sgc.speedometer.di.scope.ActivityScope
-import com.sgc.speedometer.ui.settings.SettingsFragment
 import com.sgc.speedometer.ui.speedometer.SpeedometerActivity
 import dagger.Component
 
