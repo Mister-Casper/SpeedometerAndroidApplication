@@ -162,7 +162,6 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     }
 
     override fun onDestroy() {
-        stopService()
         vibrator?.cancel()
         super.onDestroy()
     }
@@ -170,11 +169,6 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     private fun startService() {
         val serviceIntent = Intent(this, SpeedometerService::class.java)
         ContextCompat.startForegroundService(this, serviceIntent)
-    }
-
-    private fun stopService() {
-        val serviceIntent = Intent(this, SpeedometerService::class.java)
-        stopService(serviceIntent)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
