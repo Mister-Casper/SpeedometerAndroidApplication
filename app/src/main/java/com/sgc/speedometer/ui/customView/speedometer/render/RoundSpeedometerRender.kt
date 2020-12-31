@@ -138,8 +138,8 @@ class RoundSpeedometerRender(private val context: Context) : SpeedometerRender()
     private fun drawArrow(canvas: Canvas, speed: Int) {
         var angle = startAngle.toDouble()
         if (speed != 0) {
-            angle = startAngle + (speed.toDouble() / speedometerResolution * maxAngle)
-            angle = angle.coerceAtMost(maxAngle)
+            angle += (speed.toDouble() / speedometerResolution * maxAngle)
+            angle = angle.coerceAtMost(startAngle + maxAngle)
         }
 
         val bounds = Rect()
