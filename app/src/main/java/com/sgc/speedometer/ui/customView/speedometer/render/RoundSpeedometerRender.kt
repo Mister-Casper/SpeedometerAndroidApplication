@@ -58,7 +58,7 @@ class RoundSpeedometerRender(private val context: Context) : SpeedometerRender()
     private fun drawGraduations(canvas: Canvas) {
         val countGraduations = bigGraduations * smallGraduations
         val graduationAngle = maxAngle / countGraduations
-        val speedGraduation = maxSpeed / bigGraduations
+        val speedGraduation = speedometerResolution / bigGraduations
         for (i in 0..countGraduations) {
             drawGraduation(
                 canvas,
@@ -139,7 +139,7 @@ class RoundSpeedometerRender(private val context: Context) : SpeedometerRender()
     private fun drawArrow(canvas: Canvas, speed: Int) {
         var angle = startAngle.toDouble()
         if (speed != 0) {
-            angle = startAngle + (speed.toDouble() / maxSpeed * maxAngle)
+            angle = startAngle + (speed.toDouble() / speedometerResolution * maxAngle)
             angle = angle.coerceAtMost(maxAngle)
         }
 
