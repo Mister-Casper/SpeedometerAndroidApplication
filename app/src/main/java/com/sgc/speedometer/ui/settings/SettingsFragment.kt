@@ -6,6 +6,7 @@ import androidx.preference.*
 import com.sgc.speedometer.App
 import com.sgc.speedometer.R
 import com.sgc.speedometer.data.DataManager
+import com.sgc.speedometer.data.util.SpeedometerResolution
 import com.sgc.speedometer.data.util.distanceUnit.DistanceUnit
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 import javax.inject.Inject
@@ -45,6 +46,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true
             }
 
+        val speedResolutionPreference: ListPreference? = findPreference("speedometer_resolution")
+        speedResolutionPreference!!.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, newValue ->
+                val index: Int = speedResolutionPreference.findIndexOfValue(newValue.toString())
+                dataManager.setSpeedometerResolution(SpeedometerResolution.getById(index))
+                true
+            }
+
         val distanceUnitPreference: ListPreference? = findPreference("distance_unit")
         distanceUnitPreference!!.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
@@ -64,6 +73,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context).edit()
         prefs.putBoolean("theme", dataManager.getIsDarkTheme())
         prefs.putString("speed_unit", dataManager.getSpeedUnit().getString(requireContext()))
+        prefs.putString("speedometer_resolution", dataManager.getSpeedometerResolution().getString(requireContext()))
         prefs.putString("distance_unit", dataManager.getDistanceUnit().getString(requireContext()))
         prefs.putBoolean("vibration", dataManager.getIsVibration())
         prefs.apply()

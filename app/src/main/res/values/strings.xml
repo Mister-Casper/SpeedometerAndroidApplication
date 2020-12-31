@@ -19,6 +19,7 @@
     <string name="general_settings_header">GENERAL</string>
     <string name="dark_theme_settings">Dark theme</string>
     <string name="speed_unit_settings">Speed unit</string>
+    <string name="speed_resolution_settings">Speedometer resolution</string>
     <string name="distance_unit_settings">Distance unit</string>
     <string name="warning_settings_header">WARNING</string>
     <string name="vibration_settings">Vibration</string>
@@ -27,5 +28,12 @@
     <string name="turn_on_gps">Please enable location service.</string>
 
     <string name="speed_info_distance">Distance</string>
+
+    <string name="first_speed_resolution" translatable="false">0 - 40</string>
+    <string name="second_speed_resolution" translatable="false">0 - 80</string>
+    <string name="third_speed_resolution" translatable="false">0 - 120</string>
+    <string name="fourth_speed_resolution" translatable="false">0 - 160</string>
+    <string name="fifth_speed_resolution" translatable="false">0 - 240</string>
+    <string name="sixth_speed_resolution" translatable="false">0 - 320</string>
 
 </resources>

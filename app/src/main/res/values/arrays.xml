@@ -4,6 +4,14 @@
         <item>@string/km_per_hour</item>
         <item>@string/miles_per_hour</item>
     </string-array>
+    <string-array name="speed_resolutions">
+        <item>@string/first_speed_resolution</item>
+        <item>@string/second_speed_resolution</item>
+        <item>@string/third_speed_resolution</item>
+        <item>@string/fourth_speed_resolution</item>
+        <item>@string/fifth_speed_resolution</item>
+        <item>@string/sixth_speed_resolution</item>
+    </string-array>
     <string-array name="distance_units">
         <item>@string/m</item>
         <item>@string/km</item>

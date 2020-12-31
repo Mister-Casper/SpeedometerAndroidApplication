@@ -1,7 +1,9 @@
 package com.sgc.speedometer.data.prefs
 
+import com.sgc.speedometer.data.util.SpeedometerResolution
 import com.sgc.speedometer.data.util.distanceUnit.DistanceUnit
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
+import com.sgc.speedometer.ui.customView.speedometer.render.SpeedometerRender
 
 interface PreferencesHelper {
 
@@ -24,4 +26,8 @@ interface PreferencesHelper {
     fun getIsVibration(defaultIsVibration:Boolean): Boolean
 
     fun setIsVibration(isVibration:Boolean)
+
+    fun getSpeedometerResolution(defaultSpeedometerResolution: SpeedometerResolution): SpeedometerResolution
+
+    fun setSpeedometerResolution(speedometerResolution: SpeedometerResolution)
 }

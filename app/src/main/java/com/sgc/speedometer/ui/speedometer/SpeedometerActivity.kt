@@ -70,6 +70,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     override fun onResume() {
         super.onResume()
         speedometer.speedUnit = dataManager.getSpeedUnit()
+        speedometer.speedometerResolution = dataManager.getSpeedometerResolution().speedResolution
         distance_unit.text = dataManager.getDistanceUnit().getString(this)
     }
 

@@ -2,6 +2,7 @@ package com.sgc.speedometer.data.prefs
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.sgc.speedometer.data.util.SpeedometerResolution
 import com.sgc.speedometer.data.util.distanceUnit.DistanceUnit
 import com.sgc.speedometer.di.PreferenceInfo
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
@@ -16,6 +17,7 @@ class AppPreferencesHelper @Inject constructor(context: Context, @PreferenceInfo
         private const val PREF_KEY_DISTANCE_UNIT = "PREF_KEY_DISTANCE_UNIT"
         private const val PREF_KEY_IS_DARK_THEME = "PREF_KEY_IS_DARK_THEME"
         private const val PREF_KEY_IS_VIBRATION = "PREF_KEY_IS_VIBRATION"
+        private const val PREF_KEY_SPEEDOMETER_RESOLUTION= "PREF_KEY_SPEEDOMETER_RESOLUTION"
     }
 
     private val prefs: SharedPreferences =
@@ -59,6 +61,14 @@ class AppPreferencesHelper @Inject constructor(context: Context, @PreferenceInfo
 
     override fun setIsVibration(isVibration: Boolean) {
         prefs.edit().putBoolean(PREF_KEY_IS_VIBRATION, isVibration).apply()
+    }
+
+    override fun getSpeedometerResolution(defaultSpeedometerResolution: SpeedometerResolution): SpeedometerResolution {
+        return SpeedometerResolution.getById(prefs.getInt(PREF_KEY_SPEEDOMETER_RESOLUTION, defaultSpeedometerResolution.id))
+    }
+
+    override fun setSpeedometerResolution(speedometerResolution: SpeedometerResolution) {
+        prefs.edit().putInt(PREF_KEY_SPEEDOMETER_RESOLUTION, speedometerResolution.id).apply()
     }
 
 }

@@ -1,6 +1,7 @@
 package com.sgc.speedometer.data
 
 import com.sgc.speedometer.data.prefs.PreferencesHelper
+import com.sgc.speedometer.data.util.SpeedometerResolution
 import com.sgc.speedometer.data.util.distanceUnit.DistanceUnit
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 import javax.inject.Inject
@@ -70,4 +71,17 @@ class AppDataManager @Inject constructor(private val preferencesHelper: Preferen
     override fun getIsVibration(): Boolean {
         return getIsDarkTheme(defaultSettings.isVibration)
     }
+
+    override fun setSpeedometerResolution(speedometerResolution: SpeedometerResolution) {
+        preferencesHelper.setSpeedometerResolution(speedometerResolution)
+    }
+
+    override fun getSpeedometerResolution(defaultSpeedometerResolution: SpeedometerResolution): SpeedometerResolution {
+        return preferencesHelper.getSpeedometerResolution(defaultSpeedometerResolution)
+    }
+
+    override fun getSpeedometerResolution(): SpeedometerResolution {
+      return getSpeedometerResolution(defaultSettings.speedometerResolution)
+    }
+
 }

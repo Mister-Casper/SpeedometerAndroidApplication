@@ -22,6 +22,14 @@
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
+            app:entries="@array/speed_resolutions"
+            app:entryValues="@array/speed_resolutions"
+            app:iconSpaceReserved="false"
+            app:key="speedometer_resolution"
+            app:title="@string/speed_resolution_settings"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
             android:defaultValue="@string/m"
             app:entries="@array/distance_units"
             app:entryValues="@array/distance_units"

@@ -19,6 +19,7 @@
     <string name="general_settings_header">ОБЩЕЕ</string>
     <string name="dark_theme_settings">Темная тема</string>
     <string name="speed_unit_settings">Единица скорости</string>
+    <string name="speed_resolution_settings">Разрешение спидометра</string>
     <string name="distance_unit_settings">Единица расстояния</string>
     <string name="warning_settings_header">ПРЕДУПРЕЖДЕНИЕ</string>
     <string name="vibration_settings">Вибрация</string>
