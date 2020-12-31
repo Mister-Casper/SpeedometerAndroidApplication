@@ -43,6 +43,14 @@ class SpeedometerView : View {
             field = value
             showSpeedLimitExceeded()
         }
+    var speedometerResolution = speedometerRender.speedometerResolution
+        set(value) {
+            if (value != field) {
+                field = value
+                speedometerRender.speedometerResolution = value
+                invalidate()
+            }
+        }
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
     constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0)
@@ -52,8 +60,8 @@ class SpeedometerView : View {
         super.onDraw(canvas)
     }
 
-    private fun showSpeedLimitExceeded(){
-        if(isSpeedLimitExceeded)
+    private fun showSpeedLimitExceeded() {
+        if (isSpeedLimitExceeded)
             speedometerRender.speedLimitExceeded()
         else
             speedometerRender.speedLimitReturned()

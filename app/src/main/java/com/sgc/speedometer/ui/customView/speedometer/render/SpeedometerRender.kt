@@ -9,4 +9,6 @@ abstract class SpeedometerRender {
     abstract fun speedLimitExceeded()
     abstract fun speedLimitReturned()
     abstract fun getRenderId():Int
+
+    var speedometerResolution:Int = 240
 }
