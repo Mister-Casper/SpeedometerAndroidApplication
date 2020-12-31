@@ -22,7 +22,7 @@ class RoundSpeedometerRender(private val context: Context) : SpeedometerRender()
     private val bigGraduations = 8
     private val smallGraduations = 5
 
-    private val maxSpeed = 240
+    private val speedometerResolution = 240
     private val maxAngle = 240.0
 
     private val lengthBigGraduations = 50
