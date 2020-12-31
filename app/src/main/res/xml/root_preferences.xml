@@ -6,14 +6,12 @@
         app:title="@string/general_settings_header">
 
         <SwitchPreference
-            android:defaultValue="true"
             app:iconSpaceReserved="false"
             app:key="theme"
             app:title="@string/dark_theme_settings"
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
-            android:defaultValue="@string/km_per_hour"
             app:entries="@array/speed_units"
             app:entryValues="@array/speed_units"
             app:iconSpaceReserved="false"
@@ -30,7 +28,6 @@
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
-            android:defaultValue="@string/m"
             app:entries="@array/distance_units"
             app:entryValues="@array/distance_units"
             app:iconSpaceReserved="false"
@@ -45,7 +42,6 @@
         app:title="@string/warning_settings_header">
 
         <SwitchPreference
-            android:defaultValue="true"
             app:iconSpaceReserved="false"
             app:key="vibration"
             app:title="@string/vibration_settings"
