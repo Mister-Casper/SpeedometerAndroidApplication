@@ -185,7 +185,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
 
     private fun startService() {
         val serviceIntent = Intent(this, SpeedometerService::class.java)
-        bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
+        bindService(serviceIntent, connection, Context.BIND_IMPORTANT)
         ContextCompat.startForegroundService(this, serviceIntent)
     }
 
