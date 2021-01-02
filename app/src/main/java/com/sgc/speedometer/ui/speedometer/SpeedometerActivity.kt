@@ -2,10 +2,7 @@ package com.sgc.speedometer.ui.speedometer
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.pm.PackageManager
 import android.location.LocationManager.PROVIDERS_CHANGED_ACTION
 import android.os.*
@@ -20,7 +17,6 @@ import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.getActionButton
 import com.afollestad.materialdialogs.input.input
 import com.kobakei.ratethisapp.RateThisApp
-import com.sgc.speedometer.App
 import com.sgc.speedometer.BR
 import com.sgc.speedometer.R
 import com.sgc.speedometer.data.DataManager
@@ -62,6 +58,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        startService()
         title = ""
         selectTheme(dataManager.getIsDarkTheme())
         initSpeedLimitClickListener()
@@ -135,7 +132,6 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     registerReceivers()
                     viewModel.setSpeedLimitControlObserver(this)
-                    startService()
                     RateThisApp.onCreate(this)
                     RateThisApp.showRateDialogIfNeeded(this)
                 } else {
@@ -176,8 +172,20 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         super.onDestroy()
     }
 
+    private lateinit var service: SpeedometerService
+
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            val binder = service as SpeedometerService.SpeedometerServiceBinder
+            this@SpeedometerActivity.service = binder.getService()
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {}
+    }
+
     private fun startService() {
         val serviceIntent = Intent(this, SpeedometerService::class.java)
+        bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
         ContextCompat.startForegroundService(this, serviceIntent)
     }
 
@@ -196,6 +204,9 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
                 overridePendingTransition(R.anim.enter, R.anim.exit)
+            }
+            R.id.reset -> {
+                service.reset()
             }
             R.id.set_round_speedometer -> {
                 speedometer.speedometerRender = RoundSpeedometerRender(this)
@@ -253,7 +264,8 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
                 val speed = speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord!!.currentSpeed).toInt()
                 val distance = distanceUnitConverter.convertToDefaultByMeters(speedometerRecord.distance).toInt()
                 val duration = speedometerRecord.duration
-                val averageSpeed = speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord.averageSpeed).toInt()
+                val averageSpeed =
+                    speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord.averageSpeed).toInt()
 
                 viewModel.updateCurrentSpeed(speed)
                 viewModel.updateDistance(distance)

@@ -3,6 +3,7 @@ package com.sgc.speedometer.data.util
 import android.location.Location
 import android.os.CountDownTimer
 import android.os.Message
+import com.sgc.speedometer.data.model.Date
 import com.sgc.speedometer.data.model.SpeedometerRecord
 import java.util.*
 import java.util.logging.Handler
@@ -33,5 +34,12 @@ class SpeedometerRecordManager(val speedometerRecord: SpeedometerRecord) {
             speedometerRecord.averageSpeed = sumSpeed.toInt() / countSpeed
         }
         lastLocation = location
+    }
+
+    fun reset(){
+        speedometerRecord.duration = Date(0)
+        speedometerRecord.currentSpeed = 0
+        speedometerRecord.distance = 0.0
+        speedometerRecord.averageSpeed = 0
     }
 }

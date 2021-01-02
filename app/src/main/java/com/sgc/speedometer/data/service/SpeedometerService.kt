@@ -8,10 +8,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.os.Build
-import android.os.Bundle
-import android.os.CountDownTimer
-import android.os.IBinder
+import android.os.*
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.sgc.speedometer.App
@@ -40,8 +37,10 @@ class SpeedometerService : Service(), LocationListener {
 
     private val speedometerRecordManager: SpeedometerRecordManager = SpeedometerRecordManager(SpeedometerRecord())
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
+    var binder: IBinder = SpeedometerServiceBinder()
+
+    override fun onBind(intent: Intent): IBinder {
+        return binder
     }
 
     override fun onLocationChanged(location: Location) {
@@ -61,7 +60,7 @@ class SpeedometerService : Service(), LocationListener {
         return START_NOT_STICKY
     }
 
-    private fun startTimer(){
+    private fun startTimer() {
         val timer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 speedometerRecordManager.speedometerRecord.duration += 1000
@@ -138,11 +137,15 @@ class SpeedometerService : Service(), LocationListener {
         sendBroadcast(sendIntent)
     }
 
-    private fun updateNotification(speedometerRecord: SpeedometerRecord){
+    private fun updateNotification(speedometerRecord: SpeedometerRecord) {
         val speed = speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord.currentSpeed.toDouble()).toInt()
         val distance = distanceUnitConverter.convertToDefaultByMeters(speedometerRecord.distance).toInt()
         builder.setContentText(getString(R.string.speed_value, speed, distance))
         manager.notify(1, builder.build())
+    }
+
+    fun reset(){
+       speedometerRecordManager.reset()
     }
 
     override fun onProviderEnabled(provider: String) {
@@ -160,4 +163,9 @@ class SpeedometerService : Service(), LocationListener {
     companion object {
         const val CHANNEL_ID = "SPEEDOMETER_CHANNEL_ID_5"
     }
+
+    inner class SpeedometerServiceBinder : Binder() {
+        fun getService(): SpeedometerService = this@SpeedometerService
+    }
+
 }
