@@ -146,6 +146,7 @@ class SpeedometerService : Service(), LocationListener {
 
     fun reset(){
        speedometerRecordManager.reset()
+        updateInfo(speedometerRecordManager.speedometerRecord)
     }
 
     override fun onProviderEnabled(provider: String) {
