@@ -28,6 +28,8 @@
     <string name="turn_on_gps">Please enable location service.</string>
 
     <string name="speed_info_distance">Distance</string>
+    <string name="speed_info_duration">Duration</string>
+    <string name="speed_info_average">Average</string>
 
     <string name="first_speed_resolution" translatable="false">0 - 40</string>
     <string name="second_speed_resolution" translatable="false">0 - 80</string>

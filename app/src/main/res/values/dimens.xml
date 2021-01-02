@@ -1,4 +1,4 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="speedometer_info_image">52dp</dimen>
+    <dimen name="speedometer_info_image">46dp</dimen>
 </resources>

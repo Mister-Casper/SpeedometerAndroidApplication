@@ -5,6 +5,7 @@ import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.sgc.speedometer.data.DataManager
+import com.sgc.speedometer.data.model.Date
 import com.sgc.speedometer.ui.base.BaseViewModel
 import com.sgc.speedometer.ui.speedometer.speedLimitControl.SpeedLimitControl
 import com.sgc.speedometer.ui.speedometer.speedLimitControl.SpeedLimitControlObserver
@@ -14,6 +15,8 @@ class SpeedometerViewModel(dataManager: DataManager) : BaseViewModel(dataManager
     var maxSpeed: MutableLiveData<Int> = MutableLiveData<Int>(dataManager.getMaxSpeed())
     var currentSpeed: MutableLiveData<Int> = MutableLiveData<Int>(0)
     var distance: MutableLiveData<Int> = MutableLiveData<Int>(0)
+    var duration: MutableLiveData<Date> = MutableLiveData<Date>(Date(0))
+    var averageSpeed: MutableLiveData<Int> = MutableLiveData<Int>(0)
 
     private var speedLimitControl: SpeedLimitControl? = null
 
@@ -29,12 +32,20 @@ class SpeedometerViewModel(dataManager: DataManager) : BaseViewModel(dataManager
         speedLimitControl?.checkSpeedLimit(currentSpeedValue)
     }
 
-    fun setSpeedLimitControlObserver(speedLimitControlObserver: SpeedLimitControlObserver){
-        speedLimitControl = SpeedLimitControl(speedLimitControlObserver,dataManager.getMaxSpeed())
+    fun setSpeedLimitControlObserver(speedLimitControlObserver: SpeedLimitControlObserver) {
+        speedLimitControl = SpeedLimitControl(speedLimitControlObserver, dataManager.getMaxSpeed())
     }
 
     fun updateDistance(distance: Int) {
         this.distance.value = distance
+    }
+
+    fun updateDuration(duration: Date) {
+        this.duration.value = duration
+    }
+
+    fun updateAverageSpeed(averageSpeed: Int){
+        this.averageSpeed.value = averageSpeed
     }
 
     fun getIsGPSEnable(context: Context): Boolean {

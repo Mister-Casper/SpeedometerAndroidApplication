@@ -8,9 +8,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AppDataManager @Inject constructor(private val preferencesHelper: PreferencesHelper): DataManager {
-
-    private val defaultSettings = DefaultSettings()
+class AppDataManager @Inject constructor(private val preferencesHelper: PreferencesHelper,private val defaultSettings: DefaultSettings): DataManager {
 
     override fun setMaxSpeed(maxSpeed: Int) {
         preferencesHelper.setMaxSpeed(maxSpeed)

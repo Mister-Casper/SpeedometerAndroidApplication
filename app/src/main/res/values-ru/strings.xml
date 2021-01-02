@@ -28,5 +28,7 @@
     <string name="turn_on_gps">Пожалуйста, включите службу определения местоположения.</string>
 
     <string name="speed_info_distance">Дистанция</string>
+    <string name="speed_info_duration">Продолжительность</string>
+    <string name="speed_info_average">Средняя скорость</string>
 
 </resources>

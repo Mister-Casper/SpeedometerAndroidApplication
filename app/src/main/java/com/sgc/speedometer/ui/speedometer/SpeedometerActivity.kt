@@ -20,10 +20,14 @@ import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.getActionButton
 import com.afollestad.materialdialogs.input.input
 import com.kobakei.ratethisapp.RateThisApp
+import com.sgc.speedometer.App
 import com.sgc.speedometer.BR
 import com.sgc.speedometer.R
 import com.sgc.speedometer.data.DataManager
+import com.sgc.speedometer.data.model.SpeedometerRecord
 import com.sgc.speedometer.data.service.SpeedometerService
+import com.sgc.speedometer.data.util.distanceUnit.DistanceUnitConverter
+import com.sgc.speedometer.data.util.speedUnit.SpeedUnitConverter
 import com.sgc.speedometer.databinding.ActivitySpeedometerBinding
 import com.sgc.speedometer.di.component.ActivityComponent
 import com.sgc.speedometer.ui.base.BaseActivity
@@ -31,9 +35,8 @@ import com.sgc.speedometer.ui.customView.speedometer.render.RoundSpeedometerRend
 import com.sgc.speedometer.ui.customView.speedometer.render.TextSpeedometerRender
 import com.sgc.speedometer.ui.settings.SettingsActivity
 import com.sgc.speedometer.ui.speedometer.speedLimitControl.SpeedLimitControlObserver
-import com.sgc.speedometer.utils.AppConstants.DISTANCE_KEY
+import com.sgc.speedometer.utils.AppConstants
 import com.sgc.speedometer.utils.AppConstants.SPEED_INTENT_FILTER
-import com.sgc.speedometer.utils.AppConstants.SPEED_KEY
 import com.sgc.speedometer.utils.AppConstants.TAG_CODE_PERMISSION_LOCATION
 import kotlinx.android.synthetic.main.activity_speedometer.*
 import javax.inject.Inject
@@ -51,9 +54,11 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     @Inject
     lateinit var dataManager: DataManager
 
-    override fun performDependencyInjection(buildComponent: ActivityComponent) {
-        buildComponent.inject(this);
-    }
+    @Inject
+    lateinit var speedUnitConverter: SpeedUnitConverter
+
+    @Inject
+    lateinit var distanceUnitConverter: DistanceUnitConverter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,11 +72,16 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         restoreState(savedInstanceState)
     }
 
+    override fun performDependencyInjection(buildComponent: ActivityComponent) {
+        buildComponent.inject(this)
+    }
+
     override fun onResume() {
         super.onResume()
         speedometer.speedUnit = dataManager.getSpeedUnit()
         speedometer.speedometerResolution = dataManager.getSpeedometerResolution().speedResolution
         distance_unit.text = dataManager.getDistanceUnit().getString(this)
+        average_unit.text = dataManager.getSpeedUnit().getString(this)
     }
 
     private fun selectTheme(isDarkTheme: Boolean) {
@@ -237,8 +247,18 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     private inner class SpeedReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action.equals(SPEED_INTENT_FILTER)) {
-                viewModel.updateCurrentSpeed(intent.getIntExtra(SPEED_KEY, 0))
-                viewModel.updateDistance(intent.getIntExtra(DISTANCE_KEY, 0))
+                val speedometerRecord =
+                    intent.getParcelableExtra<SpeedometerRecord>(AppConstants.SPEEDOMETER_RECORD_KEY)
+
+                val speed = speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord!!.currentSpeed).toInt()
+                val distance = distanceUnitConverter.convertToDefaultByMeters(speedometerRecord.distance).toInt()
+                val duration = speedometerRecord.duration
+                val averageSpeed = speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord.averageSpeed).toInt()
+
+                viewModel.updateCurrentSpeed(speed)
+                viewModel.updateDistance(distance)
+                viewModel.updateDuration(duration)
+                viewModel.updateAverageSpeed(averageSpeed)
             }
         }
     }

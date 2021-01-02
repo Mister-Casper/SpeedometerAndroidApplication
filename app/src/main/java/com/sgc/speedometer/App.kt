@@ -11,7 +11,6 @@ import javax.inject.Inject
 class App : Application(), HasActivityInjector {
 
     lateinit var appComponent: AppComponent
-    lateinit var speedometerComponent: SpeedometerComponent
     lateinit var settingsComponent: SettingsComponent
 
     @set:Inject
@@ -22,9 +21,6 @@ class App : Application(), HasActivityInjector {
 
         appComponent = DaggerAppComponent.builder()
             .application(this)
-            .build()
-        speedometerComponent = DaggerSpeedometerComponent.builder()
-            .appComponent(appComponent)
             .build()
         settingsComponent = DaggerSettingsComponent.builder()
             .appComponent(appComponent)
