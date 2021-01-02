@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:customView="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="speedometerViewModel"
+            type="com.sgc.speedometer.ui.speedometer.SpeedometerViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="10dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"
+        tools:context=".ui.speedometer.SpeedometerActivity">
+
+        <com.sgc.speedometer.ui.customView.speedometer.SpeedometerView
+            android:id="@+id/speedometer"
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            customView:layout_constraintStart_toStartOf="parent"
+            customView:layout_constraintTop_toTopOf="parent"
+            customView:speed="@{speedometerViewModel.currentSpeed}" />
+
+        <TextView
+            android:id="@+id/speedLimit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{@string/speed_limit(speedometerViewModel.maxSpeed)}"
+            android:textSize="16sp"
+            customView:layout_constraintBottom_toBottomOf="parent"
+            customView:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="@dimen/speedometer_info_image"
+            android:layout_height="@dimen/speedometer_info_image"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/distance_btm"
+            customView:layout_constraintEnd_toEndOf="parent"
+            customView:layout_constraintHorizontal_bias="0.248"
+            customView:layout_constraintStart_toEndOf="@+id/speedometer"
+            customView:layout_constraintTop_toTopOf="@+id/speedometer" />
+
+        <TextView
+            android:id="@+id/distance_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="@string/speed_info_distance"
+            android:textSize="18sp"
+            customView:layout_constraintStart_toEndOf="@+id/imageView"
+            customView:layout_constraintTop_toTopOf="@+id/imageView" />
+
+        <TextView
+            android:id="@+id/distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{String.valueOf(speedometerViewModel.distance)}"
+            android:textSize="16sp"
+            customView:layout_constraintStart_toStartOf="@+id/distance_text"
+            customView:layout_constraintTop_toBottomOf="@+id/distance_text" />
+
+        <TextView
+            android:id="@+id/distance_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:textSize="16sp"
+            customView:layout_constraintStart_toEndOf="@+id/distance"
+            customView:layout_constraintTop_toTopOf="@+id/distance" />
+
+        <ImageView
+            android:id="@+id/durationImage"
+            android:layout_width="@dimen/speedometer_info_image"
+            android:layout_height="@dimen/speedometer_info_image"
+            android:layout_marginTop="24dp"
+            android:src="@drawable/duration_btm"
+            customView:layout_constraintEnd_toEndOf="@+id/imageView"
+            customView:layout_constraintHorizontal_bias="0.0"
+            customView:layout_constraintStart_toStartOf="@+id/imageView"
+            customView:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+        <TextView
+            android:id="@+id/duration_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/speed_info_duration"
+            android:textSize="18sp"
+            customView:layout_constraintStart_toStartOf="@+id/distance_text"
+            customView:layout_constraintTop_toTopOf="@+id/durationImage" />
+
+        <TextView
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{String.valueOf(speedometerViewModel.duration)}"
+            android:textSize="16sp"
+            customView:layout_constraintStart_toStartOf="@+id/duration_text"
+            customView:layout_constraintTop_toBottomOf="@+id/duration_text" />
+
+        <ImageView
+            android:id="@+id/averageSpeedImage"
+            android:layout_width="@dimen/speedometer_info_image"
+            android:layout_height="@dimen/speedometer_info_image"
+            android:layout_marginTop="24dp"
+            android:src="@drawable/average_speed_btm"
+            customView:layout_constraintEnd_toEndOf="@+id/imageView"
+            customView:layout_constraintHorizontal_bias="0.0"
+            customView:layout_constraintStart_toStartOf="@+id/imageView"
+            customView:layout_constraintTop_toBottomOf="@+id/durationImage" />
+
+        <TextView
+            android:id="@+id/average_speed_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/speed_info_average"
+            android:textSize="18sp"
+            customView:layout_constraintStart_toStartOf="@+id/distance_text"
+            customView:layout_constraintTop_toTopOf="@+id/averageSpeedImage" />
+
+        <TextView
+            android:id="@+id/average"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{String.valueOf(speedometerViewModel.averageSpeed)}"
+            android:textSize="16sp"
+            customView:layout_constraintStart_toStartOf="@+id/average_speed_text"
+            customView:layout_constraintTop_toBottomOf="@+id/average_speed_text" />
+
+        <TextView
+            android:id="@+id/average_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:textSize="16sp"
+            customView:layout_constraintStart_toEndOf="@+id/average"
+            customView:layout_constraintTop_toTopOf="@+id/average" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
