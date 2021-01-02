@@ -37,7 +37,9 @@ class SpeedometerService : Service(), LocationListener {
 
     private val speedometerRecordManager: SpeedometerRecordManager = SpeedometerRecordManager(SpeedometerRecord())
 
-    var binder: IBinder = SpeedometerServiceBinder()
+    private var binder: IBinder = SpeedometerServiceBinder()
+
+    private var timer: CountDownTimer? = null
 
     override fun onBind(intent: Intent): IBinder {
         return binder
@@ -49,19 +51,20 @@ class SpeedometerService : Service(), LocationListener {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startTimer()
         (application as App).appComponent.inject(this)
         manager = getSystemService(NotificationManager::class.java)
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         createNotificationChannel()
         createNotification()
         startForeground(1, createNotification())
-        turnOnGps()
+        turnOnGps() 
+        if (timer == null)
+            startTimer()
         return START_NOT_STICKY
     }
 
     private fun startTimer() {
-        val timer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
+        timer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 speedometerRecordManager.speedometerRecord.duration += 1000
                 updateInfo(speedometerRecordManager.speedometerRecord)
@@ -69,7 +72,7 @@ class SpeedometerService : Service(), LocationListener {
 
             override fun onFinish() {}
         }
-        timer.start()
+        timer!!.start()
     }
 
     private fun createNotification(): Notification {
@@ -144,8 +147,8 @@ class SpeedometerService : Service(), LocationListener {
         manager.notify(1, builder.build())
     }
 
-    fun reset(){
-       speedometerRecordManager.reset()
+    fun reset() {
+        speedometerRecordManager.reset()
         updateInfo(speedometerRecordManager.speedometerRecord)
     }
 
