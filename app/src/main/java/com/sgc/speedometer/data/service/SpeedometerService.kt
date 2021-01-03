@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.sgc.speedometer.App
 import com.sgc.speedometer.R
+import com.sgc.speedometer.data.DataManager
 import com.sgc.speedometer.data.model.SpeedometerRecord
 import com.sgc.speedometer.data.util.SpeedometerRecordManager
 import com.sgc.speedometer.data.util.distanceUnit.DistanceUnitConverter
@@ -34,6 +35,9 @@ class SpeedometerService : Service(), LocationListener {
 
     @Inject
     lateinit var distanceUnitConverter: DistanceUnitConverter
+
+    @Inject
+    lateinit var dataManager: DataManager
 
     private val speedometerRecordManager: SpeedometerRecordManager = SpeedometerRecordManager(SpeedometerRecord())
 
@@ -57,7 +61,7 @@ class SpeedometerService : Service(), LocationListener {
         createNotificationChannel()
         createNotification()
         startForeground(1, createNotification())
-        turnOnGps() 
+        turnOnGps()
         if (timer == null)
             startTimer()
         return START_NOT_STICKY
@@ -84,7 +88,16 @@ class SpeedometerService : Service(), LocationListener {
 
         builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(getString(R.string.speedometer_service_status))
-            .setContentText(getString(R.string.speed_value, 0, 0))
+            .setAutoCancel(true)
+            .setStyle(
+                NotificationCompat.BigTextStyle().bigText(
+                    getString(
+                        R.string.speed_value, 0, 0,
+                        dataManager.getSpeedUnit().getString(this),
+                        dataManager.getDistanceUnit().getString(this)
+                    )
+                )
+            )
             .setContentIntent(pendingIntent)
             .setSound(null)
             .setSmallIcon(R.mipmap.speedometer_icon)
@@ -143,7 +156,15 @@ class SpeedometerService : Service(), LocationListener {
     private fun updateNotification(speedometerRecord: SpeedometerRecord) {
         val speed = speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord.currentSpeed.toDouble()).toInt()
         val distance = distanceUnitConverter.convertToDefaultByMeters(speedometerRecord.distance).toInt()
-        builder.setContentText(getString(R.string.speed_value, speed, distance))
+        builder.setStyle(
+            NotificationCompat.BigTextStyle().bigText(
+                getString(
+                    R.string.speed_value, speed, distance,
+                    dataManager.getSpeedUnit().getString(this),
+                    dataManager.getDistanceUnit().getString(this)
+                )
+            )
+        )
         manager.notify(1, builder.build())
     }
 
