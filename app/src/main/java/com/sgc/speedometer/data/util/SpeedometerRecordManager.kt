@@ -1,13 +1,8 @@
 package com.sgc.speedometer.data.util
 
 import android.location.Location
-import android.os.CountDownTimer
-import android.os.Message
 import com.sgc.speedometer.data.model.Date
 import com.sgc.speedometer.data.model.SpeedometerRecord
-import java.util.*
-import java.util.logging.Handler
-import java.util.logging.LogRecord
 
 class SpeedometerRecordManager(val speedometerRecord: SpeedometerRecord) {
     private var lastLocation: Location? = null
@@ -17,26 +12,39 @@ class SpeedometerRecordManager(val speedometerRecord: SpeedometerRecord) {
 
     fun update(location: Location) {
         if (lastLocation != null) {
-            val elapsedTimeInSeconds = (location.time - lastLocation!!.time) / 1000.0
             val distanceInMeters = location.distanceTo(lastLocation)
-
-            val currentSpeed = if (location.hasSpeed() && location.speed > 0) {
-                location.speed
-            } else {
-                distanceInMeters / elapsedTimeInSeconds
-            }.toInt()
+            val currentSpeed = getCurrentSpeed(location)
             speedometerRecord.currentSpeed = currentSpeed
-
             speedometerRecord.distance += distanceInMeters
-
-            sumSpeed += currentSpeed
-            countSpeed++
-            speedometerRecord.averageSpeed = sumSpeed.toInt() / countSpeed
+            calcAverageSpeed(currentSpeed)
+            calcMaxSpeed(currentSpeed)
         }
         lastLocation = location
     }
 
-    fun reset(){
+    private fun getCurrentSpeed(location: Location): Int {
+        val elapsedTimeInSeconds = (location.time - lastLocation!!.time) / 1000.0
+        val distanceInMeters = location.distanceTo(lastLocation)
+
+        return if (location.hasSpeed() && location.speed > 0) {
+            location.speed
+        } else {
+            distanceInMeters / elapsedTimeInSeconds
+        }.toInt()
+    }
+
+    private fun calcAverageSpeed(currentSpeed: Int) {
+        sumSpeed += currentSpeed
+        countSpeed++
+        speedometerRecord.averageSpeed = sumSpeed.toInt() / countSpeed
+    }
+
+    private fun calcMaxSpeed(currentSpeed: Int) {
+        if (currentSpeed > speedometerRecord.maxSpeed)
+            speedometerRecord.maxSpeed = currentSpeed
+    }
+
+    fun reset() {
         speedometerRecord.duration = Date(0)
         speedometerRecord.currentSpeed = 0
         speedometerRecord.distance = 0.0

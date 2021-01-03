@@ -86,6 +86,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         speedometer.speedometerResolution = dataManager.getSpeedometerResolution().speedResolution
         distance_unit.text = dataManager.getDistanceUnit().getString(this)
         average_unit.text = dataManager.getSpeedUnit().getString(this)
+        max_unit.text = dataManager.getSpeedUnit().getString(this)
     }
 
     private fun selectTheme(isDarkTheme: Boolean) {
