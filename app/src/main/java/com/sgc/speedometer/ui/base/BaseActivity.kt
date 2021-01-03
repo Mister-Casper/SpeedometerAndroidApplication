@@ -12,12 +12,10 @@ import javax.inject.Inject
 
 abstract class BaseActivity<T : ViewDataBinding, V : BaseViewModel> : AppCompatActivity() {
 
-    private var viewDataBinding: T? = null
+    var viewDataBinding: T? = null
 
     @Inject
     lateinit var viewModel: V
-
-    abstract val bindingVariable: Int
 
     abstract val layoutId: Int
 
@@ -35,11 +33,6 @@ abstract class BaseActivity<T : ViewDataBinding, V : BaseViewModel> : AppCompatA
             .activityModule(ActivityModule(this))
             .build()
 
-    private fun performDataBinding() {
-        viewDataBinding = DataBindingUtil.setContentView(this, layoutId)
-        viewDataBinding!!.lifecycleOwner = this
-        viewDataBinding!!.setVariable(bindingVariable, viewModel)
-        viewDataBinding!!.executePendingBindings()
-    }
+    abstract fun performDataBinding()
 }
 

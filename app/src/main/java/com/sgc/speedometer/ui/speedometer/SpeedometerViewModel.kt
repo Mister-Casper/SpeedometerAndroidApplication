@@ -6,17 +6,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.sgc.speedometer.data.DataManager
 import com.sgc.speedometer.data.model.Date
+import com.sgc.speedometer.data.model.SpeedometerRecord
+import com.sgc.speedometer.data.util.distanceUnit.DistanceUnitConverter
+import com.sgc.speedometer.data.util.speedUnit.SpeedUnitConverter
 import com.sgc.speedometer.ui.base.BaseViewModel
 import com.sgc.speedometer.ui.speedometer.speedLimitControl.SpeedLimitControl
 import com.sgc.speedometer.ui.speedometer.speedLimitControl.SpeedLimitControlObserver
 
-class SpeedometerViewModel(dataManager: DataManager) : BaseViewModel(dataManager) {
+class SpeedometerViewModel(dataManager: DataManager, val speedUnitConverter: SpeedUnitConverter) :
+    BaseViewModel(dataManager) {
 
     var maxSpeed: MutableLiveData<Int> = MutableLiveData<Int>(dataManager.getMaxSpeed())
-    var currentSpeed: MutableLiveData<Int> = MutableLiveData<Int>(0)
-    var distance: MutableLiveData<Int> = MutableLiveData<Int>(0)
-    var duration: MutableLiveData<Date> = MutableLiveData<Date>(Date(0))
-    var averageSpeed: MutableLiveData<Int> = MutableLiveData<Int>(0)
+    var speedometerRecord: MutableLiveData<SpeedometerRecord> = MutableLiveData<SpeedometerRecord>(SpeedometerRecord())
 
     private var speedLimitControl: SpeedLimitControl? = null
 
@@ -24,28 +25,18 @@ class SpeedometerViewModel(dataManager: DataManager) : BaseViewModel(dataManager
         maxSpeed.value = maxSpeedValue
         dataManager.setMaxSpeed(maxSpeedValue)
         speedLimitControl?.speedLimit = maxSpeedValue
-        speedLimitControl?.checkSpeedLimit(currentSpeed.value!!)
+        speedLimitControl?.checkSpeedLimit(speedometerRecord.value!!.currentSpeed)
     }
 
-    fun updateCurrentSpeed(currentSpeedValue: Int) {
-        currentSpeed.value = currentSpeedValue
-        speedLimitControl?.checkSpeedLimit(currentSpeedValue)
+    fun updateSpeedometerRecord(speedometerRecord: SpeedometerRecord) {
+        this.speedometerRecord.value = speedometerRecord
+        speedLimitControl?.checkSpeedLimit(
+            speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord.currentSpeed).toInt()
+        )
     }
 
     fun setSpeedLimitControlObserver(speedLimitControlObserver: SpeedLimitControlObserver) {
         speedLimitControl = SpeedLimitControl(speedLimitControlObserver, dataManager.getMaxSpeed())
-    }
-
-    fun updateDistance(distance: Int) {
-        this.distance.value = distance
-    }
-
-    fun updateDuration(duration: Date) {
-        this.duration.value = duration
-    }
-
-    fun updateAverageSpeed(averageSpeed: Int){
-        this.averageSpeed.value = averageSpeed
     }
 
     fun getIsGPSEnable(context: Context): Boolean {

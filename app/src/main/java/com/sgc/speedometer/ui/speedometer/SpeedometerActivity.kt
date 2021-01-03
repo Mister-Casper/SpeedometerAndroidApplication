@@ -12,6 +12,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.getActionButton
@@ -40,8 +41,6 @@ import javax.inject.Inject
 class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, SpeedometerViewModel>(),
     SpeedLimitControlObserver {
 
-    override val bindingVariable: Int
-        get() = BR.speedometerViewModel
     override val layoutId: Int
         get() = R.layout.activity_speedometer
 
@@ -55,6 +54,15 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
 
     @Inject
     lateinit var distanceUnitConverter: DistanceUnitConverter
+
+    override fun performDataBinding() {
+        viewDataBinding = DataBindingUtil.setContentView(this, layoutId)
+        viewDataBinding!!.lifecycleOwner = this
+        viewDataBinding!!.setVariable(BR.speedometerViewModel, viewModel)
+        viewDataBinding!!.setVariable(BR.distanceUnitConverter, distanceUnitConverter)
+        viewDataBinding!!.setVariable(BR.speedUnitConverter, speedUnitConverter)
+        viewDataBinding!!.executePendingBindings()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -260,17 +268,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
             if (intent.action.equals(SPEED_INTENT_FILTER)) {
                 val speedometerRecord =
                     intent.getParcelableExtra<SpeedometerRecord>(AppConstants.SPEEDOMETER_RECORD_KEY)
-
-                val speed = speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord!!.currentSpeed).toInt()
-                val distance = distanceUnitConverter.convertToDefaultByMeters(speedometerRecord.distance).toInt()
-                val duration = speedometerRecord.duration
-                val averageSpeed =
-                    speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord.averageSpeed).toInt()
-
-                viewModel.updateCurrentSpeed(speed)
-                viewModel.updateDistance(distance)
-                viewModel.updateDuration(duration)
-                viewModel.updateAverageSpeed(averageSpeed)
+                viewModel.updateSpeedometerRecord(speedometerRecord!!)
             }
         }
     }

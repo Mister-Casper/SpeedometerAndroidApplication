@@ -4,9 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="speedometerViewModel"
             type="com.sgc.speedometer.ui.speedometer.SpeedometerViewModel" />
+
+        <variable
+            name="speedUnitConverter"
+            type="com.sgc.speedometer.data.util.speedUnit.SpeedUnitConverter" />
+
+        <variable
+            name="distanceUnitConverter"
+            type="com.sgc.speedometer.data.util.distanceUnit.DistanceUnitConverter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,7 +33,7 @@
             android:layout_height="match_parent"
             customView:layout_constraintStart_toStartOf="parent"
             customView:layout_constraintTop_toTopOf="parent"
-            customView:speed="@{speedometerViewModel.currentSpeed}" />
+            customView:speed="@{speedUnitConverter.convertToDefaultByMetersPerSec(speedometerViewModel.speedometerRecord.currentSpeed).intValue()}" />
 
         <TextView
             android:id="@+id/speedLimit"
@@ -60,7 +69,7 @@
             android:id="@+id/distance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{String.valueOf(speedometerViewModel.distance)}"
+            android:text="@{String.valueOf(distanceUnitConverter.convertToDefaultByMeters(speedometerViewModel.speedometerRecord.distance).intValue())}"
             android:textSize="16sp"
             customView:layout_constraintStart_toStartOf="@+id/distance_text"
             customView:layout_constraintTop_toBottomOf="@+id/distance_text" />
@@ -98,7 +107,7 @@
             android:id="@+id/duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{String.valueOf(speedometerViewModel.duration)}"
+            android:text="@{String.valueOf(speedometerViewModel.speedometerRecord.duration)}"
             android:textSize="16sp"
             customView:layout_constraintStart_toStartOf="@+id/duration_text"
             customView:layout_constraintTop_toBottomOf="@+id/duration_text" />
@@ -127,7 +136,7 @@
             android:id="@+id/average"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{String.valueOf(speedometerViewModel.averageSpeed)}"
+            android:text="@{String.valueOf(speedUnitConverter.convertToDefaultByMetersPerSec(speedometerViewModel.speedometerRecord.averageSpeed).intValue())}"
             android:textSize="16sp"
             customView:layout_constraintStart_toStartOf="@+id/average_speed_text"
             customView:layout_constraintTop_toBottomOf="@+id/average_speed_text" />
