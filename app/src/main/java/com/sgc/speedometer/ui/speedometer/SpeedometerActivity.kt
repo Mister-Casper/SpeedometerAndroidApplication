@@ -58,7 +58,6 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        startService()
         title = ""
         selectTheme(dataManager.getIsDarkTheme())
         initSpeedLimitClickListener()
@@ -131,6 +130,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
             TAG_CODE_PERMISSION_LOCATION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     registerReceivers()
+                    startService()
                     viewModel.setSpeedLimitControlObserver(this)
                     RateThisApp.onCreate(this)
                     RateThisApp.showRateDialogIfNeeded(this)
