@@ -57,7 +57,7 @@
             android:id="@+id/distance_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="8dp"
             android:text="@string/speed_info_distance"
             android:textSize="18sp"
             customView:layout_constraintStart_toEndOf="@+id/imageView"
@@ -124,6 +124,7 @@
             android:id="@+id/average_speed_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
             android:text="@string/speed_info_average"
             android:textSize="18sp"
             customView:layout_constraintStart_toEndOf="@+id/averageSpeedImage"
@@ -163,7 +164,7 @@
             android:layout_height="wrap_content"
             android:text="@string/speed_info_max"
             android:textSize="18sp"
-            customView:layout_constraintStart_toEndOf="@+id/averageSpeedImage"
+            customView:layout_constraintStart_toStartOf="@+id/average_speed_text"
             customView:layout_constraintTop_toTopOf="@+id/maxSpeedImage" />
 
         <TextView
