@@ -11,7 +11,7 @@
     <string name="mi">miles</string>
 
     <string name="speed_limit">Speed limit: %1$d</string>
-    <string name="speed_value">Speed : %1$d %3$s \nDistance : %2$d %4$s</string>
+    <string name="speed_value">Speed : %1$d %3$s \nDistance : %2$d %4$s \nAverage : %5$d %3$s\nMax : %6$d %3$s</string>
     <string name="set_speed_limit">Speed limit</string>
     <string name="speedometer_service_status">Speedometer running in the background</string>
 

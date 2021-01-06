@@ -11,7 +11,7 @@
     <string name="mi">мили</string>
 
     <string name="speed_limit">Ограничение скорости : %1$d</string>
-    <string name="speed_value">Скорость : %1$d %3$s , Дистанция : %2$d %4$s</string>
+    <string name="speed_value">Скорость : %1$d %3$s \nДистанция : %2$d %4$s \nСредняя : %5$d %3$s\nНаибольшая : %6$d %3$s</string>
     <string name="set_speed_limit">Ограничение скорости </string>
     <string name="speedometer_service_status">Спидометр работает в фоновом режиме</string>
 

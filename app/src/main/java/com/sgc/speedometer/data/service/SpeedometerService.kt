@@ -39,7 +39,7 @@ class SpeedometerService : Service(), LocationListener {
     @Inject
     lateinit var dataManager: DataManager
 
-    private val speedometerRecordManager: SpeedometerRecordManager = SpeedometerRecordManager(SpeedometerRecord())
+    private lateinit var speedometerRecordManager: SpeedometerRecordManager
 
     private var binder: IBinder = SpeedometerServiceBinder()
 
@@ -56,14 +56,16 @@ class SpeedometerService : Service(), LocationListener {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         (application as App).appComponent.inject(this)
+        if (timer == null) {
+            speedometerRecordManager = SpeedometerRecordManager(SpeedometerRecord())
+            startTimer()
+        }
         manager = getSystemService(NotificationManager::class.java)
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         createNotificationChannel()
         createNotification()
         startForeground(1, createNotification())
         turnOnGps()
-        if (timer == null)
-            startTimer()
         return START_NOT_STICKY
     }
 
@@ -94,7 +96,8 @@ class SpeedometerService : Service(), LocationListener {
                     getString(
                         R.string.speed_value, 0, 0,
                         dataManager.getSpeedUnit().getString(this),
-                        dataManager.getDistanceUnit().getString(this)
+                        dataManager.getDistanceUnit().getString(this),
+                        0, 0
                     )
                 )
             )
@@ -156,12 +159,16 @@ class SpeedometerService : Service(), LocationListener {
     private fun updateNotification(speedometerRecord: SpeedometerRecord) {
         val speed = speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord.currentSpeed.toDouble()).toInt()
         val distance = distanceUnitConverter.convertToDefaultByMeters(speedometerRecord.distance).toInt()
+        val average = speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord.averageSpeed).toInt()
+        val max = speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord.maxSpeed).toInt()
+
         builder.setStyle(
             NotificationCompat.BigTextStyle().bigText(
                 getString(
                     R.string.speed_value, speed, distance,
                     dataManager.getSpeedUnit().getString(this),
-                    dataManager.getDistanceUnit().getString(this)
+                    dataManager.getDistanceUnit().getString(this),
+                    average, max
                 )
             )
         )
