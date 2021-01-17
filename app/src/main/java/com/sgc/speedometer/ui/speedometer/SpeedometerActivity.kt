@@ -181,7 +181,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         super.onDestroy()
     }
 
-    private lateinit var service: SpeedometerService
+    private var service: SpeedometerService? = null
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -215,7 +215,8 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
                 overridePendingTransition(R.anim.enter, R.anim.exit)
             }
             R.id.reset -> {
-                service.reset()
+                if (service != null)
+                    service!!.reset()
             }
             R.id.set_round_speedometer -> {
                 speedometer.speedometerRender = RoundSpeedometerRender(this)
