@@ -1,5 +1,8 @@
 package com.sgc.speedometer.ui.settings
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.*
@@ -67,6 +70,29 @@ class SettingsFragment : PreferenceFragmentCompat() {
             dataManager.setIsVibration(o as Boolean)
             true
         }
+
+        val leaveFeedback: Preference? = findPreference("leave_feedback")
+        leaveFeedback!!.setOnPreferenceClickListener {
+            val appPackageName: String = requireContext().packageName
+
+            try {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackageName")))
+            } catch (anfe: ActivityNotFoundException) {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName")))
+            }
+            true
+        }
+
+        val othersProjects: Preference? = findPreference("other_projects")
+        othersProjects!!.setOnPreferenceClickListener {
+            try {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=pub:SGC+Developer")))
+            } catch (anfe: ActivityNotFoundException) {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/developer?id=SGC+Developer")))
+            }
+            true
+        }
+
     }
 
     private fun setDefaultSettings(){

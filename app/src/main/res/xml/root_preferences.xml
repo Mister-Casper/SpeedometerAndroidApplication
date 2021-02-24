@@ -49,4 +49,20 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/warning_settings_header">
+
+    <Preference
+        app:iconSpaceReserved="false"
+        app:key="leave_feedback"
+        app:title="@string/leave_feedback" />
+
+    <Preference
+        app:iconSpaceReserved="false"
+        app:key="other_projects"
+        app:title="@string/other_projects" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

@@ -23,6 +23,9 @@
     <string name="distance_unit_settings">Distance unit</string>
     <string name="warning_settings_header">WARNING</string>
     <string name="vibration_settings">Vibration</string>
+    <string name="additional_settings_header">ADDITIONAL</string>
+    <string name="leave_feedback">Leave a feedback</string>
+    <string name="other_projects">Other projects</string>
 
     <string name="reset">Reset</string>
 

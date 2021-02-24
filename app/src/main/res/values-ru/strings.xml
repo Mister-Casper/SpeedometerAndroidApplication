@@ -23,6 +23,9 @@
     <string name="distance_unit_settings">Единица расстояния</string>
     <string name="warning_settings_header">ПРЕДУПРЕЖДЕНИЕ</string>
     <string name="vibration_settings">Вибрация</string>
+    <string name="additional_settings_header">ДОПОЛНИТЕЛЬНЫЕ</string>
+    <string name="leave_feedback">Оставить отзыв</string>
+    <string name="other_projects">Другие проекты</string>
 
     <string name="reset">Сброс</string>
 
