@@ -118,7 +118,7 @@ class SpeedometerService : Service(), LocationListener {
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 50, 0.2f, this)
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
                 }
             }
         }
