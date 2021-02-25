@@ -5,6 +5,7 @@ plugins {
     id 'kotlin-android-extensions'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
+    id 'com.google.firebase.firebase-perf'
 }
 
 android {
@@ -26,8 +27,8 @@ android {
         applicationId "com.sgc.speedometer"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 7
-        versionName "1.0.0"
+        versionCode 8
+        versionName "1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -96,6 +97,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-perf-ktx'
 
     implementation 'androidx.preference:preference-ktx:1.1.1'
 
