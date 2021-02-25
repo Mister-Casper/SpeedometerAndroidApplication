@@ -102,6 +102,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         prefs.putString("speedometer_resolution", dataManager.getSpeedometerResolution().getString(requireContext()))
         prefs.putString("distance_unit", dataManager.getDistanceUnit().getString(requireContext()))
         prefs.putBoolean("vibration", dataManager.getIsVibration())
+        prefs.putBoolean("leave_feedback", false)
+        prefs.putBoolean("other_projects", false)
         prefs.apply()
     }
 }
