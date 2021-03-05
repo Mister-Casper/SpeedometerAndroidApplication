@@ -9,6 +9,7 @@ import android.os.*
 import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -18,6 +19,7 @@ import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.getActionButton
 import com.afollestad.materialdialogs.input.input
 import com.kobakei.ratethisapp.RateThisApp
+import com.sgc.speedometer.App
 import com.sgc.speedometer.BR
 import com.sgc.speedometer.R
 import com.sgc.speedometer.data.DataManager
@@ -238,7 +240,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
 
     private fun showGPSEnableDialog(isGPSEnable: Boolean) {
         if (!isGPSEnable) {
-            if (!isFinishing)
+            if ((application as App).isAppForeground)
                 MaterialDialog(this@SpeedometerActivity).show {
                     title(R.string.gps_disable)
                     message(R.string.turn_on_gps)
