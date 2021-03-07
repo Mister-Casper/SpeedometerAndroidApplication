@@ -241,15 +241,19 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     private fun showGPSEnableDialog(isGPSEnable: Boolean) {
         if (!isGPSEnable) {
             if ((application as App).isAppForeground)
-                MaterialDialog(this@SpeedometerActivity).show {
-                    title(R.string.gps_disable)
-                    message(R.string.turn_on_gps)
-                    negativeButton { }
-                    positiveButton { startActivity(Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)); }
-                    apply {
-                        getActionButton(WhichButton.POSITIVE).updateTextColor(getColor(R.color.text_color))
-                        getActionButton(WhichButton.NEGATIVE).updateTextColor(getColor(R.color.text_color))
+                try {
+                    MaterialDialog(this@SpeedometerActivity).show {
+                        title(R.string.gps_disable)
+                        message(R.string.turn_on_gps)
+                        negativeButton { }
+                        positiveButton { startActivity(Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)); }
+                        apply {
+                            getActionButton(WhichButton.POSITIVE).updateTextColor(getColor(R.color.text_color))
+                            getActionButton(WhichButton.NEGATIVE).updateTextColor(getColor(R.color.text_color))
+                        }
                     }
+                } catch (ex: WindowManager.BadTokenException) {
+                    //Ignore
                 }
         }
     }
