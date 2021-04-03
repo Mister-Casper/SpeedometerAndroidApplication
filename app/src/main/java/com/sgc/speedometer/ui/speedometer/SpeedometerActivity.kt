@@ -21,6 +21,7 @@ import com.afollestad.materialdialogs.input.input
 import com.kobakei.ratethisapp.RateThisApp
 import com.sgc.speedometer.App
 import com.sgc.speedometer.BR
+import com.sgc.speedometer.ISpeedometerService
 import com.sgc.speedometer.R
 import com.sgc.speedometer.data.DataManager
 import com.sgc.speedometer.data.model.SpeedometerRecord
@@ -183,12 +184,12 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         super.onDestroy()
     }
 
-    private var service: SpeedometerService? = null
+    private var service: ISpeedometerService? = null
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            val binder = service as SpeedometerService.SpeedometerServiceBinder
-            this@SpeedometerActivity.service = binder.getService()
+            val binder = ISpeedometerService.Stub.asInterface(service)
+            this@SpeedometerActivity.service = binder
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {}

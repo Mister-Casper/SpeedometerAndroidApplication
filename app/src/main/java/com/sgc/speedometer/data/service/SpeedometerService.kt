@@ -12,6 +12,7 @@ import android.os.*
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.sgc.speedometer.App
+import com.sgc.speedometer.ISpeedometerService
 import com.sgc.speedometer.R
 import com.sgc.speedometer.data.DataManager
 import com.sgc.speedometer.data.model.SpeedometerRecord
@@ -41,9 +42,13 @@ class SpeedometerService : Service(), LocationListener {
 
     private lateinit var speedometerRecordManager: SpeedometerRecordManager
 
-    private var binder: IBinder = SpeedometerServiceBinder()
-
     private var timer: CountDownTimer? = null
+
+    private val binder = object : ISpeedometerService.Stub() {
+        override fun reset() {
+            this@SpeedometerService.reset()
+        }
+    }
 
     override fun onBind(intent: Intent): IBinder {
         return binder
@@ -145,8 +150,11 @@ class SpeedometerService : Service(), LocationListener {
     }
 
     private fun updateInfo(speedometerRecord: SpeedometerRecord) {
-        updateNotification(speedometerRecord)
-        sendDataToActivity(speedometerRecord)
+        val km = getSystemService(KEYGUARD_SERVICE) as KeyguardManager
+        if (!km.isKeyguardLocked)
+            updateNotification(speedometerRecord)
+        if ((application as App).isAppForeground)
+            sendDataToActivity(speedometerRecord)
     }
 
     private fun sendDataToActivity(speedometerRecord: SpeedometerRecord) {
@@ -196,8 +204,5 @@ class SpeedometerService : Service(), LocationListener {
         const val CHANNEL_ID = "SPEEDOMETER_CHANNEL_ID_5"
     }
 
-    inner class SpeedometerServiceBinder : Binder() {
-        fun getService(): SpeedometerService = this@SpeedometerService
-    }
 
 }

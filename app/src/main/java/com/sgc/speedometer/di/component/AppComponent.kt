@@ -2,7 +2,6 @@ package com.sgc.speedometer.di.component
 
 import android.app.Application
 import com.sgc.speedometer.data.DataManager
-import com.sgc.speedometer.data.DefaultSettings
 import com.sgc.speedometer.data.service.SpeedometerService
 import com.sgc.speedometer.data.util.distanceUnit.DistanceUnitConverter
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnitConverter
