@@ -4,7 +4,7 @@ class SpeedLimitControl(var speedLimitControlObserver: SpeedLimitControlObserver
 
     private var isSpeedLimitExceeded = false
 
-    fun checkSpeedLimit(currentSpeed: Int) {
+    fun checkSpeedLimit(currentSpeed: Double) {
         if (currentSpeed > speedLimit) {
             if (!isSpeedLimitExceeded) {
                 speedLimitControlObserver.speedLimitExceeded()

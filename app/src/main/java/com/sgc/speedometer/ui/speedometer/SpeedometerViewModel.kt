@@ -29,7 +29,7 @@ class SpeedometerViewModel(dataManager: DataManager, val speedUnitConverter: Spe
     fun updateSpeedometerRecord(speedometerRecord: SpeedometerRecord) {
         this.speedometerRecord.value = speedometerRecord
         speedLimitControl?.checkSpeedLimit(
-            speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord.currentSpeed).toInt()
+            speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord.currentSpeed).toDouble()
         )
     }
 

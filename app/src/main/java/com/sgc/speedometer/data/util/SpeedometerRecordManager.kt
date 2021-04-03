@@ -22,7 +22,7 @@ class SpeedometerRecordManager(val speedometerRecord: SpeedometerRecord) {
         lastLocation = location
     }
 
-    private fun getCurrentSpeed(location: Location): Int {
+    private fun getCurrentSpeed(location: Location): Double {
         val elapsedTimeInSeconds = (location.time - lastLocation!!.time) / 1000.0
         val distanceInMeters = location.distanceTo(lastLocation)
 
@@ -30,23 +30,24 @@ class SpeedometerRecordManager(val speedometerRecord: SpeedometerRecord) {
             location.speed
         } else {
             distanceInMeters / elapsedTimeInSeconds
-        }.toInt()
+        }.toDouble()
     }
 
-    private fun calcAverageSpeed(currentSpeed: Int) {
+    private fun calcAverageSpeed(currentSpeed: Double) {
         sumSpeed += currentSpeed
         countSpeed++
         speedometerRecord.averageSpeed = sumSpeed.toInt() / countSpeed
     }
 
-    private fun calcMaxSpeed(currentSpeed: Int) {
+    private fun calcMaxSpeed(currentSpeed: Double) {
         if (currentSpeed > speedometerRecord.maxSpeed)
             speedometerRecord.maxSpeed = currentSpeed
     }
 
     fun reset() {
         speedometerRecord.duration = Date(0)
-        speedometerRecord.currentSpeed = 0
+        speedometerRecord.currentSpeed = 0.0
+        speedometerRecord.maxSpeed = 0.0
         speedometerRecord.distance = 0.0
         speedometerRecord.averageSpeed = 0
     }
