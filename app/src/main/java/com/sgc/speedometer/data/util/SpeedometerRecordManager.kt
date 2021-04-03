@@ -36,7 +36,7 @@ class SpeedometerRecordManager(val speedometerRecord: SpeedometerRecord) {
     private fun calcAverageSpeed(currentSpeed: Double) {
         sumSpeed += currentSpeed
         countSpeed++
-        speedometerRecord.averageSpeed = sumSpeed.toInt() / countSpeed
+        speedometerRecord.averageSpeed = sumSpeed / countSpeed
     }
 
     private fun calcMaxSpeed(currentSpeed: Double) {
@@ -49,6 +49,6 @@ class SpeedometerRecordManager(val speedometerRecord: SpeedometerRecord) {
         speedometerRecord.currentSpeed = 0.0
         speedometerRecord.maxSpeed = 0.0
         speedometerRecord.distance = 0.0
-        speedometerRecord.averageSpeed = 0
+        speedometerRecord.averageSpeed = 0.0
     }
 }
