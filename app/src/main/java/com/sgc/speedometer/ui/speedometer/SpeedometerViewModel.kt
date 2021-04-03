@@ -5,9 +5,7 @@ import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.sgc.speedometer.data.DataManager
-import com.sgc.speedometer.data.model.Date
 import com.sgc.speedometer.data.model.SpeedometerRecord
-import com.sgc.speedometer.data.util.distanceUnit.DistanceUnitConverter
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnitConverter
 import com.sgc.speedometer.ui.base.BaseViewModel
 import com.sgc.speedometer.ui.speedometer.speedLimitControl.SpeedLimitControl
@@ -41,9 +39,6 @@ class SpeedometerViewModel(dataManager: DataManager, val speedUnitConverter: Spe
 
     fun getIsGPSEnable(context: Context): Boolean {
         val locationManager = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
-        val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        val isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-
-        return isGpsEnabled && isNetworkEnabled
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 }
