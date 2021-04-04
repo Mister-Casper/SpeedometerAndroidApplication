@@ -25,7 +25,7 @@ android {
 
     defaultConfig {
         applicationId "com.sgc.speedometer"
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 30
         versionCode 12
         versionName "1.1.0"
