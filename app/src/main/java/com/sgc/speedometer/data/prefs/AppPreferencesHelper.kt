@@ -2,6 +2,7 @@ package com.sgc.speedometer.data.prefs
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.frybits.harmony.getHarmonySharedPreferences
 import com.sgc.speedometer.data.util.SpeedometerResolution
 import com.sgc.speedometer.data.util.distanceUnit.DistanceUnit
 import com.sgc.speedometer.di.PreferenceInfo
@@ -21,7 +22,7 @@ class AppPreferencesHelper @Inject constructor(context: Context, @PreferenceInfo
     }
 
     private val prefs: SharedPreferences =
-        context.getSharedPreferences(prefFileName, Context.MODE_PRIVATE)
+        context.getHarmonySharedPreferences(prefFileName)
 
     override fun getMaxSpeed(defaultMaxSpeed: Int): Int {
         return prefs.getInt(PREF_KEY_MAX_SPEED, defaultMaxSpeed)
