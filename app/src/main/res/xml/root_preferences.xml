@@ -51,7 +51,7 @@
 
     <PreferenceCategory
         app:iconSpaceReserved="false"
-        app:title="@string/warning_settings_header">
+        app:title="@string/additional_settings_header">
 
     <Preference
         app:iconSpaceReserved="false"
