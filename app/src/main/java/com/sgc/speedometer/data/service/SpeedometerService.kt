@@ -69,8 +69,8 @@ class SpeedometerService : Service(), LocationListener {
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         createNotificationChannel()
         createNotification()
-        startForeground(1, createNotification())
         turnOnGps()
+        startForeground(1, createNotification())
         return START_NOT_STICKY
     }
 
