@@ -29,8 +29,9 @@
 
         <com.sgc.speedometer.ui.customView.speedometer.SpeedometerView
             android:id="@+id/speedometer"
-            android:layout_width="300dp"
-            android:layout_height="match_parent"
+            android:layout_width="250dp"
+            android:layout_height="220dp"
+            customView:layout_constraintBottom_toTopOf="@+id/adView"
             customView:layout_constraintStart_toStartOf="parent"
             customView:layout_constraintTop_toTopOf="parent"
             customView:speed="@{speedUnitConverter.convertToDefaultByMetersPerSec(speedometerViewModel.speedometerRecord.currentSpeed).intValue()}" />
@@ -41,18 +42,21 @@
             android:layout_height="wrap_content"
             android:text="@{@string/speed_limit(speedometerViewModel.maxSpeed)}"
             android:textSize="16sp"
-            customView:layout_constraintBottom_toBottomOf="parent"
-            customView:layout_constraintStart_toStartOf="parent" />
+            customView:layout_constraintBottom_toTopOf="@+id/adView"
+            customView:layout_constraintEnd_toEndOf="parent"
+            customView:layout_constraintStart_toEndOf="@+id/speedometer"
+            customView:layout_constraintTop_toBottomOf="@+id/durationImage" />
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="@dimen/speedometer_info_image"
             android:layout_height="@dimen/speedometer_info_image"
+            android:layout_marginStart="20dp"
             android:src="@drawable/distance_btm"
             customView:layout_constraintBottom_toBottomOf="@+id/speedometer"
             customView:layout_constraintStart_toEndOf="@+id/speedometer"
             customView:layout_constraintTop_toTopOf="@+id/speedometer"
-            customView:layout_constraintVertical_bias="0.367" />
+            customView:layout_constraintVertical_bias="0.303" />
 
         <TextView
             android:id="@+id/distance_text"
@@ -185,6 +189,18 @@
             android:textSize="16sp"
             customView:layout_constraintStart_toEndOf="@+id/average"
             customView:layout_constraintTop_toTopOf="@+id/max_speed" />
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            customView:adSize="BANNER"
+            customView:adUnitId="ca-app-pub-3940256099942544/6300978111"
+            customView:layout_constraintBottom_toBottomOf="parent"
+            customView:layout_constraintEnd_toEndOf="parent"
+            customView:layout_constraintStart_toEndOf="@+id/speedometer" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

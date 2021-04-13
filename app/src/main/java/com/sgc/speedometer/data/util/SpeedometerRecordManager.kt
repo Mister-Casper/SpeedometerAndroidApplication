@@ -11,14 +11,19 @@ class SpeedometerRecordManager(val speedometerRecord: SpeedometerRecord) {
     var countSpeed: Int = 0
 
     fun update(location: Location) {
+        val currentSpeed: Double
+
         if (lastLocation != null) {
             val distanceInMeters = location.distanceTo(lastLocation)
-            val currentSpeed = getCurrentSpeed(location)
-            speedometerRecord.currentSpeed = currentSpeed
+            currentSpeed = getCurrentSpeed(location)
             speedometerRecord.distance += distanceInMeters
-            calcAverageSpeed(currentSpeed)
-            calcMaxSpeed(currentSpeed)
+        } else {
+            currentSpeed = location.speed.toDouble()
         }
+
+        speedometerRecord.currentSpeed = currentSpeed
+        calcAverageSpeed(currentSpeed)
+        calcMaxSpeed(currentSpeed)
         lastLocation = location
     }
 

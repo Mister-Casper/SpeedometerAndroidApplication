@@ -75,7 +75,7 @@ class RoundSpeedometerRender(private val context: Context) : SpeedometerRender()
         val length = getGraduationLength(isBig)
         val width = getGraduationWidth(isBig)
 
-        val rect = RectF(x - length / 2, y - width / 2, x + length / 2, y + width / 2)
+        val rect = RectF(x - length / 2, y - width / 2 + 100, x + length / 2, y + width / 2 + 100)
 
         canvas.save()
         canvas.rotate(angle.toFloat(), rect.centerX(), rect.centerY())
@@ -108,13 +108,13 @@ class RoundSpeedometerRender(private val context: Context) : SpeedometerRender()
         mainPaint.getTextBounds(speed.toString(), 0, speed.toString().length, textBounds)
         val x = (canvas.width / 2 + (getRadius(canvas) - length * 1.5) * cos(toRadians(angle))).toFloat()
         val y =
-            (canvas.height / 2 + (getRadius(canvas) - length * 1.5) * sin(toRadians(angle))).toFloat() - textBounds.centerY()
+            (canvas.height / 2 + (getRadius(canvas) - length * 1.5) * sin(toRadians(angle))).toFloat() - textBounds.centerY() + 100
         canvas.drawText(speed.toString(), x, y, mainPaint)
     }
 
     private fun drawSpeed(canvas: Canvas, speed: Int, gpsEnable: Boolean) {
         val xSpeedPos = canvas.width / 2f
-        val ySpeedPos = canvas.height / 1.75f
+        val ySpeedPos = canvas.height / 1.75f + 100
         var speedText = "-"
         if (gpsEnable)
             speedText = speed.toString()
@@ -130,7 +130,7 @@ class RoundSpeedometerRender(private val context: Context) : SpeedometerRender()
         val height: Int = bounds.height()
 
         val xTextPos = canvas.width / 2f
-        val yTextPos = canvas.height / 1.75f + height + topTextPadding
+        val yTextPos = canvas.height / 1.75f + height + topTextPadding + 100
 
         canvas.drawText(speedUnit.getString(context), xTextPos, yTextPos, textPaint)
     }
@@ -148,15 +148,15 @@ class RoundSpeedometerRender(private val context: Context) : SpeedometerRender()
         val arrowRadius = max(bounds.height(), bounds.width()) * 2
 
         val xEnd = (canvas.width / 2 + getRadius(canvas) * cos(toRadians(angle))).toFloat()
-        val yEnd = (canvas.height / 2 + getRadius(canvas) * sin(toRadians(angle))).toFloat()
+        val yEnd = (canvas.height / 2 + getRadius(canvas) * sin(toRadians(angle))).toFloat() + 100
         val xStart = (canvas.width / 2 + arrowRadius * cos(toRadians(angle))).toFloat()
-        val yStart = (canvas.height / 2 + arrowRadius * sin(toRadians(angle))).toFloat()
+        val yStart = (canvas.height / 2 + arrowRadius * sin(toRadians(angle))).toFloat() + 100
 
         canvas.drawLine(xStart, yStart, xEnd, yEnd, arrowPaint)
     }
 
     private fun getRadius(canvas: Canvas): Int {
-        return min(canvas.height, canvas.width) / 2 - lengthBigGraduations
+        return (min(canvas.height, canvas.width) / 1.6f - lengthBigGraduations).toInt()
     }
 
     override fun speedLimitExceeded() {

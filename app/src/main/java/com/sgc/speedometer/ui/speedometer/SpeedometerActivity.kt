@@ -2,10 +2,13 @@ package com.sgc.speedometer.ui.speedometer
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
 import android.content.*
 import android.content.pm.PackageManager
 import android.location.LocationManager.PROVIDERS_CHANGED_ACTION
+import android.net.Uri
 import android.os.*
+import android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
 import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
@@ -18,6 +21,8 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.getActionButton
 import com.afollestad.materialdialogs.input.input
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.kobakei.ratethisapp.RateThisApp
 import com.sgc.speedometer.App
 import com.sgc.speedometer.BR
@@ -40,6 +45,7 @@ import com.sgc.speedometer.utils.AppConstants.SPEED_INTENT_FILTER
 import com.sgc.speedometer.utils.AppConstants.TAG_CODE_PERMISSION_LOCATION
 import kotlinx.android.synthetic.main.activity_speedometer.*
 import javax.inject.Inject
+
 
 class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, SpeedometerViewModel>(),
     SpeedLimitControlObserver {
@@ -71,12 +77,32 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         super.onCreate(savedInstanceState)
         title = ""
         selectTheme(dataManager.getIsDarkTheme())
+        checkOptimization()
         initSpeedLimitClickListener()
         checkGPSEnable()
         if (savedInstanceState == null) {
             requestPermissions()
         }
         restoreState(savedInstanceState)
+       // initAdb()
+    }
+
+    @SuppressLint("NewApi", "BatteryLife")
+    private fun checkOptimization() {
+        val packageName = applicationContext.packageName
+        val pm = applicationContext.getSystemService(POWER_SERVICE) as PowerManager
+        if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+            val intent = Intent()
+            intent.action = ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+            intent.data = Uri.parse("package:" + this.packageName)
+            this.startActivity(intent)
+        }
+    }
+
+    private fun initAdb() {
+        MobileAds.initialize(this) { }
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
     }
 
     override fun performDependencyInjection(buildComponent: ActivityComponent) {
