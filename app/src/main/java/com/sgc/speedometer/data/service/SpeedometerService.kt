@@ -5,6 +5,7 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -23,6 +24,7 @@ import com.sgc.speedometer.ui.speedometer.SpeedometerActivity
 import com.sgc.speedometer.utils.AppConstants.SPEEDOMETER_RECORD_KEY
 import com.sgc.speedometer.utils.AppConstants.SPEED_INTENT_FILTER
 import javax.inject.Inject
+
 
 class SpeedometerService : Service(), LocationListener {
 
@@ -122,8 +124,11 @@ class SpeedometerService : Service(), LocationListener {
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
+                if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1500, 0f, this)
+                }
                 if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 400, 0f, this)
                 }
             }
         }

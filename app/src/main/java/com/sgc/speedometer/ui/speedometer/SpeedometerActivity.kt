@@ -77,11 +77,11 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         super.onCreate(savedInstanceState)
         title = ""
         selectTheme(dataManager.getIsDarkTheme())
-        checkOptimization()
         initSpeedLimitClickListener()
         checkGPSEnable()
         if (savedInstanceState == null) {
             requestPermissions()
+            checkOptimization()
         }
         restoreState(savedInstanceState)
        // initAdb()
