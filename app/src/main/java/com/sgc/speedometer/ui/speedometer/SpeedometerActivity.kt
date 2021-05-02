@@ -84,7 +84,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
             checkOptimization()
         }
         restoreState(savedInstanceState)
-       // initAdb()
+        // initAdb()
     }
 
     @SuppressLint("NewApi", "BatteryLife")
@@ -155,7 +155,8 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
                 }
                 input(
                     inputType = InputType.TYPE_CLASS_NUMBER,
-                    prefill = viewModel.maxSpeed.value.toString()
+                    prefill = viewModel.maxSpeed.value.toString(),
+                    maxLength = 5
                 ) { _, text ->
                     viewModel.updateMaxSpeed(text.toString().toInt())
                 }

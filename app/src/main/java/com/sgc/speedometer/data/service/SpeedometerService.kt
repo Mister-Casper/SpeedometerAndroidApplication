@@ -1,6 +1,7 @@
 package com.sgc.speedometer.data.service
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -12,6 +13,7 @@ import android.location.LocationManager
 import android.os.*
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import com.google.android.gms.location.*
 import com.sgc.speedometer.App
 import com.sgc.speedometer.ISpeedometerService
 import com.sgc.speedometer.R
@@ -26,12 +28,13 @@ import com.sgc.speedometer.utils.AppConstants.SPEED_INTENT_FILTER
 import javax.inject.Inject
 
 
-class SpeedometerService : Service(), LocationListener {
+class SpeedometerService : Service() {
 
     private lateinit var builder: NotificationCompat.Builder
     private lateinit var manager: NotificationManager
     private lateinit var pendingIntent: PendingIntent
-    private lateinit var locationManager: LocationManager
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     @Inject
     lateinit var speedUnitConverter: SpeedUnitConverter
@@ -56,11 +59,6 @@ class SpeedometerService : Service(), LocationListener {
         return binder
     }
 
-    override fun onLocationChanged(location: Location) {
-        speedometerRecordManager.update(location)
-        updateInfo(speedometerRecordManager.speedometerRecord)
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         (application as App).appComponent.inject(this)
         if (timer == null) {
@@ -68,12 +66,33 @@ class SpeedometerService : Service(), LocationListener {
             startTimer()
         }
         manager = getSystemService(NotificationManager::class.java)
-        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        requestLocationUpdates()
         createNotificationChannel()
         createNotification()
-        turnOnGps()
         startForeground(1, createNotification())
         return START_NOT_STICKY
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun requestLocationUpdates() {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        val mLocationRequest = LocationRequest()
+        mLocationRequest.interval = 300
+        mLocationRequest.fastestInterval = 50
+        mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+
+        fusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper())
+    }
+
+    private var mLocationCallback: LocationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            val locationList = locationResult.locations
+            if (locationList.isNotEmpty()) {
+                speedometerRecordManager.update(locationList.last())
+                updateInfo(speedometerRecordManager.speedometerRecord)
+            }
+        }
     }
 
     private fun startTimer() {
@@ -114,30 +133,6 @@ class SpeedometerService : Service(), LocationListener {
         return builder.build()
     }
 
-    private fun turnOnGps() {
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1500, 0f, this)
-                }
-                if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 400, 0f, this)
-                }
-            }
-        }
-    }
-
-    private fun turnOffGps() {
-        locationManager.removeUpdates(this)
-    }
-
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
@@ -147,11 +142,6 @@ class SpeedometerService : Service(), LocationListener {
             )
             manager.createNotificationChannel(serviceChannel)
         }
-    }
-
-    override fun onDestroy() {
-        turnOffGps()
-        super.onDestroy()
     }
 
     private fun updateInfo(speedometerRecord: SpeedometerRecord) {
@@ -170,7 +160,7 @@ class SpeedometerService : Service(), LocationListener {
     }
 
     private fun updateNotification(speedometerRecord: SpeedometerRecord) {
-        val speed = speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord.currentSpeed.toDouble()).toInt()
+        val speed = speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord.currentSpeed).toInt()
         val distance = distanceUnitConverter.convertToDefaultByMeters(speedometerRecord.distance).toInt()
         val average = speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord.averageSpeed).toInt()
         val max = speedUnitConverter.convertToDefaultByMetersPerSec(speedometerRecord.maxSpeed).toInt()
@@ -191,18 +181,6 @@ class SpeedometerService : Service(), LocationListener {
     fun reset() {
         speedometerRecordManager.reset()
         updateInfo(speedometerRecordManager.speedometerRecord)
-    }
-
-    override fun onProviderEnabled(provider: String) {
-
-    }
-
-    override fun onProviderDisabled(provider: String) {
-
-    }
-
-    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-
     }
 
     companion object {

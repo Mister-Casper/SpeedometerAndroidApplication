@@ -31,7 +31,7 @@ class SpeedometerRecordManager(val speedometerRecord: SpeedometerRecord) {
         val elapsedTimeInSeconds = (location.time - lastLocation!!.time) / 1000.0
         val distanceInMeters = location.distanceTo(lastLocation)
 
-        return if (location.hasSpeed() && location.speed > 0) {
+        return if (location.hasSpeed()) {
             location.speed
         } else {
             distanceInMeters / elapsedTimeInSeconds

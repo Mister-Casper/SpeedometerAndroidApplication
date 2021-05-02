@@ -35,6 +35,6 @@
     <string name="speed_info_distance">Дистанция</string>
     <string name="speed_info_duration">Время</string>
     <string name="speed_info_average">Средняя</string>
-    <string name="speed_info_max">Наибольшая</string>
+    <string name="speed_info_max">Макс</string>
 
 </resources>
