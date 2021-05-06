@@ -27,14 +27,10 @@ android {
         applicationId "com.sgc.speedometer"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 21
-        versionName "1.1.6"
+        versionCode 23
+        versionName "1.1.8"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    defaultConfig {
-        resConfigs "en", "ru"
     }
 
     configurations.all {

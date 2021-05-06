@@ -36,5 +36,7 @@
     <string name="speed_info_duration">Время</string>
     <string name="speed_info_average">Средняя</string>
     <string name="speed_info_max">Макс</string>
+    <string name="stop">Пауза</string>
+    <string name="contin">Старт</string>
 
 </resources>

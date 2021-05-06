@@ -19,4 +19,8 @@
         android:id="@+id/reset"
         android:title="@string/reset" />
 
+    <item
+        android:id="@+id/pause"
+        android:title="@string/stop" />
+
 </menu>

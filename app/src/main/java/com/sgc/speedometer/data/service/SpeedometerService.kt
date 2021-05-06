@@ -1,17 +1,11 @@
 package com.sgc.speedometer.data.service
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.*
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Criteria
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.*
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
 import com.sgc.speedometer.App
@@ -26,7 +20,6 @@ import com.sgc.speedometer.ui.speedometer.SpeedometerActivity
 import com.sgc.speedometer.utils.AppConstants.SPEEDOMETER_RECORD_KEY
 import com.sgc.speedometer.utils.AppConstants.SPEED_INTENT_FILTER
 import javax.inject.Inject
-
 
 class SpeedometerService : Service() {
 
@@ -53,6 +46,12 @@ class SpeedometerService : Service() {
         override fun reset() {
             this@SpeedometerService.reset()
         }
+        override fun stop(){
+            this@SpeedometerService.stop()
+        }
+        override fun start(){
+            this@SpeedometerService.start()
+        }
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -65,8 +64,9 @@ class SpeedometerService : Service() {
             speedometerRecordManager = SpeedometerRecordManager(SpeedometerRecord())
             startTimer()
         }
+
         manager = getSystemService(NotificationManager::class.java)
-        requestLocationUpdates()
+        requestLocationUpdates(400,200)
         createNotificationChannel()
         createNotification()
         startForeground(1, createNotification())
@@ -74,15 +74,15 @@ class SpeedometerService : Service() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun requestLocationUpdates() {
+    private fun requestLocationUpdates(interval:Long,fastestInterval:Long) {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         val mLocationRequest = LocationRequest()
-        mLocationRequest.interval = 300
-        mLocationRequest.fastestInterval = 50
+        mLocationRequest.interval = interval
+        mLocationRequest.fastestInterval = fastestInterval
         mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
-        fusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper())
+        fusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.getMainLooper())
     }
 
     private var mLocationCallback: LocationCallback = object : LocationCallback() {
@@ -183,8 +183,29 @@ class SpeedometerService : Service() {
         updateInfo(speedometerRecordManager.speedometerRecord)
     }
 
+    fun stop(){
+        timer!!.cancel()
+        fusedLocationClient.removeLocationUpdates(mLocationCallback)
+    }
+
+    fun start(){
+        timer!!.start()
+        requestLocationUpdates(400,200)
+    }
+
     companion object {
         const val CHANNEL_ID = "SPEEDOMETER_CHANNEL_ID_5"
+    }
+
+    inner class ScreenReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action == Intent.ACTION_SCREEN_OFF) {
+                requestLocationUpdates(15000,1000)
+            } else if (intent.action == Intent.ACTION_SCREEN_ON) {
+                requestLocationUpdates(400,200)
+            }
+
+        }
     }
 
 

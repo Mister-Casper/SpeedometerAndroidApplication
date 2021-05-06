@@ -43,5 +43,7 @@
     <string name="fourth_speed_resolution" translatable="false">0 - 160</string>
     <string name="fifth_speed_resolution" translatable="false">0 - 240</string>
     <string name="sixth_speed_resolution" translatable="false">0 - 320</string>
+    <string name="stop">Pause</string>
+    <string name="contin">Continue</string>
 
 </resources>

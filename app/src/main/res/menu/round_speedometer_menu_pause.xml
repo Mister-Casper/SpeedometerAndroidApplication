@@ -20,7 +20,7 @@
         android:title="@string/reset" />
 
     <item
-        android:id="@+id/pause"
-        android:title="@string/stop" />
+        android:id="@+id/start"
+        android:title="@string/contin" />
 
 </menu>

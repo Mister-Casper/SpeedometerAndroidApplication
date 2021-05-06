@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Compteur de vitesse</string>
+
+    <string name="ask_permission">"Pour que l'application fonctionne, vous devez accéder à l'emplacement de l'appareil" </string>
+
+    <string name="m_per_sec">m/sec</string>
+    <string name="km_per_hour">km/h</string>
+    <string name="miles_per_hour">miles/h</string>
+    <string name="m">mètres</string>
+    <string name="km">kilomètres</string>
+    <string name="mi">miles</string>
+
+    <string name="speed_limit">Limite de vitesse:%1$d</string>
+    <string name="speed_value">Vitesse: %1$d %3$s \n Distance: %2$d %4$s \n Moyenne: %5$d %3$s \n Max: %6$d %3$s </string>
+    <string name="set_speed_limit">Limite de vitesse</string>
+    <string name="speedometer_service_status">Compteur de vitesse en arrière-plan</string>
+
+    <string name="settings">Paramètres</string>
+    <string name="general_settings_header">GENERAL</string>
+    <string name="dark_theme_settings">Thème sombre</string>
+    <string name="speed_unit_settings">Unité de vitesse</string>
+    <string name="speed_resolution_settings">Résolution du compteur de vitesse</string>
+    <string name="distance_unit_settings">Unité de distance</string>
+    <string name="warning_settings_header">AVERTISSEMENT</string>
+    <string name="vibration_settings">Vibration</string>
+    <string name="additional_settings_header">SUPPLÉMENTAIRE</string>
+    <string name="leave_feedback">Laisser un commentaire</string>
+    <string name="other_projects">Découvrez nos autres applications (Ad)</string>
+
+    <string name="reset">Réinitialiser</string>
+
+    <string name="gps_disable">GPS désactivé</string>
+    <string name="turn_on_gps">Veuillez activer le service de localisation.</string>
+
+    <string name="speed_info_distance">Distance</string>
+    <string name="speed_info_duration">Durée</string>
+    <string name="speed_info_average">Moyenne</string>
+    <string name="speed_info_max">Max</string>
+
+    <string name="first_speed_resolution" translatable="false">0 - 40</string>
+    <string name="second_speed_resolution" translatable="false">0 - 80</string>
+    <string name="third_speed_resolution" translatable="false">0 - 120</string>
+    <string name="fourth_speed_resolution" translatable="false">0 - 160</string>
+    <string name="fifth_speed_resolution" translatable="false">0 - 240</string>
+    <string name="sixth_speed_resolution" translatable="false">0 - 320</string>
+    <string name="stop">Pause</string>
+    <string name="contin">Continuer</string>
+</resources>

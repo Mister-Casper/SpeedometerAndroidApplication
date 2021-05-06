@@ -5,8 +5,8 @@
     tools:context=".MainActivity">
 
     <item
-        android:id="@+id/set_text_speedometer"
-        android:icon="@drawable/text_speedometer_btm"
+        android:id="@+id/set_round_speedometer"
+        android:icon="@drawable/round_speedometer_btm"
         app:showAsAction="always"
         android:title="">
     </item>
@@ -20,7 +20,7 @@
         android:title="@string/reset" />
 
     <item
-        android:id="@+id/pause"
-        android:title="@string/stop" />
+        android:id="@+id/start"
+        android:title="@string/contin" />
 
 </menu>

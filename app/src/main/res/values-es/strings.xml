@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name = "app_name">Velocímetro</string>
+
+    <string name = "ask_permission">Para que la aplicación funcione, necesitas acceder a la ubicación del dispositivo</string>
+
+    <string name = "m_per_sec">m/seg</string>
+    <string name = "km_per_hour">km/h</string>
+    <string name = "miles_per_hour">millas/h</string>
+    <string name = "m">metros</string>
+    <string name = "km">kilómetros</string>
+    <string name = "mi">millas</string>
+
+    <string name = "speed_limit">Límite de velocidad: %1$d</string>
+    <string name = "speed_value">Velocidad:%1$d %3$s \n Distancia:%2$d %4$s \n Promedio:%5$d %3$s \n Máx:%6$d %3$s</string>
+    <string name = "set_speed_limit">Límite de velocidad</string>
+    <string name = "speedometer_service_status">Velocímetro funcionando en segundo plano</string>
+
+    <string name = "settings">Configuración</string>
+    <string name = "general_settings_header">GENERAL</string>
+    <string name = "dark_theme_settings">Tema oscuro</string>
+    <string name = "speed_unit_settings">Unidad de velocidad</string>
+    <string name = "speed_resolution_settings">Resolución del velocímetro</string>
+    <string name = "distance_unit_settings">Unidad de distancia</string>
+    <string name = "warning_settings_header">ADVERTENCIA</string>
+    <string name = "vibration_settings">Vibración</string>
+    <string name = "additional_settings_header">ADICIONAL</string>
+    <string name = "leave_feedback">Deja un comentario</string>
+    <string name = "other_projects">Vea nuestras otras aplicaciones (anuncio)</string>
+
+    <string name = "reset">Restablecer</string>
+
+    <string name = "gps_disable">GPS desactivado</string>
+    <string name = "turn_on_gps">Habilite el servicio de ubicación.</string>
+
+    <string name = "speed_info_distance">Distancia</string>
+    <string name = "speed_info_duration">Duración</string>
+    <string name = "speed_info_average">Promedio</string>
+    <string name = "speed_info_max">Max</string>
+
+    <string name = "stop">Pausar</string>
+    <string name = "contin">Continuar</string>
+</resources>

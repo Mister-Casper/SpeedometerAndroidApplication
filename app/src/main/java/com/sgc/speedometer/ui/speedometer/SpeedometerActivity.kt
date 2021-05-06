@@ -46,7 +46,6 @@ import com.sgc.speedometer.utils.AppConstants.TAG_CODE_PERMISSION_LOCATION
 import kotlinx.android.synthetic.main.activity_speedometer.*
 import javax.inject.Inject
 
-
 class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, SpeedometerViewModel>(),
     SpeedLimitControlObserver {
 
@@ -63,6 +62,8 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
 
     @Inject
     lateinit var distanceUnitConverter: DistanceUnitConverter
+
+    private var isPause = false
 
     override fun performDataBinding() {
         viewDataBinding = DataBindingUtil.setContentView(this, layoutId)
@@ -230,8 +231,12 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
-        if (speedometer.speedometerRender.getRenderId() == 0)
+        if (speedometer.speedometerRender.getRenderId() == 0 && isPause)
+            inflater.inflate(R.menu.round_speedometer_menu_pause, menu)
+        else if (speedometer.speedometerRender.getRenderId() == 0 && !isPause)
             inflater.inflate(R.menu.round_speedometer_menu, menu)
+        else if (speedometer.speedometerRender.getRenderId() == 1 && isPause)
+            inflater.inflate(R.menu.text_speedometer_menu_pause, menu)
         else
             inflater.inflate(R.menu.text_speedometer_menu, menu)
         return true
@@ -255,6 +260,20 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
             R.id.set_text_speedometer -> {
                 speedometer.speedometerRender = TextSpeedometerRender(this)
                 invalidateOptionsMenu()
+            }
+            R.id.start -> {
+                if (service != null) {
+                    service!!.start()
+                    isPause = false
+                    invalidateOptionsMenu()
+                }
+            }
+            R.id.pause -> {
+                if (service != null) {
+                    service!!.stop()
+                    isPause = true
+                    invalidateOptionsMenu()
+                }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -288,14 +307,18 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(SPEEDOMETER_RENDER_ID, speedometer.speedometerRender.getRenderId())
+        outState.putBoolean(IS_PAUSE, isPause)
         super.onSaveInstanceState(outState)
     }
 
     private fun restoreState(state: Bundle?) {
         if (state != null) {
+            isPause = state.getBoolean(IS_PAUSE)
             val speedometerRenderId = state.getInt(SPEEDOMETER_RENDER_ID)
             if (speedometerRenderId == 1)
                 speedometer.speedometerRender = TextSpeedometerRender(this)
+            val serviceIntent = Intent(this, SpeedometerService::class.java)
+            bindService(serviceIntent, connection, Context.BIND_IMPORTANT)
         }
     }
 
@@ -319,5 +342,6 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
 
     companion object {
         private const val SPEEDOMETER_RENDER_ID = "SPEEDOMETER_RENDER_ID"
+        private const val IS_PAUSE = "IS_PAUSE"
     }
 }
