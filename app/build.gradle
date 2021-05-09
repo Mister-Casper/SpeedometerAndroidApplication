@@ -33,6 +33,10 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    defaultConfig {
+        resConfigs "en", "ru","fr","es"
+    }
+
     configurations.all {
         resolutionStrategy {
             force("org.antlr:antlr4-runtime:4.7.1")
