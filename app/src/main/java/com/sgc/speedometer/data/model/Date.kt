@@ -21,4 +21,8 @@ data class Date(val epochMillis: Long) : Parcelable {
         return Date(epochMillis + timeMillis.toInt())
     }
 
+    fun getSeconds() : Int{
+        return (epochMillis/1000).toInt()
+    }
+
 }

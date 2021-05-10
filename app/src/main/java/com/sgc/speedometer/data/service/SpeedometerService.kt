@@ -38,7 +38,8 @@ class SpeedometerService : Service() {
     @Inject
     lateinit var dataManager: DataManager
 
-    private lateinit var speedometerRecordManager: SpeedometerRecordManager
+    private var speedometerRecordManager: SpeedometerRecordManager =
+        SpeedometerRecordManager(SpeedometerRecord())
 
     private var timer: CountDownTimer? = null
 
@@ -46,10 +47,12 @@ class SpeedometerService : Service() {
         override fun reset() {
             this@SpeedometerService.reset()
         }
-        override fun stop(){
+
+        override fun stop() {
             this@SpeedometerService.stop()
         }
-        override fun start(){
+
+        override fun start() {
             this@SpeedometerService.start()
         }
     }
@@ -60,29 +63,26 @@ class SpeedometerService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         (application as App).appComponent.inject(this)
-        if (timer == null) {
-            speedometerRecordManager = SpeedometerRecordManager(SpeedometerRecord())
-            startTimer()
-        }
-
         manager = getSystemService(NotificationManager::class.java)
-        requestLocationUpdates(400,200)
+        startForeground(1, createNotification())
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        requestLocationUpdates(800, 300)
         createNotificationChannel()
         createNotification()
-        startForeground(1, createNotification())
-        return START_NOT_STICKY
+        if (timer == null) {
+            startTimer()
+        }
+        return START_STICKY
     }
 
     @SuppressLint("MissingPermission")
-    private fun requestLocationUpdates(interval:Long,fastestInterval:Long) {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+    private fun requestLocationUpdates(interval: Long, fastestInterval: Long) {
+        val locationRequest = LocationRequest()
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.interval = interval
+        locationRequest.fastestInterval = fastestInterval
 
-        val mLocationRequest = LocationRequest()
-        mLocationRequest.interval = interval
-        mLocationRequest.fastestInterval = fastestInterval
-        mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-
-        fusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.getMainLooper())
+        fusedLocationClient.requestLocationUpdates(locationRequest, mLocationCallback, Looper.getMainLooper())
     }
 
     private var mLocationCallback: LocationCallback = object : LocationCallback() {
@@ -129,7 +129,7 @@ class SpeedometerService : Service() {
             )
             .setContentIntent(pendingIntent)
             .setSound(null)
-            .setSmallIcon(R.mipmap.speedometer_icon)
+            .setSmallIcon(R.mipmap.icon_r)
         return builder.build()
     }
 
@@ -183,14 +183,14 @@ class SpeedometerService : Service() {
         updateInfo(speedometerRecordManager.speedometerRecord)
     }
 
-    fun stop(){
+    fun stop() {
         timer!!.cancel()
         fusedLocationClient.removeLocationUpdates(mLocationCallback)
     }
 
-    fun start(){
+    fun start() {
         timer!!.start()
-        requestLocationUpdates(400,200)
+        requestLocationUpdates(800, 300)
     }
 
     companion object {
@@ -200,11 +200,10 @@ class SpeedometerService : Service() {
     inner class ScreenReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == Intent.ACTION_SCREEN_OFF) {
-                requestLocationUpdates(15000,1000)
+                requestLocationUpdates(15000, 1200)
             } else if (intent.action == Intent.ACTION_SCREEN_ON) {
-                requestLocationUpdates(400,200)
+                requestLocationUpdates(800, 300)
             }
-
         }
     }
 

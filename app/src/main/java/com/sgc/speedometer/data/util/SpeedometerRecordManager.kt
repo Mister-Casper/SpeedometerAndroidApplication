@@ -7,9 +7,6 @@ import com.sgc.speedometer.data.model.SpeedometerRecord
 class SpeedometerRecordManager(val speedometerRecord: SpeedometerRecord) {
     private var lastLocation: Location? = null
 
-    var sumSpeed: Double = 0.0
-    var countSpeed: Int = 0
-
     fun update(location: Location) {
         val currentSpeed: Double
 
@@ -22,7 +19,8 @@ class SpeedometerRecordManager(val speedometerRecord: SpeedometerRecord) {
         }
 
         speedometerRecord.currentSpeed = currentSpeed
-        calcAverageSpeed(currentSpeed)
+        if (speedometerRecord.duration.getSeconds() != 0)
+            speedometerRecord.averageSpeed = speedometerRecord.distance / speedometerRecord.duration.getSeconds()
         calcMaxSpeed(currentSpeed)
         lastLocation = location
     }
@@ -30,18 +28,7 @@ class SpeedometerRecordManager(val speedometerRecord: SpeedometerRecord) {
     private fun getCurrentSpeed(location: Location): Double {
         val elapsedTimeInSeconds = (location.time - lastLocation!!.time) / 1000.0
         val distanceInMeters = location.distanceTo(lastLocation)
-
-        return if (location.hasSpeed()) {
-            location.speed
-        } else {
-            distanceInMeters / elapsedTimeInSeconds
-        }.toDouble()
-    }
-
-    private fun calcAverageSpeed(currentSpeed: Double) {
-        sumSpeed += currentSpeed
-        countSpeed++
-        speedometerRecord.averageSpeed = sumSpeed / countSpeed
+        return distanceInMeters / elapsedTimeInSeconds
     }
 
     private fun calcMaxSpeed(currentSpeed: Double) {

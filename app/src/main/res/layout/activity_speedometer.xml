@@ -184,7 +184,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:textSize="16sp"
-            customView:layout_constraintStart_toEndOf="@+id/average"
+            customView:layout_constraintStart_toEndOf="@+id/max_speed"
             customView:layout_constraintTop_toTopOf="@+id/max_speed" />
 
         <com.google.android.gms.ads.AdView

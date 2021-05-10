@@ -11,9 +11,9 @@
     <application
         android:name=".App"
         android:allowBackup="true"
-        android:icon="@mipmap/speedometer_icon"
+        android:icon="@mipmap/icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/speedometer_icon"
+        android:roundIcon="@mipmap/icon_r"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.settings.SettingsActivity"></activity>

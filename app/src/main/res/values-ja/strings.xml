@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">スピードメーター</string>
+
+    <string name="ask_permission">アプリを機能させるには、デバイスの場所にアクセスする必要があります</string>
+
+    <string name="m_per_sec">メートル/秒</string>
+    <string name="km_per_hour">キロメートル/時</string>
+    <string name="miles_per_hour">マイル/時</string>
+    <string name="m">メートル</string>
+    <string name="km">キロメートル</string>
+    <string name="mi">マイル</string>
+
+    <string name="speed_limit">制限速度：%1$d</string>
+    <string name="speed_value">速度：%1$d %3$s \n 距離：%2$d %4$s \n 平均：%5$d %3$s \n 最大：%6$d %3$s </string>
+    <string name="set_speed_limit">制限速度</string>
+    <string name="speedometer_service_status">バックグラウンドで実行されているスピードメーター</string>
+
+    <string name="settings">設定</string>
+    <string name="general_settings_header">一般</string>
+    <string name="dark_theme_settings">ダークテーマ</string>
+    <string name="speed_unit_settings">スピードユニット</string>
+    <string name="speed_resolution_settings">スピードメーターの解像度</string>
+    <string name="distance_unit_settings">距離の単位</string>
+    <string name="warning_settings_header">警告</string>
+    <string name="vibration_settings">バイブレーション</string>
+    <string name="additional_settings_header">追加</string>
+    <string name="leave_feedback">フィードバックを残す</string>
+    <string name="other_projects">私たちの他のアプリをチェックしてください(Ad)</string>
+
+    <string name="reset">リセット</string>
+
+    <string name="gps_disable"> GPSが無効になっています</string>
+    <string name="turn_on_gps">位置情報サービスを有効にしてください。</string>
+
+    <string name="speed_info_distance">距離</string>
+    <string name="speed_info_duration">期間</string>
+    <string name="speed_info_average">平均</string>
+    <string name="speed_info_max">最大</string>
+
+    <string name="stop">一時停止</string>
+    <string name="contin">続行</string>
+
+</resources>

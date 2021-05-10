@@ -34,7 +34,7 @@ android {
     }
 
     defaultConfig {
-        resConfigs "en", "ru","fr","es"
+        resConfigs "en", "ru","fr","es","ja"
     }
 
     configurations.all {
