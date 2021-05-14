@@ -21,8 +21,6 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.WhichButton
 import com.afollestad.materialdialogs.actions.getActionButton
 import com.afollestad.materialdialogs.input.input
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.MobileAds
 import com.kobakei.ratethisapp.RateThisApp
 import com.sgc.speedometer.App
 import com.sgc.speedometer.BR
@@ -47,7 +45,7 @@ import kotlinx.android.synthetic.main.activity_speedometer.*
 import javax.inject.Inject
 
 class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, SpeedometerViewModel>(),
-    SpeedLimitControlObserver {
+    SpeedLimitControlObserver{
 
     override val layoutId: Int
         get() = R.layout.activity_speedometer
@@ -85,7 +83,6 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
             checkOptimization()
         }
         restoreState(savedInstanceState)
-        // initAdb()
     }
 
     @SuppressLint("NewApi", "BatteryLife")
@@ -98,12 +95,6 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
             intent.data = Uri.parse("package:" + this.packageName)
             this.startActivity(intent)
         }
-    }
-
-    private fun initAdb() {
-        MobileAds.initialize(this) { }
-        val adRequest = AdRequest.Builder().build()
-        adView.loadAd(adRequest)
     }
 
     override fun performDependencyInjection(buildComponent: ActivityComponent) {

@@ -24,7 +24,7 @@
 
         <service
             android:foregroundServiceType="location"
-            android:process=":foregroundLocator"
+
             android:stopWithTask="true"
             android:name=".data.service.SpeedometerService"
             android:enabled="true" />

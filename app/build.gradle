@@ -27,8 +27,8 @@ android {
         applicationId "com.sgc.speedometer"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 23
-        versionName "1.1.8"
+        versionCode 31
+        versionName "1.2.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -106,9 +106,11 @@ dependencies {
 
     implementation 'com.frybits.harmony:harmony:1.1.5'
 
-    implementation 'com.google.android.gms:play-services-ads:20.0.0'
+    implementation 'com.google.android.gms:play-services-ads:20.1.0'
 
-    implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.1'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'com.github.maddevsio:mad-location-manager:0.1.14'
+
 
 }

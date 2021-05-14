@@ -3,6 +3,7 @@ package com.sgc.speedometer.data.util
 import android.location.Location
 import com.sgc.speedometer.data.model.Date
 import com.sgc.speedometer.data.model.SpeedometerRecord
+import kotlin.math.abs
 
 class SpeedometerRecordManager(val speedometerRecord: SpeedometerRecord) {
     private var lastLocation: Location? = null
@@ -26,9 +27,13 @@ class SpeedometerRecordManager(val speedometerRecord: SpeedometerRecord) {
     }
 
     private fun getCurrentSpeed(location: Location): Double {
-        val elapsedTimeInSeconds = (location.time - lastLocation!!.time) / 1000.0
-        val distanceInMeters = location.distanceTo(lastLocation)
-        return distanceInMeters / elapsedTimeInSeconds
+        return if(location.hasSpeed()){
+            location.speed.toDouble()
+        }else {
+            val elapsedTimeInSeconds = (location.time - lastLocation!!.time) / 1000.0
+            val distanceInMeters = location.distanceTo(lastLocation)
+            abs(distanceInMeters / elapsedTimeInSeconds)
+        }
     }
 
     private fun calcMaxSpeed(currentSpeed: Double) {

@@ -187,17 +187,5 @@
             customView:layout_constraintStart_toEndOf="@+id/max_speed"
             customView:layout_constraintTop_toTopOf="@+id/max_speed" />
 
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/adView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            customView:adSize="BANNER"
-            customView:adUnitId="ca-app-pub-3940256099942544/6300978111"
-            customView:layout_constraintBottom_toBottomOf="parent"
-            customView:layout_constraintEnd_toEndOf="parent"
-            customView:layout_constraintStart_toStartOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

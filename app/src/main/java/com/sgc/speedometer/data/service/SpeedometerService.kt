@@ -5,9 +5,12 @@ import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.os.*
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
+import com.google.android.gms.tasks.OnCompleteListener
 import com.sgc.speedometer.App
 import com.sgc.speedometer.ISpeedometerService
 import com.sgc.speedometer.R
@@ -19,7 +22,10 @@ import com.sgc.speedometer.data.util.speedUnit.SpeedUnitConverter
 import com.sgc.speedometer.ui.speedometer.SpeedometerActivity
 import com.sgc.speedometer.utils.AppConstants.SPEEDOMETER_RECORD_KEY
 import com.sgc.speedometer.utils.AppConstants.SPEED_INTENT_FILTER
+import com.sgc.speedometer.utils.KalmanLatLong
+import io.reactivex.observers.DisposableObserver
 import javax.inject.Inject
+
 
 class SpeedometerService : Service() {
 
@@ -28,6 +34,7 @@ class SpeedometerService : Service() {
     private lateinit var pendingIntent: PendingIntent
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var kalmanFilter = KalmanLatLong(1f)
 
     @Inject
     lateinit var speedUnitConverter: SpeedUnitConverter
@@ -64,20 +71,20 @@ class SpeedometerService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         (application as App).appComponent.inject(this)
         manager = getSystemService(NotificationManager::class.java)
-        startForeground(1, createNotification())
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        requestLocationUpdates(800, 300)
+        requestLocationUpdates(2000, 500)
         createNotificationChannel()
         createNotification()
         if (timer == null) {
             startTimer()
         }
+        startForeground(1, createNotification())
         return START_STICKY
     }
 
     @SuppressLint("MissingPermission")
     private fun requestLocationUpdates(interval: Long, fastestInterval: Long) {
-        val locationRequest = LocationRequest()
+        val locationRequest = LocationRequest.create()
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = interval
         locationRequest.fastestInterval = fastestInterval
@@ -89,7 +96,10 @@ class SpeedometerService : Service() {
         override fun onLocationResult(locationResult: LocationResult) {
             val locationList = locationResult.locations
             if (locationList.isNotEmpty()) {
-                speedometerRecordManager.update(locationList.last())
+                val loc = locationList.last()
+                val predLoc =
+                    filterAndAddLocation(loc, speedometerRecordManager.speedometerRecord.currentSpeed.toFloat())
+                speedometerRecordManager.update(predLoc)
                 updateInfo(speedometerRecordManager.speedometerRecord)
             }
         }
@@ -190,7 +200,40 @@ class SpeedometerService : Service() {
 
     fun start() {
         timer!!.start()
-        requestLocationUpdates(800, 300)
+        requestLocationUpdates(2000, 500)
+    }
+
+    private val runStartTimeInMillis = (SystemClock.elapsedRealtimeNanos() / 1000000)
+
+    private fun filterAndAddLocation(location: Location, currentSpeed: Float): Location {
+        val Qvalue: Float
+        val locationTimeInMillis = (location.elapsedRealtimeNanos / 1000000)
+        val elapsedTimeInMillis: Long = locationTimeInMillis - runStartTimeInMillis
+        if (currentSpeed == 0.0f) {
+            Qvalue = 2f
+        } else {
+            Qvalue = currentSpeed
+        }
+        kalmanFilter.Process(location.latitude, location.longitude, location.accuracy, elapsedTimeInMillis, Qvalue)
+        val predictedLat: Double = kalmanFilter._lat
+        val predictedLng: Double = kalmanFilter._lng
+        val predictedLocation = Location("")
+
+        predictedLocation.latitude = predictedLat
+        predictedLocation.longitude = predictedLng
+        predictedLocation.time = location.time
+
+        val predictedDeltaInMeters: Float = predictedLocation.distanceTo(location)
+        if (predictedDeltaInMeters > 60) {
+            kalmanFilter.consecutiveRejectCount += 1
+            if (kalmanFilter.consecutiveRejectCount > 3) {
+                kalmanFilter = KalmanLatLong(1f)
+            }
+            return predictedLocation
+        } else {
+            kalmanFilter.consecutiveRejectCount = 0
+        }
+        return predictedLocation
     }
 
     companion object {
@@ -200,9 +243,9 @@ class SpeedometerService : Service() {
     inner class ScreenReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == Intent.ACTION_SCREEN_OFF) {
-                requestLocationUpdates(15000, 1200)
+                requestLocationUpdates(15000, 2000)
             } else if (intent.action == Intent.ACTION_SCREEN_ON) {
-                requestLocationUpdates(800, 300)
+                requestLocationUpdates(2000, 500)
             }
         }
     }
