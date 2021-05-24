@@ -1,16 +1,14 @@
 package com.sgc.speedometer.data.service
 
-import android.annotation.SuppressLint
 import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.*
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.location.*
-import com.google.android.gms.tasks.OnCompleteListener
 import com.sgc.speedometer.App
 import com.sgc.speedometer.ISpeedometerService
 import com.sgc.speedometer.R
@@ -23,17 +21,18 @@ import com.sgc.speedometer.ui.speedometer.SpeedometerActivity
 import com.sgc.speedometer.utils.AppConstants.SPEEDOMETER_RECORD_KEY
 import com.sgc.speedometer.utils.AppConstants.SPEED_INTENT_FILTER
 import com.sgc.speedometer.utils.KalmanLatLong
-import io.reactivex.observers.DisposableObserver
+import meetmehdi.interfaces.LocationManagerInterface
+import meetmehdi.location.SmartLocationManager
 import javax.inject.Inject
 
+class SpeedometerService : Service(), LocationManagerInterface {
 
-class SpeedometerService : Service() {
+    private lateinit var smartLocationManager: SmartLocationManager
 
     private lateinit var builder: NotificationCompat.Builder
     private lateinit var manager: NotificationManager
     private lateinit var pendingIntent: PendingIntent
 
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var kalmanFilter = KalmanLatLong(1f)
 
     @Inject
@@ -71,8 +70,7 @@ class SpeedometerService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         (application as App).appComponent.inject(this)
         manager = getSystemService(NotificationManager::class.java)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        requestLocationUpdates(2000, 500)
+        initLocationFetching(2000,3000,0.1f, LocationRequest.PRIORITY_HIGH_ACCURACY)
         createNotificationChannel()
         createNotification()
         if (timer == null) {
@@ -80,29 +78,6 @@ class SpeedometerService : Service() {
         }
         startForeground(1, createNotification())
         return START_STICKY
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun requestLocationUpdates(interval: Long, fastestInterval: Long) {
-        val locationRequest = LocationRequest.create()
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest.interval = interval
-        locationRequest.fastestInterval = fastestInterval
-
-        fusedLocationClient.requestLocationUpdates(locationRequest, mLocationCallback, Looper.getMainLooper())
-    }
-
-    private var mLocationCallback: LocationCallback = object : LocationCallback() {
-        override fun onLocationResult(locationResult: LocationResult) {
-            val locationList = locationResult.locations
-            if (locationList.isNotEmpty()) {
-                val loc = locationList.last()
-                val predLoc =
-                    filterAndAddLocation(loc, speedometerRecordManager.speedometerRecord.currentSpeed.toFloat())
-                speedometerRecordManager.update(predLoc)
-                updateInfo(speedometerRecordManager.speedometerRecord)
-            }
-        }
     }
 
     private fun startTimer() {
@@ -195,20 +170,21 @@ class SpeedometerService : Service() {
 
     fun stop() {
         timer!!.cancel()
-        fusedLocationClient.removeLocationUpdates(mLocationCallback)
+        smartLocationManager.abortLocationFetching()
     }
 
     fun start() {
         timer!!.start()
-        requestLocationUpdates(2000, 500)
+        initLocationFetching(2000,3000,0.1f, LocationRequest.PRIORITY_HIGH_ACCURACY)
     }
 
     private val runStartTimeInMillis = (SystemClock.elapsedRealtimeNanos() / 1000000)
 
-    private fun filterAndAddLocation(location: Location, currentSpeed: Float): Location {
+    private fun filterLocation(location: Location): Location {
         val Qvalue: Float
         val locationTimeInMillis = (location.elapsedRealtimeNanos / 1000000)
         val elapsedTimeInMillis: Long = locationTimeInMillis - runStartTimeInMillis
+        val currentSpeed = speedometerRecordManager.speedometerRecord.currentSpeed.toFloat()
         if (currentSpeed == 0.0f) {
             Qvalue = 2f
         } else {
@@ -243,11 +219,49 @@ class SpeedometerService : Service() {
     inner class ScreenReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == Intent.ACTION_SCREEN_OFF) {
-                requestLocationUpdates(15000, 2000)
+                initLocationFetching(3500,7000,10f, LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
             } else if (intent.action == Intent.ACTION_SCREEN_ON) {
-                requestLocationUpdates(2000, 500)
+                initLocationFetching(2000,3000,0.1f, LocationRequest.PRIORITY_HIGH_ACCURACY)
             }
         }
+    }
+
+    private fun initLocationFetching(fastInterval:Long,interval:Long,distance:Float,priority:Int) {
+        smartLocationManager = SmartLocationManager(
+            this,
+            SmartLocationManager.FETCH_LOCATION_BETWEEN_INTERVAL,
+            this,
+            SmartLocationManager.ALL_PROVIDERS,
+            fastInterval,
+            interval,
+            SmartLocationManager.LOCATION_PROVIDER_ALL_RESTRICTION,
+            SmartLocationManager.ANY_API,
+            distance,priority
+        )
+    }
+
+    override fun locationFetched(
+        mLocation: Location?,
+        oldLocation: Location?,
+        time: String?,
+        locationProvider: String?
+    ) {
+        if (mLocation != null) {
+            speedometerRecordManager.update(mLocation)
+            updateInfo(speedometerRecordManager.speedometerRecord)
+        }
+    }
+
+    override fun onLocationFetchingFailed(failureType: Int, connectionResult: ConnectionResult?) {
+
+    }
+
+    override fun onLocationNotEnabled(message: String?) {
+
+    }
+
+    override fun onPermissionDenied(message: String?) {
+
     }
 
 

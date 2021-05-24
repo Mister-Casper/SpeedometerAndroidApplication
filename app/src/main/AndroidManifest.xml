@@ -23,8 +23,7 @@
             android:value="ca-app-pub-5494709043617393~7137308085"/>
 
         <service
-            android:foregroundServiceType="location"
-
+            android:process=":foregroundLocator"
             android:stopWithTask="true"
             android:name=".data.service.SpeedometerService"
             android:enabled="true" />
