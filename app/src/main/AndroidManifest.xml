@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.sgc.speedometer">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -16,7 +17,7 @@
         android:roundIcon="@mipmap/icon_r"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.settings.SettingsActivity"></activity>
+        <activity android:name=".ui.settings.SettingsActivity" />
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
@@ -27,6 +28,13 @@
             android:stopWithTask="true"
             android:name=".data.service.SpeedometerService"
             android:enabled="true" />
+
+        <service
+            android:process=":foregroundLocator"
+            android:name="mad.location.manager.lib.Services.KalmanLocationService"
+            android:enabled="true"
+            android:exported="false"
+            android:stopWithTask="true" />
 
         <activity android:name=".ui.speedometer.SpeedometerActivity">
             <intent-filter>

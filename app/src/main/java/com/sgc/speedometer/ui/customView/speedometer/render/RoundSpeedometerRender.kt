@@ -2,8 +2,12 @@ package com.sgc.speedometer.ui.customView.speedometer.render
 
 import android.content.Context
 import android.graphics.*
+import android.os.Environment
 import com.sgc.speedometer.R
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
 import java.lang.Math.toRadians
 import kotlin.math.cos
 import kotlin.math.max

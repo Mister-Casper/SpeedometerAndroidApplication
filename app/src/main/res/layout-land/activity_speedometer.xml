@@ -31,18 +31,17 @@
             android:id="@+id/speedometer"
             android:layout_width="250dp"
             android:layout_height="220dp"
-            customView:layout_constraintBottom_toTopOf="@+id/adView"
             customView:layout_constraintStart_toStartOf="parent"
             customView:layout_constraintTop_toTopOf="parent"
             customView:speed="@{speedUnitConverter.convertToDefaultByMetersPerSec(speedometerViewModel.speedometerRecord.currentSpeed).intValue()}" />
 
         <TextView
+            android:layout_marginTop="12dp"
             android:id="@+id/speedLimit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{@string/speed_limit(speedometerViewModel.maxSpeed)}"
             android:textSize="16sp"
-            customView:layout_constraintBottom_toTopOf="@+id/adView"
             customView:layout_constraintEnd_toEndOf="parent"
             customView:layout_constraintStart_toEndOf="@+id/speedometer"
             customView:layout_constraintTop_toBottomOf="@+id/durationImage" />

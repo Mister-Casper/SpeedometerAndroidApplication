@@ -1,2 +1,2 @@
-include ':app', ':locationware'
+include ':app', ':locationware', ':madlocationmanager'
 rootProject.name = "Speedometer"

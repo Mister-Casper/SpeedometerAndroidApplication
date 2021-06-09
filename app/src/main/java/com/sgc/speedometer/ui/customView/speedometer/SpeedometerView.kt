@@ -8,35 +8,39 @@ import com.sgc.speedometer.data.DefaultSettings
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnit
 import com.sgc.speedometer.ui.customView.speedometer.render.RoundSpeedometerRender
 import com.sgc.speedometer.ui.customView.speedometer.render.SpeedometerRender
+import java.util.*
+
 
 class SpeedometerView : View {
+
+    private var isUpdated = false
 
     var defaultSettings = DefaultSettings()
     var speedometerRender: SpeedometerRender = RoundSpeedometerRender(context)
         set(value) {
             field = value
-            invalidate()
+            isUpdated = true
             showSpeedLimitExceeded()
         }
     var speedUnit: SpeedUnit = defaultSettings.speedUnit
         set(value) {
             field = value
-            invalidate()
+            isUpdated = true
         }
     var speed: Int = 0
         set(value) {
             field = value
-            invalidate()
+            isUpdated = true
         }
     var maxSpeed: Int = 0
         set(value) {
             field = value
-            invalidate()
+            isUpdated = true
         }
     var gpsEnable: Boolean = true
         set(value) {
             field = value
-            invalidate()
+            isUpdated = true
         }
     var isSpeedLimitExceeded: Boolean = false
         set(value) {
@@ -48,12 +52,23 @@ class SpeedometerView : View {
             if (value != field) {
                 field = value
                 speedometerRender.speedometerResolution = value
-                invalidate()
+                isUpdated = true
             }
         }
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
     constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0)
+
+    init{
+        Timer().scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+               if(isUpdated){
+                   isUpdated = false
+                   invalidate()
+               }
+            }
+        }, 0, 500)
+    }
 
     override fun onDraw(canvas: Canvas) {
         speedometerRender.draw(canvas, speed, maxSpeed, speedUnit, gpsEnable)

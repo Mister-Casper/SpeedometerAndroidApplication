@@ -157,6 +157,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             TAG_CODE_PERMISSION_LOCATION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

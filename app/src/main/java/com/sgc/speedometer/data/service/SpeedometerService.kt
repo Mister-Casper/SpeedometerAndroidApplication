@@ -4,10 +4,10 @@ import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.location.Location
 import android.os.*
 import androidx.core.app.NotificationCompat
-import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.location.*
 import com.sgc.speedometer.App
 import com.sgc.speedometer.ISpeedometerService
@@ -20,20 +20,42 @@ import com.sgc.speedometer.data.util.speedUnit.SpeedUnitConverter
 import com.sgc.speedometer.ui.speedometer.SpeedometerActivity
 import com.sgc.speedometer.utils.AppConstants.SPEEDOMETER_RECORD_KEY
 import com.sgc.speedometer.utils.AppConstants.SPEED_INTENT_FILTER
-import com.sgc.speedometer.utils.KalmanLatLong
-import meetmehdi.interfaces.LocationManagerInterface
-import meetmehdi.location.SmartLocationManager
+import mad.location.manager.lib.Commons.Utils
+import mad.location.manager.lib.Interfaces.LocationServiceInterface
+import mad.location.manager.lib.Services.KalmanLocationService
+import mad.location.manager.lib.Services.ServicesHelper
+import mad.location.manager.lib.Services.Settings
 import javax.inject.Inject
 
-class SpeedometerService : Service(), LocationManagerInterface {
+class SpeedometerService : Service(), LocationServiceInterface {
 
-    private lateinit var smartLocationManager: SmartLocationManager
+    val settings1 = Settings(
+        Utils.ACCELEROMETER_DEFAULT_DEVIATION,
+        0,
+        2000,
+        500,
+        6,
+        2,
+        2.0,
+        null, false, false, true,
+        Utils.DEFAULT_VEL_FACTOR, Utils.DEFAULT_POS_FACTOR, Settings.LocationProvider.FUSED
+    )
+
+    val settings2 = Settings(
+        Utils.ACCELEROMETER_DEFAULT_DEVIATION,
+        10,
+        4000,
+        1000,
+        6,
+        2,
+        1.0,
+        null, false, false, true,
+        Utils.DEFAULT_VEL_FACTOR, Utils.DEFAULT_POS_FACTOR, Settings.LocationProvider.FUSED
+    )
 
     private lateinit var builder: NotificationCompat.Builder
     private lateinit var manager: NotificationManager
     private lateinit var pendingIntent: PendingIntent
-
-    private var kalmanFilter = KalmanLatLong(1f)
 
     @Inject
     lateinit var speedUnitConverter: SpeedUnitConverter
@@ -70,7 +92,9 @@ class SpeedometerService : Service(), LocationManagerInterface {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         (application as App).appComponent.inject(this)
         manager = getSystemService(NotificationManager::class.java)
-        initLocationFetching(2000,3000,0.1f, LocationRequest.PRIORITY_HIGH_ACCURACY)
+        registerReceiver()
+        ServicesHelper.addLocationServiceInterface(this)
+        reset(settings1)
         createNotificationChannel()
         createNotification()
         if (timer == null) {
@@ -78,6 +102,16 @@ class SpeedometerService : Service(), LocationManagerInterface {
         }
         startForeground(1, createNotification())
         return START_STICKY
+    }
+
+    private fun reset(settings: Settings) {
+        ServicesHelper.getLocationService(this) { value: KalmanLocationService ->
+            if (!value.IsRunning()) {
+                value.stop()
+                value.reset(settings)
+                value.start()
+            }
+        }
     }
 
     private fun startTimer() {
@@ -170,99 +204,51 @@ class SpeedometerService : Service(), LocationManagerInterface {
 
     fun stop() {
         timer!!.cancel()
-        smartLocationManager.abortLocationFetching()
+        ServicesHelper.getLocationService(this) { value: KalmanLocationService ->
+            value.stop()
+        }
     }
 
     fun start() {
         timer!!.start()
-        initLocationFetching(2000,3000,0.1f, LocationRequest.PRIORITY_HIGH_ACCURACY)
-    }
-
-    private val runStartTimeInMillis = (SystemClock.elapsedRealtimeNanos() / 1000000)
-
-    private fun filterLocation(location: Location): Location {
-        val Qvalue: Float
-        val locationTimeInMillis = (location.elapsedRealtimeNanos / 1000000)
-        val elapsedTimeInMillis: Long = locationTimeInMillis - runStartTimeInMillis
-        val currentSpeed = speedometerRecordManager.speedometerRecord.currentSpeed.toFloat()
-        if (currentSpeed == 0.0f) {
-            Qvalue = 2f
-        } else {
-            Qvalue = currentSpeed
+        Handler(Looper.getMainLooper()).post {
+            reset(settings1)
         }
-        kalmanFilter.Process(location.latitude, location.longitude, location.accuracy, elapsedTimeInMillis, Qvalue)
-        val predictedLat: Double = kalmanFilter._lat
-        val predictedLng: Double = kalmanFilter._lng
-        val predictedLocation = Location("")
-
-        predictedLocation.latitude = predictedLat
-        predictedLocation.longitude = predictedLng
-        predictedLocation.time = location.time
-
-        val predictedDeltaInMeters: Float = predictedLocation.distanceTo(location)
-        if (predictedDeltaInMeters > 60) {
-            kalmanFilter.consecutiveRejectCount += 1
-            if (kalmanFilter.consecutiveRejectCount > 3) {
-                kalmanFilter = KalmanLatLong(1f)
-            }
-            return predictedLocation
-        } else {
-            kalmanFilter.consecutiveRejectCount = 0
-        }
-        return predictedLocation
     }
 
     companion object {
         const val CHANNEL_ID = "SPEEDOMETER_CHANNEL_ID_5"
     }
 
+    val mReceiver: BroadcastReceiver = ScreenReceiver()
+
+    private fun registerReceiver() {
+        val filter = IntentFilter(Intent.ACTION_SCREEN_ON)
+        filter.addAction(Intent.ACTION_SCREEN_OFF)
+        registerReceiver(mReceiver, filter)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(mReceiver)
+    }
+
     inner class ScreenReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == Intent.ACTION_SCREEN_OFF) {
-                initLocationFetching(3500,7000,10f, LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
+                reset(settings2)
             } else if (intent.action == Intent.ACTION_SCREEN_ON) {
-                initLocationFetching(2000,3000,0.1f, LocationRequest.PRIORITY_HIGH_ACCURACY)
+                reset(settings1)
             }
         }
     }
 
-    private fun initLocationFetching(fastInterval:Long,interval:Long,distance:Float,priority:Int) {
-        smartLocationManager = SmartLocationManager(
-            this,
-            SmartLocationManager.FETCH_LOCATION_BETWEEN_INTERVAL,
-            this,
-            SmartLocationManager.ALL_PROVIDERS,
-            fastInterval,
-            interval,
-            SmartLocationManager.LOCATION_PROVIDER_ALL_RESTRICTION,
-            SmartLocationManager.ANY_API,
-            distance,priority
-        )
-    }
-
-    override fun locationFetched(
-        mLocation: Location?,
-        oldLocation: Location?,
-        time: String?,
-        locationProvider: String?
-    ) {
-        if (mLocation != null) {
-            speedometerRecordManager.update(mLocation)
-            updateInfo(speedometerRecordManager.speedometerRecord)
+    override fun locationChanged(location: Location?) {
+        if (location != null) {
+            ServicesHelper.getLocationService(this) { value: KalmanLocationService ->
+                speedometerRecordManager.update(location, value.geoHashRTFilter)
+                updateInfo(speedometerRecordManager.speedometerRecord)
+            }
         }
     }
-
-    override fun onLocationFetchingFailed(failureType: Int, connectionResult: ConnectionResult?) {
-
-    }
-
-    override fun onLocationNotEnabled(message: String?) {
-
-    }
-
-    override fun onPermissionDenied(message: String?) {
-
-    }
-
-
 }
