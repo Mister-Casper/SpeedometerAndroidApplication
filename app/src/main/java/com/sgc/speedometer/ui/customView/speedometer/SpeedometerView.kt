@@ -59,13 +59,13 @@ class SpeedometerView : View {
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
     constructor(context: Context, attrs: AttributeSet) : this(context, attrs, 0)
 
-    init{
+    init {
         Timer().scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
-               if(isUpdated){
-                   isUpdated = false
-                   invalidate()
-               }
+                if (isUpdated) {
+                    isUpdated = false
+                    postInvalidate()
+                }
             }
         }, 0, 500)
     }

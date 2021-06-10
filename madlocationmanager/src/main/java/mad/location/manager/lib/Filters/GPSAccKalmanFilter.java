@@ -30,7 +30,7 @@ public class GPSAccKalmanFilter {
         int mesDim = useGpsSpeed ? 4 : 2;
         m_useGpsSpeed = useGpsSpeed;
 
-        m_kf = new KalmanFilter(4, mesDim, 2);
+        m_kf = new KalmanFilter(4, mesDim, 1);
         m_timeStampMsPredict = m_timeStampMsUpdate = timeStampMs;
         m_accSigma = accDev;
         m_predictCount = 0;
@@ -109,8 +109,8 @@ public class GPSAccKalmanFilter {
         double Q[] = {
                 posSig, 0.0, covDev, 0.0,
                 0.0, posSig, 0.0, covDev,
-                covDev, 0.0, velSig, 0.0,
-                0.0, covDev, 0.0, velSig
+                0.0, 0.0, velSig, 0.0,
+                0.0, 0.0, 0.0, velSig
         };
         m_kf.Q.setData(Q);
     }
@@ -142,11 +142,7 @@ public class GPSAccKalmanFilter {
         m_predictCount = 0;
         m_timeStampMsUpdate = timeStamp;
         rebuildR(posDev, velErr);
-        if (m_useGpsSpeed) {
-            m_kf.Zk.setData(x, y, xVel, yVel);
-        } else {
-            m_kf.Zk.setData(x, y);
-        }
+        m_kf.Zk.setData(x, y, xVel, yVel);
         m_kf.update();
     }
 
@@ -157,13 +153,20 @@ public class GPSAccKalmanFilter {
     public double getCurrentY() {
         return m_kf.Xk_k.data[1][0];
     }
-
+    public double currentXVel = 0;
+    public double currentYVel = 0;
     public double getCurrentXVel() {
-        return m_kf.Xk_k.data[2][0];
+        return currentXVel;
     }
 
     public double getCurrentYVel() {
-        return m_kf.Xk_k.data[3][0];
+        return currentYVel;
+    }
+    public double getBearing() {
+        return Math.atan2(getCurrentYVel(),getCurrentXVel());
+    }
+    public double getSpeed() {
+        return Math.sqrt(Math.pow(getCurrentYVel(),2) + Math.pow(getCurrentXVel(),2));
     }
 
 }

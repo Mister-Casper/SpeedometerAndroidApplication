@@ -8,7 +8,6 @@ import android.content.IntentFilter
 import android.location.Location
 import android.os.*
 import androidx.core.app.NotificationCompat
-import com.google.android.gms.location.*
 import com.sgc.speedometer.App
 import com.sgc.speedometer.ISpeedometerService
 import com.sgc.speedometer.R
@@ -24,33 +23,30 @@ import mad.location.manager.lib.Commons.Utils
 import mad.location.manager.lib.Interfaces.LocationServiceInterface
 import mad.location.manager.lib.Services.KalmanLocationService
 import mad.location.manager.lib.Services.ServicesHelper
-import mad.location.manager.lib.Services.Settings
 import javax.inject.Inject
 
 class SpeedometerService : Service(), LocationServiceInterface {
 
-    val settings1 = Settings(
+    val settings1 = KalmanLocationService.Settings(
         Utils.ACCELEROMETER_DEFAULT_DEVIATION,
-        0,
+        5,
         2000,
-        500,
-        6,
+        0,
+        0,
         2,
-        2.0,
-        null, false, false, true,
-        Utils.DEFAULT_VEL_FACTOR, Utils.DEFAULT_POS_FACTOR, Settings.LocationProvider.FUSED
+        null, false,
+        Utils.DEFAULT_VEL_FACTOR, Utils.DEFAULT_POS_FACTOR
     )
 
-    val settings2 = Settings(
+    val settings2 = KalmanLocationService.Settings(
         Utils.ACCELEROMETER_DEFAULT_DEVIATION,
-        10,
-        4000,
-        1000,
-        6,
-        2,
-        1.0,
-        null, false, false, true,
-        Utils.DEFAULT_VEL_FACTOR, Utils.DEFAULT_POS_FACTOR, Settings.LocationProvider.FUSED
+        40,
+        7500,
+        0,
+        0,
+        1,
+        null, false,
+        Utils.DEFAULT_VEL_FACTOR, Utils.DEFAULT_POS_FACTOR
     )
 
     private lateinit var builder: NotificationCompat.Builder
@@ -104,7 +100,7 @@ class SpeedometerService : Service(), LocationServiceInterface {
         return START_STICKY
     }
 
-    private fun reset(settings: Settings) {
+    private fun reset(settings: KalmanLocationService.Settings) {
         ServicesHelper.getLocationService(this) { value: KalmanLocationService ->
             if (!value.IsRunning()) {
                 value.stop()
@@ -245,10 +241,8 @@ class SpeedometerService : Service(), LocationServiceInterface {
 
     override fun locationChanged(location: Location?) {
         if (location != null) {
-            ServicesHelper.getLocationService(this) { value: KalmanLocationService ->
-                speedometerRecordManager.update(location, value.geoHashRTFilter)
-                updateInfo(speedometerRecordManager.speedometerRecord)
-            }
+            speedometerRecordManager.update(location)
+            updateInfo(speedometerRecordManager.speedometerRecord)
         }
     }
 }

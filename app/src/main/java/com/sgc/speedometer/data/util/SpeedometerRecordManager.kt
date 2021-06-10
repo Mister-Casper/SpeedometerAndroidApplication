@@ -4,56 +4,21 @@ import android.location.Location
 import com.sgc.speedometer.data.model.Date
 import com.sgc.speedometer.data.model.SpeedometerRecord
 import mad.location.manager.lib.Loggers.GeohashRTFilter
-import kotlin.math.abs
 
 class SpeedometerRecordManager(val speedometerRecord: SpeedometerRecord) {
     var lastLocation: Location? = null
 
-    fun update(location: Location,geohashRTFilter:GeohashRTFilter) {
-        val currentSpeed: Double?
+    fun update(location: Location) {
+        val currentSpeed: Double = location.speed.toDouble()
 
-        if (lastLocation != null) {
-            currentSpeed = getCurrentSpeed(location)
-            speedometerRecord.distance = geohashRTFilter.distanceGeoFiltered
-            calcAverageSpeed()
-        } else {
-            currentSpeed = location.speed.toDouble()
-        }
-
-        if (currentSpeed != null) {
-            calcMaxSpeed(currentSpeed)
-            speedometerRecord.currentSpeed = currentSpeed
-        }
-        lastLocation = location
-    }
-
-   /* fun update(locations: List<Location>) {
-        var currentSpeed: Double? = null
-        locations.forEach {
-            if (lastLocation != null) {
-                speedometerRecord.distance += it.distanceTo(lastLocation)
-                currentSpeed = getCurrentSpeed(it)
-                if (currentSpeed != null) {
-                    calcMaxSpeed(currentSpeed!!)
-                }
-            }
-            lastLocation = it
+        if(lastLocation != null){
+            val elapsedTimeInSeconds = (location.time - lastLocation!!.time) / 1000.0
+            speedometerRecord.distance += elapsedTimeInSeconds * currentSpeed
         }
         calcAverageSpeed()
-        if (currentSpeed != null)
-            speedometerRecord.currentSpeed = currentSpeed!!
-    }*/
-
-    private fun getCurrentSpeed(location: Location): Double? {
-        val elapsedTimeInSeconds = (location.time - lastLocation!!.time) / 1000.0
-        if (elapsedTimeInSeconds <= 0.03)
-            return null
-        return if (location.hasSpeed())
-            location.speed.toDouble()
-        else {
-            val distanceInMeters = location.distanceTo(lastLocation)
-            abs(distanceInMeters / elapsedTimeInSeconds)
-        }
+        calcMaxSpeed(currentSpeed)
+        speedometerRecord.currentSpeed = currentSpeed
+        lastLocation = location
     }
 
     private fun calcMaxSpeed(currentSpeed: Double) {

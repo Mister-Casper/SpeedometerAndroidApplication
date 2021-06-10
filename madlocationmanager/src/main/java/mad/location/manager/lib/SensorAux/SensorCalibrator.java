@@ -71,7 +71,7 @@ public class SensorCalibrator implements SensorEventListener {
     public boolean start() {
         inProgress = true;
         for (Sensor sensor : m_lstSensors) {
-            if (!m_sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME)) {
+            if (!m_sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST)) {
                 return false;
             }
         }

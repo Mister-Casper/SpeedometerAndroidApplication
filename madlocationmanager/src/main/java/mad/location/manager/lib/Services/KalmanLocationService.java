@@ -10,6 +10,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Criteria;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
@@ -18,21 +19,21 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
-import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.PowerManager;
-
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-
 import android.util.Log;
 
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.tasks.Task;
+import androidx.core.app.ActivityCompat;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Queue;
 import java.util.concurrent.PriorityBlockingQueue;
 
@@ -41,18 +42,51 @@ import mad.location.manager.lib.Commons.GeoPoint;
 import mad.location.manager.lib.Commons.SensorGpsDataItem;
 import mad.location.manager.lib.Commons.Utils;
 import mad.location.manager.lib.Filters.GPSAccKalmanFilter;
+import mad.location.manager.lib.Interfaces.ILogger;
 import mad.location.manager.lib.Interfaces.LocationServiceInterface;
 import mad.location.manager.lib.Interfaces.LocationServiceStatusInterface;
 import mad.location.manager.lib.Loggers.GeohashRTFilter;
-import mad.location.manager.lib.locationProviders.GPSCallback;
-import mad.location.manager.lib.locationProviders.GPSLocationProvider;
-import mad.location.manager.lib.locationProviders.FusedLocationProvider;
-import mad.location.manager.lib.locationProviders.LocationProviderCallback;
 
 public class KalmanLocationService extends Service
-        implements SensorEventListener, GPSCallback, LocationProviderCallback {
+        implements SensorEventListener, LocationListener, GpsStatus.Listener {
+    public static class Settings {
+        private double accelerationDeviation;
+        private int gpsMinDistance;
+        private int gpsMinTime;
+        private int geoHashPrecision;
+        private int geoHashMinPointCount;
+        private int sensorFfequencyHz;
+        private ILogger logger;
+        private boolean filterMockGpsCoordinates;
 
-    public static final String TAG = "mlm:Service";
+        private double mVelFactor;
+        private double mPosFactor;
+
+
+        public Settings(double accelerationDeviation,
+                        int gpsMinDistance,
+                        int gpsMinTime,
+                        int geoHashPrecision,
+                        int geoHashMinPointCount,
+                        int sensorFfequencyHz,
+                        ILogger logger,
+                        boolean filterMockGpsCoordinates,
+                        double velFactor,
+                        double posFactor) {
+            this.accelerationDeviation = accelerationDeviation;
+            this.gpsMinDistance = gpsMinDistance;
+            this.gpsMinTime = gpsMinTime;
+            this.geoHashPrecision = geoHashPrecision;
+            this.geoHashMinPointCount = geoHashMinPointCount;
+            this.sensorFfequencyHz = sensorFfequencyHz;
+            this.logger = logger;
+            this.filterMockGpsCoordinates = filterMockGpsCoordinates;
+            this.mVelFactor = velFactor;
+            this.mPosFactor = posFactor;
+        }
+    }
+
+    public static final String TAG = "KalmanLocationService";
 
     //region Location service implementation. Maybe we need to move it to some abstract class?*/
     protected List<LocationServiceInterface> m_locationServiceInterfaces;
@@ -61,29 +95,6 @@ public class KalmanLocationService extends Service
     protected Location m_lastLocation;
 
     protected ServiceStatus m_serviceStatus = ServiceStatus.SERVICE_STOPPED;
-
-    @Override
-    public void locationAvailabilityChanged(boolean isLocationAvailable) {
-        m_gpsEnabled = isLocationAvailable;
-        for (LocationServiceStatusInterface ilss : m_locationServiceStatusInterfaces) {
-            ilss.GPSEnabledChanged(m_gpsEnabled);
-        }
-    }
-
-    @Override
-    public void onLocationAvailable(Location location) {
-        processLocation(location);
-    }
-
-    @Override
-    public void gpsSatelliteCountChanged(int noOfSatellites) {
-        if (noOfSatellites != 0) {
-            this.m_activeSatellites = noOfSatellites;
-            for (LocationServiceStatusInterface locationServiceStatusInterface : m_locationServiceStatusInterfaces) {
-                locationServiceStatusInterface.GPSStatusChanged(this.m_activeSatellites);
-            }
-        }
-    }
 
     public enum ServiceStatus {
         PERMISSION_DENIED(0),
@@ -164,7 +175,6 @@ public class KalmanLocationService extends Service
         }
     }
 
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return new LocalBinder();
@@ -181,34 +191,17 @@ public class KalmanLocationService extends Service
     }
     //endregion
 
-    private GeohashRTFilter m_geoHashRTFilter = null;
-
-    public GeohashRTFilter getGeoHashRTFilter() {
-        return m_geoHashRTFilter;
-    }
+    public GeohashRTFilter m_geoHashRTFilter = null;
 
     public static Settings defaultSettings =
-            new Settings(
-                    Utils.ACCELEROMETER_DEFAULT_DEVIATION,
-                    Utils.GPS_MIN_DISTANCE,
-                    Utils.GPS_MIN_TIME,
-                    Utils.SENSOR_POSITION_MIN_TIME,
-                    Utils.GEOHASH_DEFAULT_PREC,
-                    Utils.GEOHASH_DEFAULT_MIN_POINT_COUNT,
+            new Settings(Utils.ACCELEROMETER_DEFAULT_DEVIATION,
+                    Utils.GPS_MIN_DISTANCE, Utils.GPS_MIN_TIME,
+                    Utils.GEOHASH_DEFAULT_PREC, Utils.GEOHASH_DEFAULT_MIN_POINT_COUNT,
                     Utils.SENSOR_DEFAULT_FREQ_HZ,
-                    null,
-                    true,
-                    true,
-                    false,
-                    Utils.DEFAULT_VEL_FACTOR,
-                    Utils.DEFAULT_POS_FACTOR,
-                    Settings.LocationProvider.GPS
-            );
+                    null, true, Utils.DEFAULT_VEL_FACTOR, Utils.DEFAULT_POS_FACTOR);
 
     private Settings m_settings;
-
-    FusedLocationProvider fusedLocationProvider;
-    GPSLocationProvider gpsLocationProvider;
+    private LocationManager m_locationManager;
     private PowerManager m_powerManager;
     private PowerManager.WakeLock m_wakeLock;
 
@@ -217,8 +210,10 @@ public class KalmanLocationService extends Service
 
     private int m_activeSatellites = 0;
     private float m_lastLocationAccuracy = 0;
+    private GpsStatus m_gpsStatus;
+
     /**/
-    private GPSAccKalmanFilter m_kalmanFilter;
+    public GPSAccKalmanFilter m_kalmanFilter;
     private SensorDataEventLoopTask m_eventLoopTask;
     private List<Sensor> m_lstSensors;
     private SensorManager m_sensorManager;
@@ -239,8 +234,6 @@ public class KalmanLocationService extends Service
     private Queue<SensorGpsDataItem> m_sensorDataQueue =
             new PriorityBlockingQueue<>();
 
-    private final HandlerThread thread = new HandlerThread("kalmanThread");
-
     private void log2File(String format, Object... args) {
         if (m_settings.logger != null)
             m_settings.logger.log2file(format, args);
@@ -257,12 +250,34 @@ public class KalmanLocationService extends Service
         }
 
         private void handlePredict(SensorGpsDataItem sdi) {
+            Location loc = new Location(TAG);//it me
+            double xVel, yVel;//it me
             log2File("%d%d KalmanPredict : accX=%f, accY=%f",
                     Utils.LogMessageType.KALMAN_PREDICT.ordinal(),
                     (long) sdi.getTimestamp(),
                     sdi.getAbsEastAcc(),
                     sdi.getAbsNorthAcc());
             m_kalmanFilter.predict(sdi.getTimestamp(), sdi.getAbsEastAcc(), sdi.getAbsNorthAcc());
+            GeoPoint pp = Coordinates.metersToGeoPoint(m_kalmanFilter.getCurrentX(),
+                    m_kalmanFilter.getCurrentY()); //it me
+            //------- it me ------------------
+            loc.setLatitude(pp.Latitude);
+            loc.setLongitude(pp.Longitude);
+            loc.setAltitude(sdi.getGpsAlt());
+            xVel = m_kalmanFilter.getCurrentXVel();
+            yVel = m_kalmanFilter.getCurrentYVel();
+            double speed = Math.sqrt(xVel * xVel + yVel * yVel); //scalar speed without bearing
+            double Bearing = Math.atan2(yVel, xVel);
+            loc.setBearing((float) Bearing);
+            loc.setSpeed((float) speed);
+            loc.setTime(System.currentTimeMillis());
+            loc.setElapsedRealtimeNanos(System.nanoTime());
+            loc.setAccuracy((float) sdi.getPosErr());
+
+            m_geoHashRTFilter.displayPoint = pp;
+            m_geoHashRTFilter.speed = speed;
+            m_geoHashRTFilter.direction = Bearing;
+            //---------- it me ----------------
         }
 
         private void handleUpdate(SensorGpsDataItem sdi) {
@@ -301,12 +316,18 @@ public class KalmanLocationService extends Service
             xVel = m_kalmanFilter.getCurrentXVel();
             yVel = m_kalmanFilter.getCurrentYVel();
             double speed = Math.sqrt(xVel * xVel + yVel * yVel); //scalar speed without bearing
+            Log.e("DFDFDF-3",xVel + " " + yVel + " " + speed);
+            double Bearing = Math.atan2(yVel, xVel);//it me
             loc.setBearing((float) sdi.getCourse());
             loc.setSpeed((float) speed);
             loc.setTime(System.currentTimeMillis());
             loc.setElapsedRealtimeNanos(System.nanoTime());
             loc.setAccuracy((float) sdi.getPosErr());
-
+            //----------------it me-------------------
+            m_geoHashRTFilter.displayPoint = pp;
+            m_geoHashRTFilter.speed = speed;
+            m_geoHashRTFilter.direction = Bearing;
+            //----------------it me-------------------
             if (m_geoHashRTFilter != null) {
                 m_geoHashRTFilter.filter(loc);
             }
@@ -341,6 +362,7 @@ public class KalmanLocationService extends Service
                         Location loc = locationAfterUpdateStep(sdi);
                         publishProgress(loc);
                     }
+
                 }
             }
             return null;
@@ -357,20 +379,33 @@ public class KalmanLocationService extends Service
                     !location.getProvider().equals(TAG)) {
                 return;
             }
+
             m_serviceStatus = ServiceStatus.HAS_LOCATION;
             m_lastLocation = location;
             m_lastLocationAccuracy = location.getAccuracy();
+
+            if (ActivityCompat.checkSelfPermission(owner, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                m_gpsStatus = null;
+            }
+
+            int activeSatellites = 0;
+            if (m_gpsStatus != null) {
+                for (GpsSatellite satellite : m_gpsStatus.getSatellites()) {
+                    activeSatellites += satellite.usedInFix() ? 1 : 0;
+                }
+                m_activeSatellites = activeSatellites;
+            }
+
             for (LocationServiceInterface locationServiceInterface : m_locationServiceInterfaces) {
                 locationServiceInterface.locationChanged(location);
             }
             for (LocationServiceStatusInterface locationServiceStatusInterface : m_locationServiceStatusInterfaces) {
                 locationServiceStatusInterface.serviceStatusChanged(m_serviceStatus);
                 locationServiceStatusInterface.lastLocationAccuracyChanged(m_lastLocationAccuracy);
-                if (m_settings.provider == Settings.LocationProvider.GPS) {
-                    m_activeSatellites = gpsLocationProvider.getGPSSatteliteCount();
-                    locationServiceStatusInterface.GPSStatusChanged(m_activeSatellites);
-                }
+                locationServiceStatusInterface.GPSStatusChanged(m_activeSatellites);
             }
+
         }
     }
 
@@ -382,11 +417,11 @@ public class KalmanLocationService extends Service
         reset(defaultSettings);
     }
 
+    @SuppressLint("InvalidWakeLockTag")
     @Override
     public void onCreate() {
         super.onCreate();
-        fusedLocationProvider = new FusedLocationProvider(this, this);
-        gpsLocationProvider = new GPSLocationProvider(this, this, this);
+        m_locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         m_sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         m_powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         m_wakeLock = m_powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
@@ -408,48 +443,42 @@ public class KalmanLocationService extends Service
 
     @Override
     public void onDestroy() {
-        thread.quitSafely();
         super.onDestroy();
     }
 
     public void start() {
-        m_wakeLock.acquire();
-        m_sensorDataQueue.clear();
+        m_wakeLock.acquire();//something
+        m_sensorDataQueue.clear();//clear previous data
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             m_serviceStatus = ServiceStatus.PERMISSION_DENIED;
         } else {
             m_serviceStatus = ServiceStatus.SERVICE_STARTED;
-            if (m_settings.provider == Settings.LocationProvider.GPS) {
-                gpsLocationProvider.startLocationUpdates(m_settings, thread);
-                m_gpsEnabled = gpsLocationProvider.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            } else {
-                fusedLocationProvider.startLocationUpdates(m_settings, thread);
-                m_gpsEnabled = fusedLocationProvider.isProviderEnabled();
-            }
-            startEventLoop(m_gpsEnabled);
-
+            m_locationManager.removeGpsStatusListener(this);
+            m_locationManager.addGpsStatusListener(this);
+            m_locationManager.removeUpdates(this);
+            m_locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    m_settings.gpsMinTime, m_settings.gpsMinDistance, this );
         }
-        m_sensorsEnabled = true;
+
+        m_sensorsEnabled = true; //enable sensors.
         for (Sensor sensor : m_lstSensors) {
             m_sensorManager.unregisterListener(this, sensor);
             m_sensorsEnabled &= !m_sensorManager.registerListener(this, sensor,
-                    Utils.hertz2periodUs(m_settings.sensorFrequencyHz));
-        }
+                    SensorManager.SENSOR_DELAY_FASTEST);
+        }//setup IMU
+        m_gpsEnabled = m_locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-
-    }
-
-    private void startEventLoop(boolean m_gpsEnabled) {
         for (LocationServiceStatusInterface ilss : m_locationServiceStatusInterfaces) {
             ilss.serviceStatusChanged(m_serviceStatus);
             ilss.GPSEnabledChanged(m_gpsEnabled);
         }
 
-        m_eventLoopTask = new SensorDataEventLoopTask(m_settings.positionMinTime, KalmanLocationService.this);
-        m_eventLoopTask.needTerminate = false;
-        m_eventLoopTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        m_eventLoopTask = new SensorDataEventLoopTask(2000, this);//create an async task.
+        m_eventLoopTask.needTerminate = false;//we don't wanna terminate this
+        m_eventLoopTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR); //put it on the threadpool
     }
 
+    //stop all services
     public void stop() {
         if (m_wakeLock.isHeld())
             m_wakeLock.release();
@@ -458,11 +487,8 @@ public class KalmanLocationService extends Service
             m_serviceStatus = ServiceStatus.SERVICE_STOPPED;
         } else {
             m_serviceStatus = ServiceStatus.SERVICE_PAUSED;
-            if (m_settings.provider == Settings.LocationProvider.GPS) {
-                gpsLocationProvider.stop();
-            } else {
-                fusedLocationProvider.stop();
-            }
+            m_locationManager.removeGpsStatusListener(this);
+            m_locationManager.removeUpdates(this);
         }
 
         if (m_geoHashRTFilter != null) {
@@ -489,13 +515,11 @@ public class KalmanLocationService extends Service
     public void reset(Settings settings) {
 
         m_settings = settings;
-        m_kalmanFilter = null;
 
         if (m_settings.geoHashPrecision != 0 &&
                 m_settings.geoHashMinPointCount != 0) {
             if (m_geoHashRTFilter == null)
-                m_geoHashRTFilter = new GeohashRTFilter(m_settings.geoHashPrecision,
-                        m_settings.geoHashMinPointCount);
+                m_geoHashRTFilter = new GeohashRTFilter(m_settings.geoHashPrecision, m_settings.geoHashMinPointCount);
         }
     }
 
@@ -514,7 +538,7 @@ public class KalmanLocationService extends Service
                 android.opengl.Matrix.multiplyMV(absAcceleration, 0, rotationMatrixInv,
                         0, linearAcceleration, 0);
 
-                String logStr = String.format(Locale.ENGLISH, "%d%d abs acc: %f %f %f",
+                @SuppressLint("DefaultLocale") String logStr = String.format("%d%d abs acc: %f %f %f",
                         Utils.LogMessageType.ABS_ACC_DATA.ordinal(),
                         nowMs, absAcceleration[east], absAcceleration[north], absAcceleration[up]);
                 log2File(logStr);
@@ -522,7 +546,7 @@ public class KalmanLocationService extends Service
                 if (m_kalmanFilter == null) {
                     break;
                 }
-
+                //initialize the object which will store all the data items.
                 SensorGpsDataItem sdi = new SensorGpsDataItem(nowMs,
                         SensorGpsDataItem.NOT_INITIALIZED,
                         SensorGpsDataItem.NOT_INITIALIZED,
@@ -549,30 +573,42 @@ public class KalmanLocationService extends Service
         /*do nothing*/
     }
 
-    Location lastLocation;
+    Location lastLocation = null;
 
-    private void processLocation(Location loc) {
+    public void onLocationChanged(Location loc) {
+
         if (loc == null) return;
-      /*  if (lastLocation != null) {
-            double elapsedTimeInSeconds = (loc.getTime() - lastLocation.getTime()) / 1000.0;
-            if (elapsedTimeInSeconds <= 0.03)
-                return;
-        }*/
-        lastLocation = loc;
-
         if (m_settings.filterMockGpsCoordinates && loc.isFromMockProvider()) return;
 
-        double x, y, xVel, yVel, posDev, course, speed;
+        double x, y, xVel, yVel, posDev, course, speed = 0;
         long timeStamp;
-        speed = loc.getSpeed();
+        if (loc.hasSpeed() && loc.getSpeed() != 0)
+            speed = loc.getSpeed();
+        else if (lastLocation != null) {
+            speed = getCurrentSpeed(loc);
+            Log.e("DFDFDF-1",Double.toString(speed));
+        }
+        lastLocation = loc;
         course = loc.getBearing();
         x = loc.getLongitude();
         y = loc.getLatitude();
         xVel = speed * Math.cos(course);
         yVel = speed * Math.sin(course);
+        Log.e("DFDFDF-1",xVel + " " + yVel);
         posDev = loc.getAccuracy();
         timeStamp = Utils.nano2milli(loc.getElapsedRealtimeNanos());
+        //WARNING!!! here should be speed accuracy, but loc.hasSpeedAccuracy()
+        // and loc.getSpeedAccuracyMetersPerSecond() requares API 26
         double velErr = loc.getAccuracy() * 0.1;
+
+        @SuppressLint("DefaultLocale") String logStr = String.format("%d%d GPS : pos lat=%f, lon=%f, alt=%f, hdop=%f, speed=%f, bearing=%f, sa=%f",
+                Utils.LogMessageType.GPS_DATA.ordinal(),
+                timeStamp, loc.getLatitude(),
+                loc.getLongitude(), loc.getAltitude(), loc.getAccuracy(),
+                loc.getSpeed(), loc.getBearing(), velErr);
+        log2File(logStr);
+        Log.e("adsddsds", logStr);
+
 
         GeomagneticField f = new GeomagneticField(
                 (float) loc.getLatitude(),
@@ -586,7 +622,7 @@ public class KalmanLocationService extends Service
                     Utils.LogMessageType.KALMAN_ALLOC.ordinal(),
                     timeStamp, x, y, speed, course, m_settings.accelerationDeviation, posDev);
             m_kalmanFilter = new GPSAccKalmanFilter(
-                    m_settings.useGpsSpeed,
+                    false, //todo move to settings
                     Coordinates.longitudeToMeters(x),
                     Coordinates.latitudeToMeters(y),
                     xVel,
@@ -598,6 +634,9 @@ public class KalmanLocationService extends Service
                     m_settings.mPosFactor);
             return;
         }
+
+        m_kalmanFilter.currentXVel = xVel;
+        m_kalmanFilter.currentYVel = yVel;
 
         SensorGpsDataItem sdi = new SensorGpsDataItem(
                 timeStamp, loc.getLatitude(), loc.getLongitude(), loc.getAltitude(),
@@ -612,4 +651,63 @@ public class KalmanLocationService extends Service
         m_sensorDataQueue.add(sdi);
     }
 
+
+    private Double getCurrentSpeed(Location location) {
+        double elapsedTimeInSeconds = (location.getTime() - lastLocation.getTime()) / 1000.0;
+        double distanceInMeters = location.distanceTo(lastLocation);
+        return distanceInMeters / elapsedTimeInSeconds;
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        /*do nothing*/
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        Log.d(TAG, "onProviderEnabled: " + provider);
+        if (provider.equals(LocationManager.GPS_PROVIDER)) {
+            m_gpsEnabled = true;
+            for (LocationServiceStatusInterface ilss : m_locationServiceStatusInterfaces) {
+                ilss.GPSEnabledChanged(m_gpsEnabled);
+            }
+        }
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        Log.d(TAG, "onProviderDisabled: " + provider);
+        if (provider.equals(LocationManager.GPS_PROVIDER)) {
+            m_gpsEnabled = false;
+            for (LocationServiceStatusInterface ilss : m_locationServiceStatusInterfaces) {
+                ilss.GPSEnabledChanged(m_gpsEnabled);
+            }
+        }
+    }
+
+    /*GpsStatus.Listener implementation. do we really need this? */
+    @Override
+    public void onGpsStatusChanged(int event) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            m_gpsStatus = m_locationManager.getGpsStatus(m_gpsStatus);
+        }
+
+        int activeSatellites = 0;
+        if (m_gpsStatus != null) {
+            for (GpsSatellite satellite : m_gpsStatus.getSatellites()) {
+                activeSatellites += satellite.usedInFix() ? 1 : 0;
+            }
+
+            if (activeSatellites != 0) {
+                this.m_activeSatellites = activeSatellites;
+                for (LocationServiceStatusInterface locationServiceStatusInterface : m_locationServiceStatusInterfaces) {
+                    locationServiceStatusInterface.GPSStatusChanged(this.m_activeSatellites);
+                }
+            }
+        }
+    }
 }
+//thots : onLocationChanged updates sdi every time location changes/interval time is exceeded
+//      onSensorChanged updates every time a new sensor value is available. it also negates the old
+//gps readings. meaning that when you go through the "do in background" stuff, it will "predict"
+// the next location.

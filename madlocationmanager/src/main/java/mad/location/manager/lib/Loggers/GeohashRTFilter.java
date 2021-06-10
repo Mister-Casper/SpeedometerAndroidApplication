@@ -1,16 +1,17 @@
 package mad.location.manager.lib.Loggers;
 
+import android.annotation.SuppressLint;
 import android.location.Location;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import mad.location.manager.lib.Commons.Coordinates;
 import mad.location.manager.lib.Commons.GeoPoint;
 import mad.location.manager.lib.Commons.Utils;
 import mad.location.manager.lib.Filters.GeoHash;
 import mad.location.manager.lib.Interfaces.ILogger;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by lezh1k on 2/13/18.
@@ -24,25 +25,28 @@ public class GeohashRTFilter {
     private double m_distanceGeoFilteredHP = 0.0;
     private double m_distanceAsIs = 0.0;
     private double m_distanceAsIsHP = 0.0;
+    public double speed = 0.0;
+    public double direction = 0.0;
 
     private static final double COORD_NOT_INITIALIZED = 361.0;
     private int ppCompGeoHash = 0;
     private int ppReadGeoHash = 1;
 
-    private long geoHashBuffers[];
+    private char geoHashBuffers[][];
     private int pointsInCurrentGeohashCount;
 
     private GeoPoint currentGeoPoint;
     private GeoPoint lastApprovedGeoPoint;
+    public GeoPoint displayPoint;
     private GeoPoint lastGeoPointAsIs;
 
+    private boolean isFirstCoordinate = true;
     private List<Location> m_geoFilteredTrack;
+
     public List<Location> getGeoFilteredTrack() {
         return m_geoFilteredTrack;
     }
 
-
-    private boolean isFirstCoordinate = true;
     private int m_geohashPrecision;
     private int m_geohashMinPointCount;
 
@@ -72,10 +76,15 @@ public class GeohashRTFilter {
     public void reset(ILogger logger) {
         m_logger = logger;
         m_geoFilteredTrack.clear();
-        geoHashBuffers = new long[2];
+        char[] buff1 = new char[GeoHash.GEOHASH_MAX_PRECISION];
+        char[] buff2 = new char[GeoHash.GEOHASH_MAX_PRECISION];
+        geoHashBuffers = new char[][]{buff1, buff2};
         pointsInCurrentGeohashCount = 0;
         lastApprovedGeoPoint = new GeoPoint(COORD_NOT_INITIALIZED, COORD_NOT_INITIALIZED);
         currentGeoPoint = new GeoPoint(COORD_NOT_INITIALIZED, COORD_NOT_INITIALIZED);
+        displayPoint = new GeoPoint(COORD_NOT_INITIALIZED, COORD_NOT_INITIALIZED);
+        speed = 0.0;
+        direction = 0.0;
 
         lastGeoPointAsIs = new GeoPoint(COORD_NOT_INITIALIZED, COORD_NOT_INITIALIZED);
         m_distanceGeoFilteredHP = m_distanceGeoFiltered = 0.0;
@@ -88,7 +97,7 @@ public class GeohashRTFilter {
 
     public void filter(Location loc) {
         if (m_logger != null) {
-            String toLog = String.format("%d%d FKS : lat=%f, lon=%f, alt=%f",
+            @SuppressLint("DefaultLocale") String toLog = String.format("%d%d FKS : lat=%f, lon=%f, alt=%f",
                     Utils.LogMessageType.FILTERED_GPS_DATA.ordinal(),
                     loc.getTime(),
                     loc.getLatitude(), loc.getLongitude(), loc.getAltitude());
@@ -97,9 +106,10 @@ public class GeohashRTFilter {
 
         GeoPoint pi = new GeoPoint(loc.getLatitude(), loc.getLongitude());
         if (isFirstCoordinate) {
-            geoHashBuffers[ppCompGeoHash] = GeoHash.encode_u64(pi.Latitude, pi.Longitude, m_geohashPrecision);
-            currentGeoPoint.Latitude = pi.Latitude;
-            currentGeoPoint.Longitude = pi.Longitude;
+            GeoHash.encode(pi.Latitude, pi.Longitude, geoHashBuffers[ppCompGeoHash], m_geohashPrecision);
+            displayPoint.Latitude = currentGeoPoint.Latitude = pi.Latitude; // initialization.
+            displayPoint.Longitude = currentGeoPoint.Longitude = pi.Longitude; // initialization.
+
             pointsInCurrentGeohashCount = 1;
 
             isFirstCoordinate = false;
@@ -107,7 +117,6 @@ public class GeohashRTFilter {
             lastGeoPointAsIs.Longitude = pi.Longitude;
             return;
         }
-
         m_distanceAsIs += Coordinates.distanceBetween(
                 lastGeoPointAsIs.Longitude,
                 lastGeoPointAsIs.Latitude,
@@ -126,8 +135,9 @@ public class GeohashRTFilter {
         lastGeoPointAsIs.Longitude = loc.getLongitude();
         lastGeoPointAsIs.Latitude = loc.getLatitude();
 
-        geoHashBuffers[ppReadGeoHash] = GeoHash.encode_u64(pi.Latitude, pi.Longitude, m_geohashPrecision);
-        if (geoHashBuffers[ppCompGeoHash] != geoHashBuffers[ppReadGeoHash]) {
+
+        GeoHash.encode(pi.Latitude, pi.Longitude, geoHashBuffers[ppReadGeoHash], m_geohashPrecision);
+        if (!Arrays.equals(geoHashBuffers[ppCompGeoHash], geoHashBuffers[ppReadGeoHash])) {
             if (pointsInCurrentGeohashCount >= m_geohashMinPointCount) {
                 currentGeoPoint.Latitude /= pointsInCurrentGeohashCount;
                 currentGeoPoint.Longitude /= pointsInCurrentGeohashCount;
@@ -148,6 +158,7 @@ public class GeohashRTFilter {
                     double dd2 = hpResBuffGeo[0];
                     m_distanceGeoFilteredHP += dd2;
                 }
+
                 lastApprovedGeoPoint.Longitude = currentGeoPoint.Longitude;
                 lastApprovedGeoPoint.Latitude = currentGeoPoint.Latitude;
                 Location laLoc = new Location(PROVIDER_NAME);
@@ -162,6 +173,7 @@ public class GeohashRTFilter {
             pointsInCurrentGeohashCount = 1;
             currentGeoPoint.Latitude = pi.Latitude;
             currentGeoPoint.Longitude = pi.Longitude;
+
             //swap buffers
             int swp = ppCompGeoHash;
             ppCompGeoHash = ppReadGeoHash;
