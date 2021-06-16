@@ -23,4 +23,11 @@
         android:id="@+id/pause"
         android:title="@string/stop" />
 
+    <item
+        android:id="@+id/addHistory"
+        android:title="@string/add_history"/>
+
+    <item
+        android:id="@+id/history"
+        android:title="@string/history"/>
 </menu>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingStart="12dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="16dp">
+
+    <TextView
+        android:textSize="24sp"
+        android:id="@+id/record_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <TextView
+        android:layout_marginStart="12dp"
+        android:textSize="24sp"
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/record_id"/>
+
+    <Button
+        android:id="@+id/continue_record"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        app:layout_constraintRight_toLeftOf="@id/delete"
+        app:layout_constraintTop_toTopOf="@id/record_id"
+        app:layout_constraintBottom_toBottomOf="@id/record_id"
+        android:background="@drawable/continue_btm"/>
+
+    <Button
+        android:id="@+id/delete"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/record_id"
+        app:layout_constraintBottom_toBottomOf="@id/record_id"
+        android:background="@drawable/delete_btm"/>
+
+    <TextView
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/max"
+        app:layout_constraintTop_toBottomOf="@id/record_id"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <TextView
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/av"
+        app:layout_constraintTop_toBottomOf="@id/max"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <TextView
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/distance"
+        app:layout_constraintTop_toBottomOf="@id/av"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <TextView
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/duration"
+        app:layout_constraintTop_toBottomOf="@id/distance"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

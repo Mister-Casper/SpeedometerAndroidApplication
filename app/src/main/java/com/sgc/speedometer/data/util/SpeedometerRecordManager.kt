@@ -2,10 +2,9 @@ package com.sgc.speedometer.data.util
 
 import android.location.Location
 import com.sgc.speedometer.data.model.Date
-import com.sgc.speedometer.data.model.SpeedometerRecord
-import mad.location.manager.lib.Loggers.GeohashRTFilter
+import com.sgc.speedometer.SpeedometerRecord
 
-class SpeedometerRecordManager(val speedometerRecord: SpeedometerRecord) {
+class SpeedometerRecordManager(var speedometerRecord: SpeedometerRecord) {
     var lastLocation: Location? = null
 
     fun update(location: Location) {
@@ -26,7 +25,7 @@ class SpeedometerRecordManager(val speedometerRecord: SpeedometerRecord) {
             speedometerRecord.maxSpeed = currentSpeed
     }
 
-    private fun calcAverageSpeed() {
+    public fun calcAverageSpeed() {
         if (speedometerRecord.duration.getSeconds() != 0)
             speedometerRecord.averageSpeed = speedometerRecord.distance / speedometerRecord.duration.getSeconds()
     }

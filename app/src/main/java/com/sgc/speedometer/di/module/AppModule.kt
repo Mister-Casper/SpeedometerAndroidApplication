@@ -2,8 +2,11 @@ package com.sgc.speedometer.di.module
 
 import android.app.Application
 import android.content.Context
+import androidx.room.Room
 import com.sgc.speedometer.data.AppDataManager
 import com.sgc.speedometer.data.DataManager
+import com.sgc.speedometer.data.DefaultSettings
+import com.sgc.speedometer.data.bd.AppDatabase
 import com.sgc.speedometer.data.prefs.AppPreferencesHelper
 import com.sgc.speedometer.data.prefs.PreferencesHelper
 import com.sgc.speedometer.di.PreferenceInfo
@@ -23,8 +26,22 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideDataManager(appDataManager: AppDataManager): DataManager {
-        return appDataManager
+    fun provideAppDatabase(context: Context): AppDatabase {
+        return Room.databaseBuilder(
+            context, AppDatabase::class.java,
+            "HISTORY_DATABASE"
+        ).fallbackToDestructiveMigration()
+            .allowMainThreadQueries().build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideDataManager(
+        preferencesHelper: PreferencesHelper,
+        defaultSettings: DefaultSettings,
+        appDatabase: AppDatabase
+    ): DataManager {
+        return AppDataManager(preferencesHelper, defaultSettings, appDatabase)
     }
 
     @Provides

@@ -46,4 +46,9 @@
     <string name="stop">Pause</string>
     <string name="contin">Continue</string>
 
+    <string name="history">History</string>
+    <string name="add_history">Add to history</string>
+    <string name="record_title">Record title</string>
+    <string name="record_prefill">Record</string>
+
 </resources>

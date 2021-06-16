@@ -23,4 +23,11 @@
         android:id="@+id/start"
         android:title="@string/contin" />
 
+    <item
+        android:id="@+id/addHistory"
+        android:title="@string/add_history"/>
+
+    <item
+        android:id="@+id/history"
+        android:title="@string/history"/>
 </menu>

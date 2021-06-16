@@ -27,7 +27,8 @@ import com.sgc.speedometer.BR
 import com.sgc.speedometer.ISpeedometerService
 import com.sgc.speedometer.R
 import com.sgc.speedometer.data.DataManager
-import com.sgc.speedometer.data.model.SpeedometerRecord
+import com.sgc.speedometer.data.model.Date
+import com.sgc.speedometer.SpeedometerRecord
 import com.sgc.speedometer.data.service.SpeedometerService
 import com.sgc.speedometer.data.util.distanceUnit.DistanceUnitConverter
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnitConverter
@@ -36,16 +37,20 @@ import com.sgc.speedometer.di.component.ActivityComponent
 import com.sgc.speedometer.ui.base.BaseActivity
 import com.sgc.speedometer.ui.customView.speedometer.render.RoundSpeedometerRender
 import com.sgc.speedometer.ui.customView.speedometer.render.TextSpeedometerRender
+import com.sgc.speedometer.ui.history.HistoryActivity
 import com.sgc.speedometer.ui.settings.SettingsActivity
 import com.sgc.speedometer.ui.speedometer.speedLimitControl.SpeedLimitControlObserver
 import com.sgc.speedometer.utils.AppConstants
+import com.sgc.speedometer.utils.AppConstants.CONTINUE_RECORD
 import com.sgc.speedometer.utils.AppConstants.SPEED_INTENT_FILTER
 import com.sgc.speedometer.utils.AppConstants.TAG_CODE_PERMISSION_LOCATION
 import kotlinx.android.synthetic.main.activity_speedometer.*
+import java.time.LocalDateTime
+import java.time.ZoneId
 import javax.inject.Inject
 
 class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, SpeedometerViewModel>(),
-    SpeedLimitControlObserver{
+    SpeedLimitControlObserver {
 
     override val layoutId: Int
         get() = R.layout.activity_speedometer
@@ -136,6 +141,8 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         registerReceiver(gpsSwitchStateReceiver, IntentFilter(PROVIDERS_CHANGED_ACTION))
     }
 
+    var isSpeedLimitDialogOpen = false
+
     private fun initSpeedLimitClickListener() {
         speedLimit.setOnClickListener {
             MaterialDialog(this).show {
@@ -179,6 +186,13 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         }
     }
 
+    private fun continueRecord() {
+        val record = intent.getParcelableExtra<SpeedometerRecord>(CONTINUE_RECORD)
+        if (record != null) {
+            service!!.continueRecord(record)
+        }
+    }
+
     override fun speedLimitExceeded() {
         if (dataManager.getIsVibration())
             vibrate()
@@ -210,6 +224,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val binder = ISpeedometerService.Stub.asInterface(service)
             this@SpeedometerActivity.service = binder
+            continueRecord()
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {}
@@ -237,9 +252,7 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.settings -> {
-                val intent = Intent(this, SettingsActivity::class.java)
-                startActivity(intent)
-                overridePendingTransition(R.anim.enter, R.anim.exit)
+                startAnimActivity(SettingsActivity::class.java)
             }
             R.id.reset -> {
                 if (service != null)
@@ -267,8 +280,25 @@ class SpeedometerActivity : BaseActivity<ActivitySpeedometerBinding, Speedometer
                     invalidateOptionsMenu()
                 }
             }
+            R.id.addHistory -> {
+                val record = viewModel.speedometerRecord.value
+                record!!.recordDate =
+                    Date(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+                val id = dataManager.insertSpeedometerRecord(record)
+                service?.setRecordId(id)
+                startAnimActivity(HistoryActivity::class.java)
+            }
+            R.id.history -> {
+                startAnimActivity(HistoryActivity::class.java)
+            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun startAnimActivity(cls: Class<*>) {
+        val intent = Intent(this, cls)
+        startActivity(intent)
+        overridePendingTransition(R.anim.enter, R.anim.exit)
     }
 
     private fun checkGPSEnable() {

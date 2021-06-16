@@ -8,6 +8,7 @@ import com.sgc.speedometer.data.util.speedUnit.SpeedUnitConverter
 import com.sgc.speedometer.di.module.AppModule
 import com.sgc.speedometer.di.module.DefaultSettingsModule
 import com.sgc.speedometer.di.module.SpeedometerModule
+import com.sgc.speedometer.ui.history.HistoryActivity
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -19,6 +20,8 @@ interface AppComponent {
     fun inject(app: Application)
 
     fun inject(service: SpeedometerService)
+
+    fun inject(historyActivity: HistoryActivity)
 
     fun getDataManager(): DataManager
     fun getSpeedUnitConverter(): SpeedUnitConverter

@@ -67,7 +67,7 @@ class SpeedometerView : View {
                     postInvalidate()
                 }
             }
-        }, 0, 500)
+        }, 0, 250)
     }
 
     override fun onDraw(canvas: Canvas) {

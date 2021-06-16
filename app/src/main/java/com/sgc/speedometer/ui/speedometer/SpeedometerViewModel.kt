@@ -5,7 +5,7 @@ import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.sgc.speedometer.data.DataManager
-import com.sgc.speedometer.data.model.SpeedometerRecord
+import com.sgc.speedometer.SpeedometerRecord
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnitConverter
 import com.sgc.speedometer.ui.base.BaseViewModel
 import com.sgc.speedometer.ui.speedometer.speedLimitControl.SpeedLimitControl

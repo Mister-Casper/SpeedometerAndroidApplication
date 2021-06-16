@@ -12,7 +12,8 @@ import com.sgc.speedometer.App
 import com.sgc.speedometer.ISpeedometerService
 import com.sgc.speedometer.R
 import com.sgc.speedometer.data.DataManager
-import com.sgc.speedometer.data.model.SpeedometerRecord
+import com.sgc.speedometer.data.model.Date
+import com.sgc.speedometer.SpeedometerRecord
 import com.sgc.speedometer.data.util.SpeedometerRecordManager
 import com.sgc.speedometer.data.util.distanceUnit.DistanceUnitConverter
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnitConverter
@@ -30,7 +31,7 @@ class SpeedometerService : Service(), LocationServiceInterface {
     val settings1 = KalmanLocationService.Settings(
         Utils.ACCELEROMETER_DEFAULT_DEVIATION,
         5,
-        2000,
+        3000,
         0,
         0,
         2,
@@ -41,7 +42,7 @@ class SpeedometerService : Service(), LocationServiceInterface {
     val settings2 = KalmanLocationService.Settings(
         Utils.ACCELEROMETER_DEFAULT_DEVIATION,
         40,
-        7500,
+        9000,
         0,
         0,
         1,
@@ -66,6 +67,7 @@ class SpeedometerService : Service(), LocationServiceInterface {
         SpeedometerRecordManager(SpeedometerRecord())
 
     private var timer: CountDownTimer? = null
+    private var stopTime = 0L
 
     private val binder = object : ISpeedometerService.Stub() {
         override fun reset() {
@@ -78,6 +80,14 @@ class SpeedometerService : Service(), LocationServiceInterface {
 
         override fun start() {
             this@SpeedometerService.start()
+        }
+
+        override fun continueRecord(record: SpeedometerRecord?) {
+            speedometerRecordManager.speedometerRecord = record!!
+        }
+
+        override fun setRecordId(id: Long) {
+            speedometerRecordManager.speedometerRecord.id = id
         }
     }
 
@@ -233,8 +243,16 @@ class SpeedometerService : Service(), LocationServiceInterface {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == Intent.ACTION_SCREEN_OFF) {
                 reset(settings2)
+                timer!!.cancel()
+                stopTime = System.currentTimeMillis()
             } else if (intent.action == Intent.ACTION_SCREEN_ON) {
                 reset(settings1)
+                if (stopTime != 0L) {
+                    speedometerRecordManager.speedometerRecord.duration =
+                        Date(speedometerRecordManager.speedometerRecord.duration.epochMillis + System.currentTimeMillis() - stopTime)
+                    startTimer()
+                    speedometerRecordManager.calcAverageSpeed()
+                }
             }
         }
     }
