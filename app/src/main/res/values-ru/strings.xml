@@ -39,4 +39,8 @@
     <string name="stop">Пауза</string>
     <string name="contin">Старт</string>
 
+    <string name = "history">История</string>
+    <string name = "add_history">Добавить в историю</string>
+    <string name = "delete_ask">Вы хотите удалить эту запись?</string>
+
 </resources>

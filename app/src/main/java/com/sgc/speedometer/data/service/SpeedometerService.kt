@@ -30,22 +30,22 @@ class SpeedometerService : Service(), LocationServiceInterface {
 
     val settings1 = KalmanLocationService.Settings(
         Utils.ACCELEROMETER_DEFAULT_DEVIATION,
+        1,
+        1000,
+        0,
+        0,
         5,
-        3000,
-        0,
-        0,
-        2,
         null, false,
         Utils.DEFAULT_VEL_FACTOR, Utils.DEFAULT_POS_FACTOR
     )
 
     val settings2 = KalmanLocationService.Settings(
         Utils.ACCELEROMETER_DEFAULT_DEVIATION,
-        40,
-        9000,
+        5,
+        3000,
         0,
         0,
-        1,
+        2,
         null, false,
         Utils.DEFAULT_VEL_FACTOR, Utils.DEFAULT_POS_FACTOR
     )
@@ -234,11 +234,6 @@ class SpeedometerService : Service(), LocationServiceInterface {
         registerReceiver(mReceiver, filter)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterReceiver(mReceiver)
-    }
-
     inner class ScreenReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == Intent.ACTION_SCREEN_OFF) {
@@ -261,6 +256,46 @@ class SpeedometerService : Service(), LocationServiceInterface {
         if (location != null) {
             speedometerRecordManager.update(location)
             updateInfo(speedometerRecordManager.speedometerRecord)
+        }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        acquireWakelock()
+    }
+
+    override fun onDestroy() {
+        releaseWakelock()
+        super.onDestroy()
+        unregisterReceiver(mReceiver)
+    }
+
+    private val wakeLock: PowerManager.WakeLock by lazy {
+        (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
+            newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "speedometer:ServiceWakelock")
+        }
+    }
+
+    private fun acquireWakelock() {
+        try {
+            wakeLock.let {
+                wakeLock.setReferenceCounted(false)
+                if (!wakeLock.isHeld) {
+                    wakeLock.acquire()
+                }
+            }
+        } catch (e: RuntimeException) {
+        }
+    }
+
+    private fun releaseWakelock() {
+        try {
+            wakeLock.let {
+                if (it.isHeld) {
+                    it.release()
+                }
+            }
+        } catch (e: RuntimeException) {
         }
     }
 }

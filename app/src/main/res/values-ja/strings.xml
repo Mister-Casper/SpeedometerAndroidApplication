@@ -41,4 +41,8 @@
     <string name="stop">一時停止</string>
     <string name="contin">続行</string>
 
+    <string name="history">履歴</string>
+    <string name="add_history">履歴に追加</string>
+    <string name="delete_ask">このレコードを削除しますか？</string>
+
 </resources>

@@ -46,4 +46,8 @@
     <string name="sixth_speed_resolution" translatable="false">0 - 320</string>
     <string name="stop">Pause</string>
     <string name="contin">Continuer</string>
+
+    <string name="history">Historique</string>
+    <string name="add_history">"Ajouter à l'historique"</string>
+    <string name="delete_ask">Voulez-vous supprimer cet enregistrement ?</string>
 </resources>

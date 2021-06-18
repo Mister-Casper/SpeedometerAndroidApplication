@@ -40,4 +40,8 @@
 
     <string name = "stop">Pausar</string>
     <string name = "contin">Continuar</string>
+
+    <string name = "history">Historial</string>
+    <string name = "add_history">Agregar al historial </string>
+    <string name = "delete_ask">Quiere borrar este registro?</string>
 </resources>

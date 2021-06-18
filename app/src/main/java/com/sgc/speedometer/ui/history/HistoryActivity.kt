@@ -3,9 +3,14 @@ package com.sgc.speedometer.ui.history
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.WhichButton
+import com.afollestad.materialdialogs.actions.getActionButton
+import com.afollestad.materialdialogs.input.input
 import com.sgc.speedometer.App
 import com.sgc.speedometer.R
 import com.sgc.speedometer.data.DataManager
@@ -67,12 +72,20 @@ class HistoryActivity : AppCompatActivity(), HistoryAdapter.RecordListener {
     }
 
     override fun onDelete(record: SpeedometerRecord) {
-        dataManager.deleteSpeedometerRecord(record)
+        MaterialDialog(this).show {
+            title(R.string.delete_ask)
+            negativeButton { }
+            positiveButton { dataManager.deleteSpeedometerRecord(record) }
+            apply {
+                getActionButton(WhichButton.POSITIVE).updateTextColor(getColor(R.color.text_color))
+                getActionButton(WhichButton.NEGATIVE).updateTextColor(getColor(R.color.text_color))
+            }
+        }
     }
 
     override fun onContinue(record: SpeedometerRecord) {
         val intent = Intent(this, SpeedometerActivity::class.java)
-        intent.putExtra(AppConstants.CONTINUE_RECORD,record)
+        intent.putExtra(AppConstants.CONTINUE_RECORD, record)
         startActivity(intent)
     }
 }
