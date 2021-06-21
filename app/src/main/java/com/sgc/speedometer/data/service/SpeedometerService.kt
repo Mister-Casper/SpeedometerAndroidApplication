@@ -30,7 +30,7 @@ class SpeedometerService : Service(), LocationServiceInterface {
 
     val settings1 = KalmanLocationService.Settings(
         Utils.ACCELEROMETER_DEFAULT_DEVIATION,
-        1,
+        5,
         1000,
         0,
         0,
@@ -41,7 +41,7 @@ class SpeedometerService : Service(), LocationServiceInterface {
 
     val settings2 = KalmanLocationService.Settings(
         Utils.ACCELEROMETER_DEFAULT_DEVIATION,
-        5,
+        30,
         3000,
         0,
         0,
@@ -98,11 +98,11 @@ class SpeedometerService : Service(), LocationServiceInterface {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         (application as App).appComponent.inject(this)
         manager = getSystemService(NotificationManager::class.java)
+        createNotification()
+        createNotificationChannel()
         registerReceiver()
         ServicesHelper.addLocationServiceInterface(this)
         reset(settings1)
-        createNotificationChannel()
-        createNotification()
         if (timer == null) {
             startTimer()
         }

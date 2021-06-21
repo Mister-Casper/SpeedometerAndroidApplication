@@ -27,8 +27,8 @@ android {
         applicationId "com.sgc.speedometer"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 42
-        versionName "1.4.1"
+        versionCode 44
+        versionName "1.4.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
