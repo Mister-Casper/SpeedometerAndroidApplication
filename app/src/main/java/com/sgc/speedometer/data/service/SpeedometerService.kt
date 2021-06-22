@@ -11,9 +11,9 @@ import androidx.core.app.NotificationCompat
 import com.sgc.speedometer.App
 import com.sgc.speedometer.ISpeedometerService
 import com.sgc.speedometer.R
+import com.sgc.speedometer.SpeedometerRecord
 import com.sgc.speedometer.data.DataManager
 import com.sgc.speedometer.data.model.Date
-import com.sgc.speedometer.SpeedometerRecord
 import com.sgc.speedometer.data.util.SpeedometerRecordManager
 import com.sgc.speedometer.data.util.distanceUnit.DistanceUnitConverter
 import com.sgc.speedometer.data.util.speedUnit.SpeedUnitConverter
@@ -34,18 +34,18 @@ class SpeedometerService : Service(), LocationServiceInterface {
         1000,
         0,
         0,
-        5,
+        2,
         null, false,
         Utils.DEFAULT_VEL_FACTOR, Utils.DEFAULT_POS_FACTOR
     )
 
     val settings2 = KalmanLocationService.Settings(
         Utils.ACCELEROMETER_DEFAULT_DEVIATION,
-        30,
+        20,
         3000,
         0,
         0,
-        2,
+        1,
         null, false,
         Utils.DEFAULT_VEL_FACTOR, Utils.DEFAULT_POS_FACTOR
     )
@@ -105,6 +105,9 @@ class SpeedometerService : Service(), LocationServiceInterface {
         reset(settings1)
         if (timer == null) {
             startTimer()
+        }
+        if(intent?.extras?.getParcelable<SpeedometerRecord>(RECORD) != null){
+            speedometerRecordManager.speedometerRecord = intent.extras!!.getParcelable(RECORD)!!
         }
         startForeground(1, createNotification())
         return START_STICKY
@@ -224,6 +227,7 @@ class SpeedometerService : Service(), LocationServiceInterface {
 
     companion object {
         const val CHANNEL_ID = "SPEEDOMETER_CHANNEL_ID_5"
+        const val RECORD = "RECORD"
     }
 
     val mReceiver: BroadcastReceiver = ScreenReceiver()
@@ -297,5 +301,16 @@ class SpeedometerService : Service(), LocationServiceInterface {
             }
         } catch (e: RuntimeException) {
         }
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        val restartServiceTask = Intent(applicationContext, this.javaClass)
+        restartServiceTask.putExtra(RECORD,speedometerRecordManager.speedometerRecord)
+        restartServiceTask.setPackage(packageName)
+        val restartPendingIntent =
+            PendingIntent.getService(applicationContext, 1, restartServiceTask, PendingIntent.FLAG_ONE_SHOT)
+        val myAlarmService = applicationContext.getSystemService(ALARM_SERVICE) as AlarmManager
+        myAlarmService[AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000] = restartPendingIntent
+        super.onTaskRemoved(rootIntent)
     }
 }
